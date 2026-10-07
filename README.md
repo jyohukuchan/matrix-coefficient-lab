@@ -4,7 +4,7 @@ This is a focused source fork of [OpenAI's mathematics repository](https://githu
 
 The extension of OpenAI's proof to arbitrary fields was found and formalized by **consumer-grade GPT-6 Astra and GPT-6.1 Sol**, working under Sela Navot's direction. Lean checked the resulting formal proof; the verification scope is documented below.
 
-The sources are extracted from the `MatrixMultiplication` subtree at OpenAI commit [`adc7f1241b42e322a6451854ab7e4b4c146bf78a`](https://github.com/openai/math/tree/adc7f1241b42e322a6451854ab7e4b4c146bf78a/lean/OAI/LinearAlgebra/MatrixMultiplication), packaged as a standalone Lake project. Only the 126 OAI modules in the import closure of the all-fields theorem and its audit are kept: 120 upstream modules, 40 of them modified, plus 6 new files. OpenAI's other matrix-multiplication results in that subtree (the dual exponent, rectangular and conditional bounds, and their numerical certificates) are omitted. So is the complex-only program layer through which OpenAI's complex proof reached `Model.lean`, which this fork's generic arithmetic bridge replaces. The preserved tag `openai-baseline-adc7f12` records that subtree before the extension. The accompanying OpenAI preprint is [*An Upper Bound of 9/4 for the Matrix Multiplication Exponent*](https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/preprints/Matrix-Multiplication-Nine-Fourths-October-2-2026/build/paper.tex). See [UPSTREAM.md](UPSTREAM.md) for provenance.
+The sources are extracted from the `MatrixMultiplication` subtree at OpenAI commit [`adc7f1241b42e322a6451854ab7e4b4c146bf78a`](https://github.com/openai/math/tree/adc7f1241b42e322a6451854ab7e4b4c146bf78a/lean/OAI/LinearAlgebra/MatrixMultiplication), packaged as a standalone Lake project. The matrix-multiplication subtree keeps only the 126 OAI modules in the import closure of the all-fields theorem and its audit: 120 upstream modules, 40 of them modified, plus 6 new files. OpenAI's other matrix-multiplication results in that subtree (the dual exponent, rectangular and conditional bounds, and their numerical certificates) are omitted. So is the complex-only program layer through which OpenAI's complex proof reached `Model.lean`, which this fork's generic arithmetic bridge replaces. The preserved tag `openai-baseline-adc7f12` records that subtree before the extension. The accompanying OpenAI preprint is [*An Upper Bound of 9/4 for the Matrix Multiplication Exponent*](https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/preprints/Matrix-Multiplication-Nine-Fourths-October-2-2026/build/paper.tex). See [UPSTREAM.md](UPSTREAM.md) for provenance.
 
 ## Premise and theorem-statement diff
 
@@ -74,9 +74,26 @@ Install [elan](https://github.com/leanprover/elan), and have Git and Python 3 av
 
 ```sh
 bash scripts/bootstrap.sh
+LEAN_NUM_THREADS=1 lake build
 bash scripts/check-proof.sh
 bash scripts/check-kernel.sh
 ```
+
+The Lake project lives at the repository root: [`lakefile.lean`](lakefile.lean),
+[`lake-manifest.json`](lake-manifest.json), and [`lean-toolchain`](lean-toolchain).
+Lean sources remain under `lean/`, configured through the package's `srcDir`.
+The small [`OAI` package entry point](lean/OAI.lean) imports the audit.
+Plain `lake build` builds this default target, including the public
+`AllFields` theorem and `AllFieldsAudit`. It does not build the separate
+Comparator challenge with its deliberate specification holes. For a focused
+check, run `LEAN_NUM_THREADS=1 lake build OAI.LinearAlgebra.MatrixMultiplication.AllFields`
+from the repository root.
+
+If upgrading an existing checkout that previously kept its Lake configuration
+under `lean/`, rerun `bash scripts/bootstrap.sh` from the repository root before
+building. The current project uses the root `.lake/` directory for dependencies
+and build outputs; historical records below describe the layout at their
+recorded commits.
 
 The toolchain and direct dependency pins are:
 
@@ -86,7 +103,7 @@ The toolchain and direct dependency pins are:
 | Mathlib | `d13f23b723b8a846827a245b89c10fc7d3f11612` |
 | fixed-point-theorems | `770940ddf9878cf61952ed53d910b92bca841838` |
 
-All transitive revisions are recorded in [`lean/lake-manifest.json`](lean/lake-manifest.json). Bootstrap obtains the matching Mathlib cache and applies the included [upstream Lean 4.34.1 compatibility patch](lean/patches/fixed-point-theorems-lean4341.patch) to fixed-point-theorems. Dependency validation checks the pinned revisions and that exact patch.
+All transitive revisions are recorded in [`lake-manifest.json`](lake-manifest.json). Bootstrap obtains the matching Mathlib cache and applies the included [upstream Lean 4.34.1 compatibility patch](lean/patches/fixed-point-theorems-lean4341.patch) to fixed-point-theorems. Dependency validation checks the pinned revisions and that exact patch.
 
 `check-proof.sh` compares eleven original specification and builder files with the immutable baseline, validates dependencies, and builds [`AllFields.lean`](lean/OAI/LinearAlgebra/MatrixMultiplication/AllFields.lean) and [`AllFieldsAudit.lean`](lean/OAI/LinearAlgebra/MatrixMultiplication/AllFieldsAudit.lean). The audit covers an arbitrary field universe, representative finite and infinite fields, the explicit cost statement, an exact coefficient-rank witness, and guarded axiom checks. Those guards require exactly `propext`, `Classical.choice`, and `Quot.sound` for the audited declarations; an additional axiom, including `sorryAx`, makes the check fail.
 
@@ -116,6 +133,16 @@ git diff --diff-filter=AMR openai-baseline-adc7f12 -- lean/OAI/LinearAlgebra/Mat
 ```
 
 Git shows `Arithmetic/Growth.lean` as a rename of upstream's `ComplexArithmetic/Growth.lean`, which it generalizes to arbitrary fields. Without the filter, the omitted upstream modules also appear as deletions.
+
+## Reservoir discovery
+
+The root Lake configuration and manifest make this repository discoverable as
+a standalone Lean package. [Reservoir's inclusion criteria](https://reservoir.lean-lang.org/inclusion-criteria)
+also require a public, non-fork GitHub repository, at least two stars, and a
+GitHub-recognized OSI-approved license. Reservoir indexes eligible repositories
+automatically, approximately daily; there is no ordinary submission step.
+Meeting those criteria does not confirm that the package has been indexed or
+that a Reservoir build has passed.
 
 ## Attribution and scope
 

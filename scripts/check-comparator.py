@@ -17,7 +17,7 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean"
+SOURCES = ROOT / "lean"
 SPEC = ROOT / "verification/comparator"
 PINS = json.loads((SPEC / "pins.json").read_text())
 MARKER = b"\n-- COMPARATOR FROZEN MODEL ENDS HERE\n"
@@ -47,7 +47,7 @@ def verify_spec():
         "git", "show", f"{PINS['model_baseline']}:{PINS['model_path']}"
     ], cwd=ROOT)
     current = (ROOT / PINS["model_path"]).read_bytes()
-    challenge = (LEAN / "ComparatorAudit/Challenge.lean").read_bytes()
+    challenge = (SOURCES / "ComparatorAudit/Challenge.lean").read_bytes()
     if challenge.count(MARKER) != 1:
         raise RuntimeError("Missing or duplicated frozen-model boundary")
     if challenge.split(MARKER)[0] != original or current != original:
@@ -68,7 +68,7 @@ def verify_spec():
         "permitted_axioms": ["propext", "Classical.choice", "Quot.sound"],
     }:
         raise RuntimeError("Comparator configuration differs from the five-theorem audit")
-    if (LEAN / "lean-toolchain").read_text().strip() != PINS["toolchain"]:
+    if (ROOT / "lean-toolchain").read_text().strip() != PINS["toolchain"]:
         raise RuntimeError("Project toolchain differs from Comparator pins")
     print(f"Frozen model SHA-256: {hashlib.sha256(original).hexdigest()}", flush=True)
     return hashlib.sha256(challenge).hexdigest()
@@ -79,7 +79,7 @@ def main():
     parser.add_argument("--trusted-local", action="store_true",
                         help="Use upstream's unsandboxed development runner")
     parser.add_argument("--comparator-dir", type=Path,
-                        default=LEAN / ".lake/comparator-tool")
+                        default=ROOT / ".lake/comparator-tool")
     parser.add_argument("--negative-controls", action="store_true",
                         help="Also require rejection of changed cost and sorry proofs")
     args = parser.parse_args()
@@ -107,7 +107,7 @@ def main():
     exporter = tool / ".lake/packages/lean4export"
     require_clean_pin(exporter, PINS["lean4export"])
     print(f"Comparator: {revision(tool)}\nlean4export: {revision(exporter)}", flush=True)
-    run(["lean", "--version"], cwd=LEAN, env=env)
+    run(["lean", "--version"], cwd=ROOT, env=env)
     env["COMPARATOR_LEAN4EXPORT"] = str(exporter / ".lake/build/bin/lean4export")
     if args.trusted_local:
         env["COMPARATOR_LANDRUN"] = str(tool / "scripts/fake-landrun.sh")
@@ -116,9 +116,9 @@ def main():
     # Only prebuild outside Landrun when explicitly trusting local sources.
     if args.trusted_local:
         run(["lake", "build", "ComparatorAudit.Challenge", "ComparatorAudit.Solution"],
-            cwd=LEAN, env=env)
+            cwd=ROOT, env=env)
     command = ["lake", "env", tool / ".lake/build/bin/comparator"]
-    run(command + [SPEC / "config.json"], cwd=LEAN, env=env)
+    run(command + [SPEC / "config.json"], cwd=ROOT, env=env)
     if verify_spec() != before:
         raise RuntimeError("Frozen challenge changed during verification")
     print("PASS: five theorems, frozen definitions, standard axioms, Lean kernel replay.",
@@ -131,12 +131,12 @@ def main():
 
 def negative_controls(command, env, trusted_local):
     """Use actual challenge/solution variants, never weaken the real config."""
-    generated = LEAN / "ComparatorAudit/GeneratedControls"
+    generated = SOURCES / "ComparatorAudit/GeneratedControls"
     if generated.exists():
         raise RuntimeError(f"Refusing to overwrite existing control directory: {generated}")
     config = json.loads((SPEC / "config.json").read_text())
-    challenge = (LEAN / "ComparatorAudit/Challenge.lean").read_text()
-    solution = (LEAN / "ComparatorAudit/Solution.lean").read_text()
+    challenge = (SOURCES / "ComparatorAudit/Challenge.lean").read_text()
+    solution = (SOURCES / "ComparatorAudit/Solution.lean").read_text()
     cost = "  | .mul _ _ => 1"
     proof = "AuxiliarySeparation.matrix_multiplication_cost_le F ε hε"
     if challenge.count(cost) != 1 or solution.count(proof) != 1:
@@ -157,11 +157,11 @@ def negative_controls(command, env, trusted_local):
             cfg = generated / f"{name}.json"
             cfg.write_text(json.dumps(altered, indent=2) + "\n")
             if trusted_local:
-                run(["lake", "build", module], cwd=LEAN, env=env)
-            result = subprocess.run(list(map(str, command + [cfg])), cwd=LEAN,
+                run(["lake", "build", module], cwd=ROOT, env=env)
+            result = subprocess.run(list(map(str, command + [cfg])), cwd=ROOT,
                                     env=env, text=True, capture_output=True)
             output = result.stdout + result.stderr
-            log = LEAN / ".lake" / f"comparator-{name}.log"
+            log = ROOT / ".lake" / f"comparator-{name}.log"
             log.write_text(output)
             if result.returncode == 0 or expected not in output:
                 print(output, file=sys.stderr)

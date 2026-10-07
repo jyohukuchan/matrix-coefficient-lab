@@ -75,6 +75,14 @@ recursion level. Descend all powers with one fixed coefficient algebra.
 - Coordinate file ownership before editing shared files. All agents use one
   shared checkout and branch; do not revert or reset another agent's work.
 - Record verified facts separately from drafted/uncompiled statements.
+- Run Lake and verification commands from the repository root. `lakefile.lean`,
+  `lake-manifest.json`, and `lean-toolchain` live there; `srcDir := "lean"`
+  retains the source paths, and compatibility patches stay in `lean/patches/`.
+  Dependencies and build outputs live in the root `.lake/`. When upgrading an
+  older checkout with a nested Lake project, rerun `bash scripts/bootstrap.sh`
+  before building; do not assume the historical `lean/.lake/` artifacts are
+  current. Plain `lake build` targets `OAI`, including `AllFieldsAudit`, and
+  must not build or import the Comparator challenge by default.
 - For Comparator verification, use `python3 scripts/check-comparator.py
   --trusted-local --negative-controls` only for trusted local sources. See
   `verification/comparator/README.md` for the pinned setup and Linux option.

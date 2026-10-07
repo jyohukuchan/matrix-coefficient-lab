@@ -26,7 +26,6 @@ git diff --exit-code "$baseline" -- \
 
 python3 scripts/verify-dependencies.py "$project_root"
 
-cd -- lean
 # This target imports the AllFields entry point, preserves the complex theorem,
 # checks arbitrary universes and representative fields, and audits axioms.
 lake build OAI.LinearAlgebra.MatrixMultiplication.AllFieldsAudit
