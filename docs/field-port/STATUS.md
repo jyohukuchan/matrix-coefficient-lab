@@ -14,26 +14,38 @@ owned by `selanavot`; the user explicitly authorized creation and pushes.
 
 - Upstream: `https://github.com/openai/math`
 - Baseline SHA: `adc7f1241b42e322a6451854ab7e4b4c146bf78a`
-- Initial branch: `codex/matrix-multiplication-all-fields`
+- Canonical checkout: `/Users/selanavot/Documents/Codex/2026-10-06/ope/work/matrix-multiplication-all-fields`
+- Private repository: https://github.com/selanavot/matrix-multiplication-all-fields
+- Private draft PR: https://github.com/selanavot/matrix-multiplication-all-fields/pull/1
+- Branch: `codex/matrix-multiplication-all-fields`
+- Focused upstream baseline on `main`: `d2336fc`.
+- Initial partial source checkpoint: `826d7bbe8b757f98618349b4c3657220b36f57fe`.
 - Lean: `leanprover/lean4:v4.34.1`
 - Mathlib: `d13f23b723b8a846827a245b89c10fc7d3f11612`
 - fixed-point-theorems: `770940ddf9878cf61952ed53d910b92bca841838`
 - The upstream fixed-point compatibility patch is required.
-- Setup agent is preparing a private standalone snapshot of the complete
-  MatrixMultiplication subtree with these exact dependencies. This avoids
-  unrelated manuscript and proof-package downloads. Baseline and changes
-  will remain separately reviewable.
+- The private standalone package contains the complete MatrixMultiplication
+  subtree with these exact dependencies. The baseline and work branch are
+  separately reviewable in the private draft PR.
+- Visibility was verified as `PRIVATE` / `isPrivate: true` before the first
+  push and again before PR creation. No public fork or upstream PR was made.
 
-Temporary local compilation currently uses sibling `../lean-focus`, whose
-`OAI` symlink points into the working checkout's `lean/OAI`. All 8908 matching
-Mathlib cache files have downloaded. Example command from that harness:
+Run all new Lake commands from the canonical checkout's `lean/` directory.
+All 8908 matching Mathlib cache files have downloaded. Local ignored cache
+links reuse that download. The old `../openai-math` clone is a read-only
+reference; `../lean-focus` is a retired build harness. Do not mix build roots,
+because their differing paths can invalidate shared build traces.
+
+Example command from canonical `lean/`:
 
 ```sh
 lake build OAI.LinearAlgebra.MatrixMultiplication.Arithmetic.FieldDescent
 ```
 
-The setup agent will record the canonical private checkout and portable build
-commands when the migration is complete.
+For a fresh checkout, run `lake update` and `lake exe cache get` from `lean/`.
+The focused Lake post-update hook applies the included upstream fixed-point
+compatibility patch. Detailed environment and privacy evidence is in
+`docs/field-port/agents/setup.md`.
 
 ## Verified so far
 
@@ -42,6 +54,11 @@ The following generic targets have compiled with the pinned toolchain:
 - `Arithmetic.FieldDescent`: finite-algebra rank projection and fixed-overhead
   descent of all tensor powers from every algebraic extension, including
   `AlgebraicClosure F`. No separability or characteristic restriction.
+- `Arithmetic.Growth`: generic exact-rank recursion, padding, and scalar
+  arithmetic complexity bounds using the existing program specification.
+- `AuxiliarySeparation.Arithmetic.FieldExtension`: fixed coefficient-algebra
+  overhead disappears from tensor-power rank exponents; in particular,
+  `exactRankExponent F ≤ exactRankExponent (AlgebraicClosure F)`.
 - `AuxiliarySeparation.Separation.Fourier`: invertible period selection and
   generic roots-of-unity averaging.
 - `AuxiliarySeparation.Polynomial.Interpolation`: arbitrary distinct nonzero
@@ -82,8 +99,8 @@ These are component checks. The final all-fields theorem has not yet compiled.
 
 ## Immediate next steps
 
-1. Finish private repository setup; coordinate a pause before changing the
-   canonical checkout and preserve every agent's current source.
+1. Preserve meaningful progress in the private work branch and update its
+   draft PR as verification advances. The canonical-checkout migration is done.
 2. Compile the generic rank and character foundations; repair elaboration
    errors before compiling their dependents.
 3. Change the two character entropy wrappers in `Entropy/Tag.lean` from

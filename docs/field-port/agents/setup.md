@@ -9,6 +9,8 @@ Owner: `audit_extension`. Updated 2026-10-06.
 - Private repository: https://github.com/selanavot/matrix-multiplication-all-fields.
 - Before the first push, `gh repo view selanavot/matrix-multiplication-all-fields --json nameWithOwner,url,visibility,isPrivate` returned `visibility: PRIVATE` and `isPrivate: true`.
 - `main` is the focused upstream baseline, commit `d2336fc`; the work branch contains the extension.
+- Private draft PR: https://github.com/selanavot/matrix-multiplication-all-fields/pull/1, attached to the app task. Its description explicitly marks the all-fields theorem unverified and the source checkpoint partial.
+- Initial partial-source checkpoint pushed: `826d7bbe8b757f98618349b4c3657220b36f57fe`.
 - The `upstream` remote points to the public OpenAI repository and its push URL is `DISABLED`. `origin` is the private repository.
 - Old `../openai-math` is now a read-only upstream reference. Do not resume edits there.
 
@@ -23,7 +25,7 @@ Owner: `audit_extension`. Updated 2026-10-06.
 - Portable fresh setup: run `lake update`, then `lake exe cache get` from `lean/`. The full upstream project's unrelated packages are intentionally absent.
 - Focused check: from `lean/`, run `lake build OAI.LinearAlgebra.MatrixMultiplication.Arithmetic.Growth`.
 - Generic bridge check: `lake build OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Arithmetic.Exponent`.
-- Local focus harness commands remain valid, but source edits belong only to the canonical checkout.
+- Run all new builds from canonical `lean/`. The retired focus harness shares caches, and mixing build roots can invalidate build traces and cause transient missing-olean errors.
 
 ## Ownership and verified result
 
