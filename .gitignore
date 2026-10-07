@@ -1,3 +1,7 @@
+/.lake/
+/lakefile.olean
+/lakefile.olean.trace
+/lakefile.ilean
 lean/.lake/
 lean/.olean
 lean/lakefile.olean

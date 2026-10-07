@@ -3,6 +3,9 @@ open Lake DSL
 
 package matrixMultiplicationAllFields where
   version := v!"0.1.0"
+  description := "OpenAI matrix-multiplication proof extended to arbitrary fields"
+  license := "Apache-2.0"
+  srcDir := "lean"
   fixedToolchain := true
   leanOptions := #[⟨`autoImplicit, false⟩]
 
@@ -11,7 +14,9 @@ require «fixed-point-theorems» from git
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @ "d13f23b723b8a846827a245b89c10fc7d3f11612"
 
-lean_lib OAI
+@[default_target]
+lean_lib OAI where
+  globs := #[.one `OAI.LinearAlgebra.MatrixMultiplication.AllFieldsAudit]
 
 -- Independent environments for the frozen Comparator challenge and its solution.
 -- The challenge intentionally contains theorem holes and is never imported by OAI.
@@ -20,7 +25,7 @@ lean_lib ComparatorAudit
 post_update pkg do
   let some dep ← findPackageByName? `«fixed-point-theorems»
     | error "Missing fixed-point-theorems dependency."
-  let patch := pkg.dir / "patches" / "fixed-point-theorems-lean4341.patch"
+  let patch := pkg.dir / "lean" / "patches" / "fixed-point-theorems-lean4341.patch"
   let reverse ← IO.Process.output {
     cmd := "git", args := #["-C", dep.dir.toString, "apply", "--reverse", "--check", patch.toString]
   }

@@ -35,16 +35,16 @@ def git(path: Path, *args: str) -> bytes:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('root', type=Path, help='Repository root containing lean/')
+    parser.add_argument('root', type=Path, help='Repository root containing lake-manifest.json')
     args = parser.parse_args()
     root = args.root.resolve()
-    manifest_path = root / 'lean/lake-manifest.json'
+    manifest_path = root / 'lake-manifest.json'
     manifest_bytes = manifest_path.read_bytes()
-    committed_manifest = git(root, 'show', 'HEAD:lean/lake-manifest.json')
+    committed_manifest = git(root, 'show', 'HEAD:lake-manifest.json')
     if manifest_bytes != committed_manifest:
         raise RuntimeError('Working manifest differs from HEAD; dependency pins are not the committed pins.')
-    toolchain = (root / 'lean/lean-toolchain').read_bytes()
-    if toolchain != git(root, 'show', 'HEAD:lean/lean-toolchain'):
+    toolchain = (root / 'lean-toolchain').read_bytes()
+    if toolchain != git(root, 'show', 'HEAD:lean-toolchain'):
         raise RuntimeError('Working Lean toolchain differs from HEAD.')
     manifest = json.loads(manifest_bytes)
     patch = (root / PATCH_PATH).read_bytes()
@@ -52,7 +52,7 @@ def main() -> int:
         raise RuntimeError('Compatibility patch does not match the audited upstream SHA-256.')
     if patch != git(root, 'show', f'HEAD:{PATCH_PATH}'):
         raise RuntimeError('Working compatibility patch differs from HEAD.')
-    packages_dir = (root / 'lean' / manifest['packagesDir']).resolve()
+    packages_dir = (root / manifest['packagesDir']).resolve()
     packages = manifest['packages']
     if len(packages) != 10:
         raise RuntimeError(f'Expected ten pinned packages; found {len(packages)}.')
