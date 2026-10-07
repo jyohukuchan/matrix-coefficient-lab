@@ -1,10 +1,11 @@
 # Reviewer guide
 
-**The initial public theorem and six-guard audit passed.** The additional
-adversarial audit is in progress; its expanded checks must not be treated as
-already passed. See [ADVERSARIAL.md](ADVERSARIAL.md) for current status and
-[VERIFICATION.md](VERIFICATION.md) for the initial evidence. Lake graph job
-totals are not counts of freshly compiled modules.
+**The all-fields theorem and expanded audit passed.** The core proof was
+rebuilt from committed sources in isolation and replayed in a fresh Lean
+kernel environment. The canonical public build, ten axiom guards, and
+intentional axiom/sorry rejection controls also passed. See
+[ADVERSARIAL.md](ADVERSARIAL.md) and [VERIFICATION.md](VERIFICATION.md) for
+scope, evidence, and the use of pinned third-party caches.
 
 The source baseline is preserved by tag `openai-baseline-adc7f12`, at private
 commit `d2336fc`. It contains OpenAI's

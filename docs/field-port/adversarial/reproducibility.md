@@ -16,7 +16,7 @@ The strongest surviving claim is the precise theorem about the unchanged `Arithm
 
 Evidence:
 
-- `lean/.lake/build` is a symlink to `/Users/selanavot/Documents/Codex/2026-10-06/ope/work/lean-focus/.lake/build`.
+- `lean/.lake/build` is a symlink to `<retired harness>/.lake/build`.
 - `lean/.lake/packages` similarly points to the retired harness's dependency directory.
 - `../lean-focus/OAI` points back to the canonical source checkout. The retired harness and canonical Lake package differ in package name and hook configuration, but use the same direct dependency pins and `autoImplicit=false`.
 - `../final-proof-check.log` contains one newly built target: `Built ...AllFieldsAudit (34s)`, followed by `Build completed successfully (9437 jobs)`. Thus 9437 is the successful dependency graph job total, not evidence that 9437 source files were newly compiled in that run.

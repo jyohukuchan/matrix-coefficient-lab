@@ -1,3 +1,9 @@
+/-
+Upstream source and modification notice
+Modified from OpenAI's matrix-multiplication sources to support arbitrary fields.
+See UPSTREAM.md for provenance and changes; Apache-2.0 license retained in LICENSE.
+-/
+
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Algebra.Order.Group.Unbundled.Int

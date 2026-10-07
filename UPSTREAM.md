@@ -1,18 +1,60 @@
-# Upstream baseline
+# Upstream provenance and modifications
 
-The `lean/OAI/LinearAlgebra/MatrixMultiplication` sources are extracted from
-OpenAI's public mathematics repository at commit
-`adc7f1241b42e322a6451854ab7e4b4c146bf78a`:
-https://github.com/openai/math/tree/adc7f1241b42e322a6451854ab7e4b4c146bf78a
+This is a focused source fork of [OpenAI's mathematics repository](https://github.com/openai/math).
+The `lean/OAI/LinearAlgebra/MatrixMultiplication` subtree was extracted from
+commit `adc7f1241b42e322a6451854ab7e4b4c146bf78a`:
 
-The preserved tag `openai-baseline-adc7f12` points to baseline commit
-`d2336fc`. It preserves the upstream matrix multiplication subtree and must
-not be moved. Use this tag for comparisons after development PRs are merged
-into `main`.
-The standalone Lake package keeps the same Lean 4.34.1 toolchain, Mathlib
-commit, fixed-point dependency, and upstream compatibility patch. Other
-mathematical projects and dependencies are omitted from this focused package.
+https://github.com/openai/math/tree/adc7f1241b42e322a6451854ab7e4b4c146bf78a/lean/OAI/LinearAlgebra/MatrixMultiplication
 
-The working branch contains the extension to arbitrary fields. Its core
-aggregate theorem has compiled; see the progress documentation for the public
-entry-point build and final axiom-audit status.
+The associated OpenAI preprint is *An Upper Bound of 9/4 for the Matrix
+Multiplication Exponent* (October 2, 2026), available at that same pinned
+revision under `preprints/Matrix-Multiplication-Nine-Fourths-October-2-2026`.
+OpenAI supplies the original construction, complex-field proof, and arithmetic
+specification. This fork extends the scalar-field scope of that proof.
+
+## Preserved baseline
+
+Tag `openai-baseline-adc7f12` points to immutable baseline commit
+`d2336fc571f1f8cdabf0c6d3a2d3ef1ec3327653`. Its matrix-multiplication subtree
+preserves the upstream sources before our changes. Do not move the tag.
+Compare against that baseline after development PRs merge:
+
+```sh
+git diff d2336fc571f1f8cdabf0c6d3a2d3ef1ec3327653 -- lean/OAI/LinearAlgebra/MatrixMultiplication
+```
+
+The extraction is packaged as a standalone Lake project, keeping upstream's
+Lean 4.34.1 toolchain, Mathlib commit, fixed-point dependency, and compatibility
+patch. Other mathematical projects and their dependencies are omitted. This
+provenance describes the extracted source history; it does not claim to retain
+the full upstream repository history or GitHub fork relationship.
+
+## Scope of this fork's changes
+
+- Parameterize the scalar-field-dependent tensor and spectral development.
+- Choose a nonvanishing Fourier period in each characteristic and use arbitrary
+  distinct nonzero interpolation nodes over the algebraic closure.
+- Add algebraic-extension descent with a single fixed coefficient-algebra
+  overhead across all tensor powers.
+- Connect exact rank over arbitrary fields to the existing generic arithmetic
+  program builder and original exponent definition.
+- Export an arbitrary-field theorem, retain the public complex specialization,
+  and add specification, representative-field, and axiom audits.
+
+The original `Model.lean` and ten protected specification/builder files are
+unchanged. Retained upstream rectangular and dual-exponent results keep their
+original scope. The README shows the small theorem-statement change; the
+[reviewer guide](docs/field-port/REVIEW.md) traces the substantive proof changes.
+
+## Attribution and verification
+
+The original [Apache License 2.0](LICENSE) is retained. Modified pre-existing
+upstream Lean files carry prominent modification notices; their original
+headers are preserved. Those notices point here for the source revision and
+scope. New proof and audit files are distributed under the repository license.
+
+See [VERIFICATION.md](docs/field-port/VERIFICATION.md) for exact checked commits,
+commands, axiom dependencies, and coverage limits, and
+[ADVERSARIAL.md](docs/field-port/ADVERSARIAL.md) for three fresh source reviews.
+No historical-priority claim or claim about the original authors' intentions
+is made by this fork.

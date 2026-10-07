@@ -1,0 +1,88 @@
+Mechanical verification excerpts, 2026-10-06
+
+Core source: 9bd2a64fa47efe678664b5401b6a8ea6d93238ad
+Expanded audit source: 704431ea67e20489dba45b47c70813a6075c554c
+
+1. Isolated source compilation excerpt (the broader public build was stopped):
+✔ [9360/9437] Built OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Main (44s)
+
+2. Fresh kernel replay, observed process exit 0:
+warning: fixed-point-theorems: repository '<pinned packages>/fixed-point-theorems' has local changes
+replaying OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Main with --fresh
+
+3. Canonical expanded audit, observed process exit 0:
+PASS mathlib: d13f23b723b8a846827a245b89c10fc7d3f11612 (clean)
+PASS fixed-point-theorems: 770940ddf9878cf61952ed53d910b92bca841838 (exact compatibility patch)
+PASS plausible: 118aa17ee84656b8bd727fef7c458ee8c833385c (clean)
+PASS LeanSearchClient: ddf04cf3949fa556442341e87d47f9f6e6074707 (clean)
+PASS importGraph: e928b72544873815af278d38681b31c0293588e3 (clean)
+PASS proofwidgets: 106ff4fafc74ef4ac99d81dbf3ab399118f497a5 (clean)
+PASS aesop: 355695d523e41d0554926416cba2a2b3544fbbc9 (clean)
+PASS Qq: 6a489d9af5d0c47e5b259e2e8bcdfc1811b5a259 (clean)
+PASS batteries: f2effa3d803fda822b1f97b806c47cf2adfbcbc2 (clean)
+PASS Cli: e92c9f15fdfacc8536f31cfb3b7ad26c3c8cd204 (clean)
+PASS all ten source dependencies match committed pins and allowed changes.
+Scope: generated ignored .lake build artifacts are reused and not source-verified here.
+warning: fixed-point-theorems: repository '<pinned packages>/fixed-point-theorems' has local changes
+ℹ [9437/9437] Built OAI.LinearAlgebra.MatrixMultiplication.AllFieldsAudit (81s)
+info: OAI/LinearAlgebra/MatrixMultiplication/AllFieldsAudit.lean:70:0: omega_le_nine_quarters : ∀ (F : Type u_1) [inst : Field F], Arithmetic.omega F ≤ 9 / 4
+Build completed successfully (9437 jobs).
+
+4. Direct type/definition inspection and two intended negative controls, observed process exit 1:
+warning: fixed-point-theorems: repository '<pinned packages>/fixed-point-theorems' has local changes
+OAI.MatrixMultiplication.omega_le_nine_quarters.{u_1} : ∀ (F : Type u_1) [inst : Field.{u_1} F],
+  LE.le.{0} (OAI.MatrixMultiplication.Arithmetic.omega.{u_1} F) (9 / 4)
+@OAI.MatrixMultiplication.Foundation.Tensor.RankAtMost.descend_algebraic_powers : ∀ {F : Type u_1} {E : Type u_2}
+  {X : Type u_3} {Y : Type u_4} {Z : Type u_5} [inst : Field F] [inst_1 : CommRing E] [inst_2 : Algebra F E]
+  [Nontrivial E] [Algebra.IsAlgebraic F E] [Fintype X] [Fintype Y] [Fintype Z]
+  {T : OAI.MatrixMultiplication.Foundation.Tensor F X Y Z} {r : ℕ},
+  OAI.MatrixMultiplication.Foundation.Tensor.RankAtMost (fun x y z => (algebraMap F E) (T x y z)) r →
+    ∃ d, 0 < d ∧ ∀ (n : ℕ), (T.power n).RankAtMost (r ^ n * d * d)
+@OAI.MatrixMultiplication.AuxiliarySeparation.exactRankExponent_le_algebraic_extension : ∀ {F : Type u_1} {E : Type u_2}
+  [inst : Field F] [inst_1 : Field E] [inst_2 : Algebra F E] [Algebra.IsAlgebraic F E],
+  OAI.MatrixMultiplication.AuxiliarySeparation.exactRankExponent F ≤
+    OAI.MatrixMultiplication.AuxiliarySeparation.exactRankExponent E
+@OAI.MatrixMultiplication.AuxiliarySeparation.exists_detecting_character : ∀ {K : Type u_1} [inst : Field K] {d k : ℕ},
+  2 ≤ d →
+    ↑k < ↑d ^ OAI.MatrixMultiplication.AuxiliarySeparation.exactRankExponent K →
+      ∃ χ, ↑k ≤ χ.value (OAI.MatrixMultiplication.AuxiliarySeparation.matrixMultiplicationTensor d d d)
+@OAI.MatrixMultiplication.Arithmetic.admissibleExponent_of_rankAtMost : ∀ {F : Type u_1} [inst : Field F] {n R : ℕ},
+  2 ≤ n →
+    (OAI.MatrixMultiplication.Foundation.Tensor.matrixCoefficients (Fin n) (Fin n) (Fin n)).RankAtMost R →
+      ∀ {τ : ℝ}, 2 ≤ τ → ↑R ≤ ↑n ^ τ → OAI.MatrixMultiplication.Arithmetic.AdmissibleExponent F τ
+@OAI.MatrixMultiplication.Foundation.Tensor.RankAtMost.map : ∀ {K : Type u_1} {X : Type u_2} {Y : Type u_3}
+  {Z : Type u_4} [inst : CommSemiring K] {L : Type u_5} [inst_1 : CommSemiring L] (f : K →+* L)
+  {T : OAI.MatrixMultiplication.Foundation.Tensor K X Y Z} {r : ℕ},
+  T.RankAtMost r → OAI.MatrixMultiplication.Foundation.Tensor.RankAtMost (fun x y z => f (T x y z)) r
+def OAI.MatrixMultiplication.Arithmetic.MatrixAlgorithm.Correct.{u_1} : {F : Type u_1} →
+  [Field F] → {a b c : ℕ} → OAI.MatrixMultiplication.Arithmetic.MatrixAlgorithm F a b c → Prop :=
+fun {F} [Field F] {a b c} P => ∀ (A : Matrix (Fin a) (Fin b) F) (B : Matrix (Fin b) (Fin c) F), P.eval A B = A * B
+def OAI.MatrixMultiplication.Arithmetic.Gate.cost.{u_1, u_2, u_3} : {F : Type u_1} →
+  {Input : Type u_2} → {Register : Type u_3} → OAI.MatrixMultiplication.Arithmetic.Gate F Input Register → ℕ :=
+fun {F} {Input} {Register} x =>
+  match x with
+  | OAI.MatrixMultiplication.Arithmetic.Gate.constant a => 0
+  | OAI.MatrixMultiplication.Arithmetic.Gate.input a => 0
+  | OAI.MatrixMultiplication.Arithmetic.Gate.add a a_1 => 1
+  | OAI.MatrixMultiplication.Arithmetic.Gate.sub a a_1 => 1
+  | OAI.MatrixMultiplication.Arithmetic.Gate.mul a a_1 => 1
+def OAI.MatrixMultiplication.Foundation.Tensor.RankAtMost.{u_1, u_2, u_3, u_4} : {K : Type u_1} →
+  {X : Type u_2} →
+    {Y : Type u_3} →
+      {Z : Type u_4} → [CommSemiring K] → OAI.MatrixMultiplication.Foundation.Tensor K X Y Z → ℕ → Prop :=
+fun {K} {X} {Y} {Z} [CommSemiring K] T r =>
+  ∃ a b c, T = fun x y z => ∑ i, OAI.MatrixMultiplication.Foundation.Tensor.rankOne (a i) (b i) (c i) x y z
+'adversarialInjectedBound' depends on axioms: [adversarialInjected, propext, Classical.choice, Quot.sound]
+<scratch>/AdversarialControls.lean:21:0: error: ❌️ Docstring on `#guard_msgs` does not match generated message:
+
+- info: 'adversarialInjectedBound' depends on axioms: [propext, Classical.choice, Quot.sound]
++ info: 'adversarialInjectedBound' depends on axioms: [adversarialInjected, propext, Classical.choice, Quot.sound]
+<scratch>/AdversarialControls.lean:25:8: warning: declaration uses `sorry`
+'adversarialSorryBound' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+<scratch>/AdversarialControls.lean:30:0: error: ❌️ Docstring on `#guard_msgs` does not match generated message:
+
+- info: 'adversarialSorryBound' depends on axioms: [propext, Classical.choice, Quot.sound]
++ info: 'adversarialSorryBound' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+
+5. Post-check attribution notices:
+PASS 41 files: removing only the exact notices restores every original source byte.

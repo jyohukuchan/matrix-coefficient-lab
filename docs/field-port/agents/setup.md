@@ -4,7 +4,7 @@ Owner: `audit_extension`. Updated 2026-10-06.
 
 ## Canonical checkout and privacy
 
-- Editable checkout: `/Users/selanavot/Documents/Codex/2026-10-06/ope/work/matrix-multiplication-all-fields`.
+- Editable checkout: `<repository checkout>`.
 - Active branch: `codex/matrix-multiplication-all-fields`.
 - Private repository: https://github.com/selanavot/matrix-multiplication-all-fields.
 - Before the first push, `gh repo view selanavot/matrix-multiplication-all-fields --json nameWithOwner,url,visibility,isPrivate` returned `visibility: PRIVATE` and `isPrivate: true`.

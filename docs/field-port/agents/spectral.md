@@ -15,7 +15,7 @@ not yet verified.
 ## Environment and commands
 
 Canonical private checkout is
-`/Users/selanavot/Documents/Codex/2026-10-06/ope/work/matrix-multiplication-all-fields`,
+`<repository checkout>`,
 branch `codex/matrix-multiplication-all-fields`. Run all lake commands from
 its `lean/` directory. The old public clone and `work/lean-focus` are now
 read-only references; the old shared-cache symlink invalidated build traces

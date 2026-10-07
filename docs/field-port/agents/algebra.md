@@ -109,7 +109,7 @@ The full prefix for each target is
 ## Build environment and exact commands
 
 The canonical private source checkout is
-`/Users/selanavot/Documents/Codex/2026-10-06/ope/work/matrix-multiplication-all-fields`.
+`<repository checkout>`.
 **Run all Lake commands in its `lean/` directory.** The setup agent copied the
 focused Lake configuration and installed dependencies there. The old
 `openai-math` checkout is a read-only reference; do not edit it.
