@@ -37,7 +37,11 @@ that the specification captures every desired informal interpretation.
 
 First bootstrap the normal proof project as documented in the root README.
 Git, Python 3, elan, and the pinned Lean toolchain must be available.
-The runner downloads and builds the pinned Comparator sources if missing:
+Run all commands from the repository root, where the Lake configuration,
+manifest, and toolchain file live. Proof and Comparator sources remain under
+`lean/`; the default `lake build` target includes the public proof audit but
+excludes this separate challenge. The runner downloads and builds the pinned
+Comparator sources if missing:
 
 ```sh
 python3 scripts/check-comparator.py --trusted-local --negative-controls
@@ -50,7 +54,7 @@ statement/definition comparison, axiom checks, and Lean-kernel replay, but
 does not provide Linux hostile-build isolation. No independent kernel is
 configured.
 
-The default tool directory is `lean/.lake/comparator-tool`; optionally pass
+The default tool directory is `.lake/comparator-tool`; optionally pass
 `--comparator-dir /path/to/comparator` to use an existing clean checkout at
 the required pin. No toolchains or generated binaries are committed.
 
@@ -96,7 +100,7 @@ and requires Comparator to reject both:
 
 These controls use the actual model and theorem wrappers. They do not modify
 the real challenge, solution, or proof. Their sources are removed afterwards;
-diagnostic logs are left under `lean/.lake/`.
+diagnostic logs are left under the root `.lake/`.
 
 ## Recorded outcome
 
@@ -116,10 +120,11 @@ The first two lines are the positive run; the final two are separate, deliberate
 negative runs. A [selected transcript](result.txt) records the tool pins, source
 checkpoint, source hashes, and results without machine-specific paths.
 
-The verified harness checkpoint is
+The original verified harness checkpoint is
 `1b763143a3a8bc2de4caf380a1e5b8b00b770533`, based on proof tree
-`76b2937ebeb56ace5f2f4a895238d195722c5069`. Subsequent outcome documentation does
-not alter the challenge, solution, runner, or original proof. The frozen
+`76b2937ebeb56ace5f2f4a895238d195722c5069`, using the former nested Lake layout.
+The subsequent outcome documentation at `9555f18` did not alter the challenge,
+solution, runner, or original proof. The frozen
 challenge SHA-256 stayed
 `22c1867ae6ed025318a6010447f997e14513cfe421d11c619cf1950985df1106`.
 
@@ -131,7 +136,8 @@ Compilation reused pinned dependency and project build caches. This result is
 not a full source rebuild, an independent-kernel check, a Linux sandbox test,
 or a new uniform-algorithm theorem.
 
-After incorporating the core-only tree from `c4aaf79`, the challenge, solution,
+At merge commit `894c95a`, after incorporating the core-only tree from
+`c4aaf79`, the challenge, solution,
 runner, and pins remained byte-identical. All 124 OAI source modules imported
 by the solution were retained; their only change was an attribution comment
 in `Arithmetic/Growth.lean`. The standard audit passed again against the new
