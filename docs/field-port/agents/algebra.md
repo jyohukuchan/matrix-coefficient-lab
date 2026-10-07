@@ -1,5 +1,9 @@
 # Algebra agent: all-fields matrix multiplication port
 
+> **Archived development note.** Written by an AI coding agent on 2026-10-06, during development
+> and while the repository was private. Status statements below are historical; current status
+> and verification scope are in [STATUS.md](../STATUS.md) and [VERIFICATION.md](../VERIFICATION.md).
+
 ## Current status
 
 The finite algebraic constructions have been generalized from `ℂ` to a field
