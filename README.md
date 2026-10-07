@@ -1,65 +1,71 @@
 # Matrix multiplication over arbitrary fields
 
-This private Lean project extends OpenAI's matrix multiplication proof from
-complex scalars to arbitrary fields. The intended conclusion uses the existing
-`OAI.MatrixMultiplication.Arithmetic.omega F` definition and is
-`omega F ≤ (9 : ℝ) / 4`.
+This private Lean project proves **`Arithmetic.omega F ≤ 9/4` for every field
+`F`**, extending OpenAI's complex-scalar result with the original arithmetic
+complexity definition unchanged.
 
-**The core all-fields theorem has compiled; final validation is pending.**
-`AuxiliarySeparation.Main` built successfully (9053 jobs), including both the
-all-fields exponent bound and the explicit epsilon-cost theorem. The public
-entry-point build and final axiom audit remain pending.
-See [the current status](docs/field-port/STATUS.md) and
-[the private draft PR](https://github.com/selanavot/matrix-multiplication-all-fields/pull/1).
+The public theorem in namespace `OAI.MatrixMultiplication` is:
 
-## Source and review baseline
+```lean
+theorem omega_le_nine_quarters (F : Type*) [Field F] :
+    Arithmetic.omega F ≤ (9 : ℝ) / 4
+```
 
-The preserved tag `openai-baseline-adc7f12` (commit `d2336fc`) contains the
-complete upstream MatrixMultiplication subtree from `openai/math` commit
-`adc7f1241b42e322a6451854ab7e4b4c146bf78a`. Compare the work against that tag,
-which remains the original baseline when private development PRs are merged.
-[UPSTREAM.md](UPSTREAM.md) records the
-source and the focused package layout. The original Apache 2.0 license is
-retained in [LICENSE](LICENSE).
+The field universe is arbitrary. There is no characteristic, finiteness,
+algebraic-closedness, or separability premise on `F`. The original
+`complex_omega_le_nine_quarters` theorem remains as a specialization.
 
-## Build setup
+The full public entry point and permanent audit passed on 2026-10-06 with
+Lean 4.34.1. The final audit reports 9437 successful build jobs and checks
+six declarations against exactly `propext`, `Classical.choice`, and
+`Quot.sound`; no `sorryAx` or extra mathematical axiom occurs. See the
+[verification record](docs/field-port/VERIFICATION.md).
 
-Install [elan](https://github.com/leanprover/elan) if it is not already available,
-then run from the repository root:
+## Review
+
+Start with [the private PR](https://github.com/selanavot/matrix-multiplication-all-fields/pull/1)
+and [the reviewer guide](docs/field-port/REVIEW.md). The proof changes the
+Fourier period and interpolation nodes, then descends tensor powers through
+one fixed finite coefficient algebra. Its constant overhead disappears from
+the exponent.
+
+The exact upstream MatrixMultiplication subtree is preserved by tag
+`openai-baseline-adc7f12`, at private commit `d2336fc`, corresponding to
+`openai/math` commit `adc7f1241b42e322a6451854ab7e4b4c146bf78a`.
+This tag remains the comparison baseline after private development merges.
+[UPSTREAM.md](UPSTREAM.md) records provenance and package layout. The upstream
+Apache 2.0 [LICENSE](LICENSE) is retained.
+
+## Reproduce the checks
+
+Install [elan](https://github.com/leanprover/elan), then run from this repository:
 
 ```sh
 bash scripts/bootstrap.sh
+bash scripts/check-proof.sh
 ```
 
-The script resolves the exact declared dependencies and downloads the matching
-Mathlib cache. The toolchain file selects Lean 4.34.1. The package pins Mathlib
-to `d13f23b723b8a846827a245b89c10fc7d3f11612` and fixed-point-theorems to
-`770940ddf9878cf61952ed53d910b92bca841838`. Its Lake post-update hook applies
-the included upstream Lean 4.34.1 compatibility patch. A subsequent
-dirty-repository warning for that patched dependency is expected.
+The bootstrap script resolves the pinned dependencies and downloads the
+matching Mathlib cache. Mathlib is pinned to
+`d13f23b723b8a846827a245b89c10fc7d3f11612`; fixed-point-theorems is pinned to
+`770940ddf9878cf61952ed53d910b92bca841838`. The Lake post-update hook applies
+the included upstream Lean 4.34.1 compatibility patch. Its subsequent
+dirty-dependency warning is expected.
 
-Run proof checks from `lean/`. These component targets have compiled:
+The audit first checks that `Model.lean` is unchanged from the baseline,
+then builds the public theorem, examples over arbitrary universes and
+representative fields, the explicit program-cost statement, and guarded
+axiom checks. Run only one Lake build process at a time. Build caches and
+local dependencies are ignored by Git.
 
-```sh
-lake build OAI.LinearAlgebra.MatrixMultiplication.Arithmetic.FieldDescent
-lake build OAI.LinearAlgebra.MatrixMultiplication.Arithmetic.Growth
-lake build OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Arithmetic.Exponent
-lake build OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Arithmetic.FieldExtension
-lake build OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Separation.Fourier
-lake build OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Polynomial.Interpolation
-```
+## Scope and privacy
 
-Additional verified algebra components and the remaining integration work are
-listed in the status document. Prefer one aggregate Lake invocation rather than
-several simultaneous builds writing the same outputs. Build caches and local
-dependency checkouts are ignored and are not part of the source checkpoint.
+This is an asymptotic upper bound in the upstream arithmetic-operation model.
+The project does not establish historical novelty or practical algorithm
+constants, and it does not determine the exact value of the exponent.
 
-The final validation must build the public all-fields entry point, retain the
-complex specialization, and inspect the theorem's `#print axioms` output.
-The core aggregate build is verified; these final checks remain pending.
-
-## Privacy
-
-This work is authorized for the private `selanavot/matrix-multiplication-all-fields`
-repository only. Do not publish it or create an upstream PR without separate
-authorization. [AGENTS.md](AGENTS.md) records the working agreements.
+Work is authorized only in the private
+`selanavot/matrix-multiplication-all-fields` repository. Publication or an
+upstream PR requires separate authorization. [AGENTS.md](AGENTS.md),
+[STATUS.md](docs/field-port/STATUS.md), and the agent notes support continuation
+after a reset.

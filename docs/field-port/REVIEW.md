@@ -1,9 +1,9 @@
 # Reviewer guide
 
-**Final validation is pending.** `AuxiliarySeparation.Main` compiled as an
-aggregate (9053 jobs), including the all-fields exponent and epsilon-cost
-theorems. The public entry-point build and final axiom audit remain pending. See
-[STATUS.md](STATUS.md) for current verification evidence.
+**The full theorem and final audit passed.** The public `Main` build completed
+with 9436 jobs, and `scripts/check-proof.sh` passed with 9437 jobs, including
+all arbitrary-field examples and guarded axiom checks. See
+[VERIFICATION.md](VERIFICATION.md) for exact statements and evidence.
 
 The source baseline is preserved by tag `openai-baseline-adc7f12`, at private
 commit `d2336fc`. It contains OpenAI's
@@ -54,14 +54,12 @@ replacement complexity model. The infimum argument bounds the arithmetic
 exponent by every finite rank exponent and does not assume the infimum is
 attained. Source review found no specification weakening in either bridge.
 
-## Required final checks
+## Reproduce the final checks
 
-Run one aggregate build from `lean/`, then inspect `#check` and `#print axioms`
-for the public all-fields declaration and its explicit epsilon-cost theorem.
-The former must quantify an arbitrary field with no characteristic premise;
-the latter must conclude correctness and the original program cost at every
-positive size. Expected foundational axioms are `propext`, `Classical.choice`,
-and `Quot.sound`; `sorryAx` or an added mathematical axiom is unacceptable.
-Retain and build the original complex specialization. The auxiliary aggregate
-already compiled, but completion still requires the public build and final
-axiom checks.
+Run `bash scripts/check-proof.sh` from the repository root after bootstrapping
+dependencies. It verifies the unchanged original model and builds
+`AllFieldsAudit.lean`, which imports the public theorem, checks an arbitrary
+universe and characteristic-2/3/5 examples, retains the complex specialization,
+and checks the original correctness/cost statement. Six guarded axiom checks
+accept exactly `propext`, `Classical.choice`, and `Quot.sound`; any added axiom
+or `sorryAx` causes a build failure. These checks all passed.

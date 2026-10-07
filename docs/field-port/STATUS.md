@@ -1,152 +1,94 @@
 # Field-generalization status
 
-Last updated: 2026-10-06. The complete all-fields theorem in
-`AuxiliarySeparation.Main` has compiled and its axiom audit passed.
-Public-entry-point regression and permanent audit checks are still pending;
-do not mark the project complete yet.
+Last updated: 2026-10-06. **The requested all-fields proof and verification
+are complete.** There are no remaining Lean proof or audit failures.
 
-## Current specification
+## Result
 
-Prove `OAI.MatrixMultiplication.Arithmetic.omega F ≤ (9 : ℝ) / 4` for
-`(F : Type u) [Field F]`, retaining the existing arithmetic definition and
-complex specialization. All changes must live in a private GitHub repository
-owned by `selanavot`; the user explicitly authorized creation and pushes.
-
-## Baseline and environment
-
-- Upstream: `https://github.com/openai/math`
-- Baseline SHA: `adc7f1241b42e322a6451854ab7e4b4c146bf78a`
-- Canonical checkout: `/Users/selanavot/Documents/Codex/2026-10-06/ope/work/matrix-multiplication-all-fields`
-- Private repository: https://github.com/selanavot/matrix-multiplication-all-fields
-- Private draft PR: https://github.com/selanavot/matrix-multiplication-all-fields/pull/1
-- Branch: `codex/matrix-multiplication-all-fields`
-- Focused upstream baseline on `main`: `d2336fc`.
-- Initial partial source checkpoint: `826d7bbe8b757f98618349b4c3657220b36f57fe`.
-- Lean: `leanprover/lean4:v4.34.1`
-- Mathlib: `d13f23b723b8a846827a245b89c10fc7d3f11612`
-- fixed-point-theorems: `770940ddf9878cf61952ed53d910b92bca841838`
-- The upstream fixed-point compatibility patch is required.
-- The private standalone package contains the complete MatrixMultiplication
-  subtree with these exact dependencies. The baseline and work branch are
-  separately reviewable in the private draft PR.
-- Visibility was verified as `PRIVATE` / `isPrivate: true` before the first
-  push and again before PR creation. No public fork or upstream PR was made.
-
-Run all new Lake commands from the canonical checkout's `lean/` directory.
-All 8908 matching Mathlib cache files have downloaded. Local ignored cache
-links reuse that download. The old `../openai-math` clone is a read-only
-reference; `../lean-focus` is a retired build harness. Do not mix build roots,
-because their differing paths can invalidate shared build traces.
-
-Example command from canonical `lean/`:
-
-```sh
-lake build OAI.LinearAlgebra.MatrixMultiplication.Arithmetic.FieldDescent
+```lean
+theorem OAI.MatrixMultiplication.omega_le_nine_quarters
+    (F : Type u) [Field F] :
+    OAI.MatrixMultiplication.Arithmetic.omega F ≤ (9 : ℝ) / 4
 ```
 
-For a fresh checkout, run `lake update` and `lake exe cache get` from `lean/`.
-The focused Lake post-update hook applies the included upstream fixed-point
-compatibility patch. Detailed environment and privacy evidence is in
-`docs/field-port/agents/setup.md`.
+The field universe is arbitrary. The original `Arithmetic.omega`, program
+correctness and operation-count definitions in `Model.lean` are unchanged.
+The explicit epsilon-cost theorem and original complex specialization also
+compile. No characteristic, finiteness, separability or algebraic-closedness
+assumption is required on F.
 
-## Verified so far
+## Verification
 
-The following generic targets have compiled with the pinned toolchain:
+- Auxiliary Main passed (9053 jobs).
+- Public Main, including the retained upstream results, passed (9436 jobs).
+- `bash scripts/check-proof.sh` passed (9437 jobs).
+- Arbitrary-universe and characteristic-2/3/5 examples passed, as did rational,
+  real and complex examples and the original explicit correctness/cost claim.
+- Six guarded axiom checks passed with only `propext`, `Classical.choice`,
+  and `Quot.sound`. No `sorryAx` or additional mathematical axioms occur.
+- Independent algebra, spectral/descent, and arithmetic-specification reviews
+  found no weakened definitions or hidden field premises.
 
-- `AuxiliarySeparation.Main`: the full chain, including
-  `omega_le_nine_quarters (F : Type*) [Field F]` and the explicit uniform
-  arithmetic-program cost bound. Canonical build succeeded with 9053 jobs.
-- Generic detecting-character existence, determinant and sector character
-  inequalities, and the polynomial-profile/exact-rank conclusion.
-- `Arithmetic.FieldDescent`: finite-algebra rank projection and fixed-overhead
-  descent of all tensor powers from every algebraic extension, including
-  `AlgebraicClosure F`. No separability or characteristic restriction.
-- `Arithmetic.Growth`: generic exact-rank recursion, padding, and scalar
-  arithmetic complexity bounds using the existing program specification.
-- `AuxiliarySeparation.Arithmetic.Exponent`: for every field `K`,
-  `omega K ≤ exactRankExponent K` and the explicit epsilon-complexity bridge.
-- `AuxiliarySeparation.Arithmetic.FieldExtension`: fixed coefficient-algebra
-  overhead disappears from tensor-power rank exponents; in particular,
-  `exactRankExponent F ≤ exactRankExponent (AlgebraicClosure F)`.
-- `AuxiliarySeparation.Separation.Fourier`: invertible period selection and
-  generic roots-of-unity averaging.
-- `AuxiliarySeparation.Polynomial.Interpolation`: arbitrary distinct nonzero
-  nodes over an infinite field.
-- `AuxiliarySeparation.Convolution.Basic`.
-- `AuxiliarySeparation.Determinant.Filtration`, including its basis/kernel.
-- `AuxiliarySeparation.Sector.Degeneration`.
-- `AuxiliarySeparation.Arithmetic.Exponent`: the generic rank-to-arithmetic
-  exponent bridge, using the unchanged arithmetic model.
-- The generic tensor semiring and `Tensor.Characters`, including
-  `Character.Basic`, `Character.Dot`, and character permutation/symmetrization.
-- `Character.FiniteSeparation`, `Entropy.Tag`, and `Tensor.TagInequality`
-  with the constant-six finite bound.
-- All algebra-agent owned convolution, determinant-filtration, and sector
-  algebra targets; see its note for the complete target list.
+See [VERIFICATION.md](VERIFICATION.md) for exact commands and qualifications,
+and [REVIEW.md](REVIEW.md) for the proof route. No build process is active.
 
-The full auxiliary theorem and its axiom dependencies are checked. A read-only
-`lake env lean` audit printed the exact universal `[Field F]` type and only
-`[propext, Classical.choice, Quot.sound]` for the all-fields omega theorem,
-explicit cost bound, algebraic-closure descent and detecting-character
-existence. No `sorryAx` or additional axioms occur.
+## Repository and environment
 
-The public `Main` wrapper and retained complex/rectangular results are
-currently building. `AllFieldsAudit.lean` is drafted for generic-universe,
-small-characteristic and guarded axiom checks, but has not run yet.
+- Canonical checkout: `/Users/selanavot/Documents/Codex/2026-10-06/ope/work/matrix-multiplication-all-fields`
+- Private repository: https://github.com/selanavot/matrix-multiplication-all-fields
+- Development PR: https://github.com/selanavot/matrix-multiplication-all-fields/pull/1
+- Implementation branch: `codex/matrix-multiplication-all-fields`
+- Preserved baseline tag: `openai-baseline-adc7f12`, at `d2336fc`.
+- Exact public source: `openai/math` commit `adc7f1241b42e322a6451854ab7e4b4c146bf78a`.
+- Initial partial checkpoint: `826d7bb`; infrastructure checkpoint: `2e23d75`.
+- Checked auxiliary proof checkpoint: `d56ef0a`; guarded audit/review checkpoint: `ae8fdd5`.
+- Lean: `leanprover/lean4:v4.34.1`.
+- Mathlib: `d13f23b723b8a846827a245b89c10fc7d3f11612`.
+- fixed-point-theorems: `770940ddf9878cf61952ed53d910b92bca841838`, with the included upstream compatibility patch.
 
-## Source interfaces
+The user explicitly authorizes private repository creation, pushes, PRs and
+merges. Visibility was repeatedly verified as `PRIVATE` / `isPrivate: true`.
+No public fork, upstream PR or publication is authorized. PR1 is the
+canonical record of the final merge state. The baseline tag remains the
+review reference after merging.
 
-- New `AuxiliarySeparation.matrixMultiplicationTensor (K := K) a b c`
-  has the original coefficient definition over generic `K`; at `ℂ` it is
-  definitionally the upstream tensor. The upstream complex-only constant
-  remains unchanged to avoid invalidating unrelated modules.
-- `exactRank` infers the field from its tensor.
-- `exactMatrixRank K n`, `exactRankExponentSet K`, `exactRankExponent K`.
-- `TensorSemiring.FiniteTensor K`, `TensorSemiring.TensorClass K`.
-- `Character K` with the original character axioms, now over `K`.
-- `omega K` and `ArithmeticBound K` abbreviate the unchanged primary
-  `Arithmetic.omega K` and `Arithmetic.AdmissibleExponent K`.
+For reproduction, run `bash scripts/bootstrap.sh` followed by
+`bash scripts/check-proof.sh` from the repository root. The manifest has ten
+exact Git revisions and no local-path dependency entries. Local ignored cache
+links reuse the downloaded Mathlib cache. The old `../openai-math` clone is a
+read-only reference; `../lean-focus` is a retired harness. Use only the
+canonical checkout's `lean/` directory for direct Lake commands.
 
-## Ownership
+## Proof architecture
 
-- Root coordinator: tensor semiring, Character.Basic/Dot/Permutation/
-  Symmetrization, character-to-semiring infrastructure, entropy wrappers,
-  profile and rank-bound conclusion, final theorem and review.
-- `audit_algebra`: Fourier, FiniteProjection, Separation.Basic,
-  Polynomial.Interpolation, Character.Degeneration/FiniteSeparation,
-  Tensor.TagInequality, Convolution subtree, Determinant algebra files,
-  Sector.Branches/Degeneration, and the determinant/sector character
-  inequalities.
-- `audit_spectral`: new `Arithmetic.FieldDescent` and new
-  `AuxiliarySeparation.Arithmetic.FieldExtension`, plus spectral Obstruction,
-  Character.Existence, and Arithmetic.CharacterRounding integration.
-- `audit_extension`: environment/private-repository setup, new primary
-  `Arithmetic.Growth`, `AuxiliarySeparation.Arithmetic.Exponent`.
+1. Parameterize actual finite tensors, characters, the rank exponent, and the
+   spectral argument by the scalar field K.
+2. In an algebraically closed field, choose Fourier period 5M or 5M+1 so its
+   scalar cast is nonzero. The resulting finite overhead is at most 6M.
+3. Interpolate at arbitrary distinct nonzero points; no integer-node or
+   characteristic-zero assumption is needed.
+4. Apply the original determinant/sector and real growth argument to obtain
+   the 9/4 exact-rank bound over algebraically closed fields.
+5. Descend all powers of one finite decomposition through one fixed finite
+   coefficient algebra: rank grows by at most its dimension squared, a
+   constant independent of the tensor power.
+6. Remove that constant in the exponent and use the original generic program
+   model to conclude the bound for each field F via its own algebraic closure.
 
-## Immediate next steps
+## Continuation cautions
 
-1. Root alone coordinates Lake. Public `Main` is building in session 10954.
-   Auxiliary Main has succeeded (9053 jobs).
-2. Build `AllFieldsAudit`, inspect final theorem axioms and exact generic type,
-   and make axiom checks into guarded regression checks.
-3. Independent algebra and descent/spectral reviews found no specification
-   weakening or hidden field assumptions; arithmetic model review also passed.
-4. Baseline tag `openai-baseline-adc7f12` is pushed, and checked proof
-   checkpoint `d56ef0a` is pushed. The user explicitly authorizes private merges.
-5. Save checked proof, final validation and review guide, update/merge private
-   PR1 after verification. Preserve both baseline and proof checkpoints.
+- Preserve the proven theorem and original model. Future source changes must
+  pass `scripts/check-proof.sh`; `sorry` or extra mathematical axioms are
+  unacceptable in the final proof dependencies.
+- Only one coordinator starts Lake builds. Concurrent builds against shared
+  artifacts caused contention and transient missing-olean errors.
+- Do not rerun the external initial port scripts; they are not idempotent.
+- Some unchanged upstream comparator files intentionally contain placeholders;
+  the final theorem's guarded axiom audit confirms it does not depend on them.
+- Complex topological degeneration lemmas remain specialized. The all-fields
+  argument uses algebraic interpolation instead.
+- Human review of the formalization is still useful. Historical novelty,
+  author intent, exact omega, and practical constants were not established.
 
-## Known implementation cautions
-
-- The initial mechanical generalization adds explicit `K` applications to
-  closed numerical/tensor statements. Some elaboration errors are expected.
-- `Spectrum/Obstruction.lean` used a natural-number local `K`; it was renamed
-  `budget` to avoid shadowing the scalar field.
-- Complex topological degeneration lemmas remain specialized to `ℂ`. The
-  generic proof uses polynomial interpolation and does not depend on them.
-- Do not run concurrent Lake build processes against shared artifacts. This
-  caused resource contention and transient missing-olean errors even after
-  the canonical build root was standardized. Root coordinates aggregate builds.
-- Existing upstream comparator files contain intentional `sorry` placeholders;
-  they are not proof implementations. The new final theorem must not depend
-  on them or introduce new `sorry`/axiom declarations.
+Agent ownership/history is retained in `agents/`. All assigned components
+are finished; the root note and this file are authoritative for final status.

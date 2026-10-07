@@ -1,49 +1,34 @@
 # Root coordinator handoff
 
-Read `../STATUS.md` and repository `AGENTS.md` first.
+The requested proof is complete. Read `../STATUS.md`, `../VERIFICATION.md`,
+`../REVIEW.md`, and repository `AGENTS.md` for the final result and workflow.
+No Lean processes or mathematical proof obligations remain active.
 
-## Completed this session
+The final public theorem is
+`OAI.MatrixMultiplication.omega_le_nine_quarters (F : Type u) [Field F]`,
+using unchanged `Arithmetic.omega F`. Public Main passed with 9436 jobs, and
+`bash scripts/check-proof.sh` passed with 9437 jobs. Six guarded axiom checks
+accept only `propext`, `Classical.choice`, and `Quot.sound`.
 
-- Established ownership with three continuing agents.
-- Added generic matrix tensor in `AuxiliarySeparation/Tensor/MatrixMultiplication.lean`.
-- Generalized `Arithmetic/RankExponent.lean`, `Tensor/Semiring.lean`, and
-  `Character/Basic.lean` to scalar `K`.
-- Applied an initial field-parameter pass to the character/semiring, entropy,
-  profile, and spectral specialization files listed in STATUS ownership.
-- Wrote durable project/restart documentation.
+The permanent audit checks arbitrary universes, fields of characteristics
+2/3/5, rationals/reals/complexes, and the explicit original program-cost
+statement. The initial characteristic-five example lacked a local
+`Fact (Nat.Prime 5)` instance; adding its `norm_num` proof completed the audit.
+No change to the universal theorem was needed.
 
-## Validation and remaining work
+Private PR1 is the authoritative workflow/merge record. The user explicitly
+authorizes merging private development PRs. Preserve the upstream baseline
+at tag `openai-baseline-adc7f12` when merging. Do not publish anything.
+The repository has exact dependency pins, bootstrap and check scripts,
+review documentation, and individual agent notes for continuation.
 
-The complete `AuxiliarySeparation.Main` build succeeded (9053 jobs), including
-all-fields exact-rank, arithmetic cost and `Arithmetic.omega` conclusions.
-All generic algebra, spectral and arithmetic bridge components are checked.
-Independent agent source reviews found no hidden assumptions or weakened
-specification. The public `Main` regression is running (session 10954).
+Only one coordinator may start aggregate Lake builds. Shared-source editing
+can be parallel, but concurrent builds caused memory contention and transient
+missing artifacts. Always build in the canonical private checkout's `lean/`.
+The old focus harness is retired. External initial port scripts are not
+idempotent and must not be rerun.
 
-`AllFieldsAudit.lean` is drafted with an arbitrary-universe `[Field F]`
-example, fields of characteristics 2/3/5, rational/real/complex examples,
-the original correctness/cost statement, and six `#print axioms` checks.
-It must be built after public Main. A separate read-only auxiliary audit
-has passed: arbitrary universe, only `[Field F]`, standard axioms
-`propext`, `Classical.choice`, `Quot.sound` for omega, explicit cost,
-closure descent and detecting-character existence. The permanent audit now
-uses guarded messages for six declarations; not yet run. Three comment-only
-source fixes changed stale "complex" descriptions to arbitrary-field ones;
-the next build will refresh their traces.
-
-The user now explicitly authorizes private PR merges. Agent setup is saving
-the pristine baseline as tag `openai-baseline-adc7f12`. Once all verification
-passes, update documentation and PR1, commit/push, and merge privately.
-
-Only root may start aggregate Lake builds. Multiple concurrent Lake processes
-caused excessive memory use and transient missing-olean errors. All agents
-now use the private canonical checkout's `lean/` directory. Source repair
-remains parallel across owned files.
-
-External one-off scripts `work/port_core.py` and `work/port_remaining.py`
-performed the initial replacements. **Do not rerun them** on modified files;
-they are not idempotent. Future repairs should edit source directly.
-
-The original workspace also contains a compiled explanatory note at
-`outputs/matrix-multiplication-all-fields.tex`. Its mathematical audit is
-background; compilation of that LaTeX document is not Lean verification.
+The explanatory LaTeX note at the outer workspace's
+`outputs/matrix-multiplication-all-fields.tex` predates the completed Lean
+verification. The checked Lean files and final verification record are the
+source of truth for the finished result.

@@ -14,6 +14,8 @@ namespace OAI.MatrixMultiplication.AllFieldsAudit
 
 universe u
 
+local instance : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+
 example (F : Type u) [Field F] : Arithmetic.omega F ≤ (9 : ℝ) / 4 :=
   omega_le_nine_quarters F
 
