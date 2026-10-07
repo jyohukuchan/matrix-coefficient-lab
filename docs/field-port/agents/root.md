@@ -17,6 +17,22 @@ Only the exact-pinned dependency checkouts/caches are shared. Its log is
 `../adversarial-clean-build.log`. At 9377/9437 jobs, memory pressure from nine
 concurrent Lean workers required stopping that process (exit 143) and resuming
 with `LEAN_NUM_THREADS=2`; continuation log `../adversarial-clean-resume.log`.
+After 22 more modules, root stopped the two-worker build (exit 143) to avoid
+overlapping large imports and resumed with `LEAN_NUM_THREADS=1` in execution
+session 96424, logging to `../adversarial-clean-single.log`. That compatibility
+build was then stopped (exit 143, completed modules retained) to prioritize
+the already rebuilt core theorem's kernel replay. The **active process** is
+execution session 75218:
+
+```sh
+LEAN_NUM_THREADS=1 lake env leanchecker --fresh --verbose \
+  OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Main
+```
+
+It runs in `../adversarial-clean/lean`, logging to `../adversarial-kernel.log`.
+Do not start another Lean compiler or replay until it finishes. After replay,
+resume the public AllFieldsAudit build with one worker in the isolated tree.
+The focused auxiliary all-fields Main has already compiled successfully there.
 This is a deliberate isolated verification
 exception to the normal canonical-directory rule. Only root starts builds.
 After that build, run bundled `leanchecker --fresh` on AuxiliarySeparation.Main

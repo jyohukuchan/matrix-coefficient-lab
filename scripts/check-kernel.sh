@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-export LEAN_NUM_THREADS="${LEAN_NUM_THREADS:-2}"
+export LEAN_NUM_THREADS="${LEAN_NUM_THREADS:-1}"
 
 project_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd -- "$project_root"
