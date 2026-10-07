@@ -4,7 +4,7 @@ import Mathlib.Logic.Equiv.Prod
 namespace OAI
 
 /-!
-# Characters of finite complex tensors
+# Characters of finite tensors over a field
 
 The tensor operations in this file are the coefficient operations from
 `MatrixMultiplication.Foundation.Tensor`. A character is an assumption on those

@@ -39,11 +39,31 @@ example (F : Type u) [Field F] (ε : ℝ) (hε : 0 < ε) :
   AuxiliarySeparation.matrix_multiplication_cost_le F ε hε
 
 #check @OAI.MatrixMultiplication.omega_le_nine_quarters
+
+/- The guarded messages make any new axiom dependency a build failure. -/
+
+/-- info: 'OAI.MatrixMultiplication.omega_le_nine_quarters' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
 #print axioms OAI.MatrixMultiplication.omega_le_nine_quarters
+
+/-- info: 'OAI.MatrixMultiplication.complex_omega_le_nine_quarters' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
 #print axioms OAI.MatrixMultiplication.complex_omega_le_nine_quarters
+
+/-- info: 'OAI.MatrixMultiplication.AuxiliarySeparation.matrix_multiplication_cost_le' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
 #print axioms OAI.MatrixMultiplication.AuxiliarySeparation.matrix_multiplication_cost_le
+
+/-- info: 'OAI.MatrixMultiplication.AuxiliarySeparation.exactRankExponent_le_algebraicClosure' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
 #print axioms OAI.MatrixMultiplication.AuxiliarySeparation.exactRankExponent_le_algebraicClosure
+
+/-- info: 'OAI.MatrixMultiplication.AuxiliarySeparation.exists_detecting_character' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
 #print axioms OAI.MatrixMultiplication.AuxiliarySeparation.exists_detecting_character
+
+/-- info: 'OAI.MatrixMultiplication.Foundation.Tensor.RankAtMost.descend_algebraicClosure_powers' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
 #print axioms OAI.MatrixMultiplication.Foundation.Tensor.RankAtMost.descend_algebraicClosure_powers
 
 end OAI.MatrixMultiplication.AllFieldsAudit

@@ -9,7 +9,7 @@ namespace OAI
 /-!
 # Finite tensors modulo mutual restriction
 
-Representatives have three natural-number dimensions and complex coefficients.
+Representatives have three natural-number dimensions and coefficients in `K`.
 The order is actual linear restriction, and equality in the quotient is mutual
 restriction. In particular, changing coordinates does not change the class.
 -/
@@ -124,7 +124,7 @@ theorem IsRestriction.eq_zero_of_zero {T : Tensor K X Y Z}
 
 end Restriction
 
-/-- A set-sized presentation of any finite complex coefficient tensor. -/
+/-- A set-sized presentation of any finite coefficient tensor over `K`. -/
 structure FiniteTensor (K : Type*) [Field K] where
   nx : ℕ
   ny : ℕ
@@ -171,7 +171,7 @@ theorem sum_mono {T T' S S' : (FiniteTensor K)} (hT : T ≤ T') (hS : S ≤ S') 
 
 end FiniteTensor
 
-/-- Finite complex tensors, with two presentations identified exactly when
+/-- Finite tensors over `K`, with two presentations identified exactly when
 each is a linear restriction of the other. -/
 abbrev TensorClass (K : Type*) [Field K] := Antisymmetrization (FiniteTensor K) (· ≤ ·)
 

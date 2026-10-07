@@ -8,7 +8,7 @@ Owner: `audit_extension`. Updated 2026-10-06.
 - Active branch: `codex/matrix-multiplication-all-fields`.
 - Private repository: https://github.com/selanavot/matrix-multiplication-all-fields.
 - Before the first push, `gh repo view selanavot/matrix-multiplication-all-fields --json nameWithOwner,url,visibility,isPrivate` returned `visibility: PRIVATE` and `isPrivate: true`.
-- `main` is the focused upstream baseline, commit `d2336fc`; the work branch contains the extension.
+- The preserved tag `openai-baseline-adc7f12` is the focused upstream baseline, commit `d2336fc`. Compare against this tag after merging development PRs into `main`.
 - Private draft PR: https://github.com/selanavot/matrix-multiplication-all-fields/pull/1, attached to the app task. Its description explicitly marks the all-fields theorem unverified and the source checkpoint partial.
 - Initial partial-source checkpoint pushed: `826d7bbe8b757f98618349b4c3657220b36f57fe`.
 - The `upstream` remote points to the public OpenAI repository and its push URL is `DISABLED`. `origin` is the private repository.
@@ -39,9 +39,12 @@ Owned proof files:
 complex recursion, padding, and exact-rank arithmetic construction to every
 field using the existing generic arithmetic-program specification.
 
-The auxiliary exact-rank-to-arithmetic bridge is drafted but its target has
-not yet been checked. It depends on the root coordinator's generalized
-rank definitions. The final all-fields theorem remains unfinished.
+The canonical `AuxiliarySeparation.Arithmetic.Exponent` target also compiled
+successfully, reporting `Build completed successfully (8942 jobs)`. This
+checks `omega K ≤ exactRankExponent K` and the epsilon-complexity bridge for
+an arbitrary field `K`, using the original arithmetic definition. The generic
+`Arithmetic.Growth` target rechecked successfully in that canonical build.
+The public entry-point build and final axiom audit remain pending.
 
 ## Setup friction and durable resolution
 
@@ -49,5 +52,28 @@ rank definitions. The final all-fields theorem remains unfinished.
 - Full-history Mathlib clone/update was unnecessarily expensive; initial setup used a shallow filtered clone and the pinned revision. The committed lockfile avoids silently changing dependency versions.
 - `git archive` on the upstream partial clone attempted to hydrate unrelated blobs. The standalone baseline was instead copied from the materialized selected subtree, with modified sources restored from their original `HEAD` blobs. The new private repository contains only that focused history.
 
-Next: compile and repair the auxiliary exponent bridge, update this note with
-the exact checked target, and preserve progress in the private work branch.
+Infrastructure documentation checkpoint `2e23d75` is pushed to the private
+draft PR. The portable bootstrap script passed `bash -n`; the canonical Lake
+configuration compiled and shared caches were audited as ignored. A brand-new
+dependency download through the wrapper has not been rerun, because the exact
+dependencies and compiler are already installed and checked.
+
+Next: the root coordinator runs one serialized aggregate proof build. Do not
+launch concurrent Lake builds that write the same output paths. Final theorem
+axioms and the complete complex specialization remain aggregate validation.
+
+## Specification review
+
+A separate source-review pass compared the arithmetic conversion to the
+focused upstream baseline. `Model.lean` and the existing primary arithmetic
+specification/builder files are unchanged. `SquareAlgorithm` is definitionally
+the original square `MatrixAlgorithm`; the auxiliary exponent and admissible
+bound are direct aliases of the original definitions. The generic block
+recurrence retains all scalar-operation overhead, and padding uses the
+unchanged correctness/cost theorem. No specification weakening was found.
+
+The route and review checkpoints are recorded in `docs/field-port/REVIEW.md`.
+The root coordinator confirmed `AuxiliarySeparation.Main` compiled (9053 jobs),
+including the all-fields exponent and epsilon-cost theorems. The guide leaves
+the public entry-point build and final axiom audit pending. This review launched
+no Lake builds, preserving the single-build coordination rule.

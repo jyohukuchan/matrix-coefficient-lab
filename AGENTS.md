@@ -79,6 +79,10 @@ recursion level. Descend all powers with one fixed coefficient algebra.
 - Record verified facts separately from drafted/uncompiled statements.
 - Prefer focused `lake build <module>` checks; once dependencies compile,
   build the final theorem and inspect `#print axioms` for its declaration.
+- Run `bash scripts/check-proof.sh` for the complete public theorem and
+  specification/axiom audit. Only the root coordinator starts Lake builds;
+  concurrent builds against shared artifacts previously caused contention
+  and transient missing-olean errors. Source editing can remain parallel.
 
 The user authorizes installing tools needed for this proof. Lean 4.34.1 is
 installed. Use the exact dependency pins recorded in the project manifest;

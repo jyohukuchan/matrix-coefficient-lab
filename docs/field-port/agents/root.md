@@ -23,8 +23,13 @@ specification. The public `Main` regression is running (session 10954).
 `AllFieldsAudit.lean` is drafted with an arbitrary-universe `[Field F]`
 example, fields of characteristics 2/3/5, rational/real/complex examples,
 the original correctness/cost statement, and six `#print axioms` checks.
-It must be built after public Main; convert printed axiom checks to guarded
-checks once output is confirmed. No final axiom claims yet.
+It must be built after public Main. A separate read-only auxiliary audit
+has passed: arbitrary universe, only `[Field F]`, standard axioms
+`propext`, `Classical.choice`, `Quot.sound` for omega, explicit cost,
+closure descent and detecting-character existence. The permanent audit now
+uses guarded messages for six declarations; not yet run. Three comment-only
+source fixes changed stale "complex" descriptions to arbitrary-field ones;
+the next build will refresh their traces.
 
 The user now explicitly authorizes private PR merges. Agent setup is saving
 the pristine baseline as tag `openai-baseline-adc7f12`. Once all verification

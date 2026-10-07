@@ -35,7 +35,7 @@ theorem exists_rankAtMost {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
   rw [heq]
   exact Tensor.rankAtMost_sum_rankOne a b c
 
-/-- Exact rank of a finite complex coefficient tensor. -/
+/-- Exact rank of a finite coefficient tensor over the scalar field. -/
 def exactRank {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
     (T : Tensor K X Y Z) : ℕ := by
   classical

@@ -1,8 +1,9 @@
 # Field-generalization status
 
 Last updated: 2026-10-06. The complete all-fields theorem in
-`AuxiliarySeparation.Main` has compiled. Public-entry-point regression and
-final axiom checks are still pending; do not mark the project complete yet.
+`AuxiliarySeparation.Main` has compiled and its axiom audit passed.
+Public-entry-point regression and permanent audit checks are still pending;
+do not mark the project complete yet.
 
 ## Current specification
 
@@ -83,10 +84,15 @@ The following generic targets have compiled with the pinned toolchain:
 - All algebra-agent owned convolution, determinant-filtration, and sector
   algebra targets; see its note for the complete target list.
 
-The full auxiliary theorem is checked. The public `Main` wrapper and retained
-complex/rectangular results are currently building. `AllFieldsAudit.lean`
-has been drafted for generic-universe, small-characteristic and axiom checks,
-but has not run yet.
+The full auxiliary theorem and its axiom dependencies are checked. A read-only
+`lake env lean` audit printed the exact universal `[Field F]` type and only
+`[propext, Classical.choice, Quot.sound]` for the all-fields omega theorem,
+explicit cost bound, algebraic-closure descent and detecting-character
+existence. No `sorryAx` or additional axioms occur.
+
+The public `Main` wrapper and retained complex/rectangular results are
+currently building. `AllFieldsAudit.lean` is drafted for generic-universe,
+small-characteristic and guarded axiom checks, but has not run yet.
 
 ## Source interfaces
 
@@ -125,8 +131,8 @@ but has not run yet.
    and make axiom checks into guarded regression checks.
 3. Independent algebra and descent/spectral reviews found no specification
    weakening or hidden field assumptions; arithmetic model review also passed.
-4. Agent setup is preserving the baseline with tag `openai-baseline-adc7f12`
-   before any private PR merge. The user explicitly authorizes private merges.
+4. Baseline tag `openai-baseline-adc7f12` is pushed, and checked proof
+   checkpoint `d56ef0a` is pushed. The user explicitly authorizes private merges.
 5. Save checked proof, final validation and review guide, update/merge private
    PR1 after verification. Preserve both baseline and proof checkpoints.
 
