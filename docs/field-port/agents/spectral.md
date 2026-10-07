@@ -1,7 +1,11 @@
 # Spectral and field-descent agent
 
-Last updated: 2026-10-06. The task is active; the final all-fields theorem is
-not yet verified.
+> **Archived development note.** Written by an AI coding agent on 2026-10-06, during development
+> and while the repository was private. Status statements below are historical; current status
+> and verification scope are in [STATUS.md](../STATUS.md) and [VERIFICATION.md](../VERIFICATION.md).
+
+Last updated: 2026-10-06, before final verification. The final all-fields
+theorem was verified afterwards; see [VERIFICATION.md](../VERIFICATION.md).
 
 ## Ownership
 
@@ -83,7 +87,7 @@ migration (3103 jobs, no source warnings). It contains:
 The root-owned RankExponent elaboration errors were repaired and compiled.
 Both owned descent files were rebuilt successfully from the canonical
 `lean/` directory after migration (3103 jobs, exit 0). The scratch axioms
-check for FieldExtension has not yet completed: attempts in the retired
+check for FieldExtension had not yet completed at this point (it later passed): attempts in the retired
 `lean-focus` harness encountered missing dependency object files due to trace
 invalidation. This was not a source/proof failure.
 
@@ -138,8 +142,8 @@ field hypothesis was found:
   remain arbitrary.
 
 No `sorry`, `admit`, or axiom declaration occurs in the new descent files.
-The final closure comparison and detecting-character axioms check is pending
-root's single-process validation; the earlier descent-power check reported
+The final closure comparison and detecting-character axioms check was then pending
+root's single-process validation (both later passed among the ten guarded axiom checks); the earlier descent-power check reported
 only `propext`, `Classical.choice`, and `Quot.sound`.
 
 ## Mathematical audit already completed

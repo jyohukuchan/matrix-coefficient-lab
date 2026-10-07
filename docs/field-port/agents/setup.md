@@ -1,5 +1,9 @@
 # Setup and arithmetic bridge
 
+> **Archived development note.** Written by an AI coding agent on 2026-10-06, during development
+> and while the repository was private. Status statements below are historical; current status
+> and verification scope are in [STATUS.md](../STATUS.md) and [VERIFICATION.md](../VERIFICATION.md).
+
 Owner: `audit_extension`. Updated 2026-10-06.
 
 ## Canonical checkout and privacy
@@ -44,7 +48,7 @@ successfully, reporting `Build completed successfully (8942 jobs)`. This
 checks `omega K ≤ exactRankExponent K` and the epsilon-complexity bridge for
 an arbitrary field `K`, using the original arithmetic definition. The generic
 `Arithmetic.Growth` target rechecked successfully in that canonical build.
-The public entry-point build and final axiom audit remain pending.
+The public entry-point build and final axiom audit were pending at this point; both later passed (see [VERIFICATION.md](../VERIFICATION.md)).
 
 ## Setup friction and durable resolution
 
@@ -74,6 +78,6 @@ unchanged correctness/cost theorem. No specification weakening was found.
 
 The route and review checkpoints are recorded in `docs/field-port/REVIEW.md`.
 The root coordinator confirmed `AuxiliarySeparation.Main` compiled (9053 jobs),
-including the all-fields exponent and epsilon-cost theorems. The guide leaves
-the public entry-point build and final axiom audit pending. This review launched
+including the all-fields exponent and epsilon-cost theorems. At that point the
+public entry-point build and final axiom audit were pending; both later passed. This review launched
 no Lake builds, preserving the single-build coordination rule.

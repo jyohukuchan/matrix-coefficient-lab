@@ -1,12 +1,16 @@
 # Root coordinator handoff
 
+> **Archived development note.** Written by an AI coding agent on 2026-10-06, during development
+> and while the repository was private. Status statements below are historical; current status
+> and verification scope are in [STATUS.md](../STATUS.md) and [VERIFICATION.md](../VERIFICATION.md).
+
 ## Current result — 2026-10-06
 
 The all-fields proof, three adversarial source reviews, mechanical audit, and
 requested public-reader README are complete. There are no active Lean/Lake
 processes or unfinished mathematical obligations from this audit. The
-repository remains **private**. User intent to make it public soon does not
-authorize changing visibility. Private pushes, PRs, and merges are authorized.
+repository was private when this handoff was written; it has since been made
+public.
 
 Read `../STATUS.md`, `../VERIFICATION.md`, `../ADVERSARIAL.md`, and repository
 `AGENTS.md` before continuing. PR2 is the audit/README integration record:

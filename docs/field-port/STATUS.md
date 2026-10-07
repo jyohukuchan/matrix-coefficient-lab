@@ -3,7 +3,7 @@
 Last updated: 2026-10-06. **The all-fields proof and adversarial audit passed.**
 The README now explains the OpenAI source fork, premise, theorem-statement diff,
 proof changes, exact conclusions, and verification limits. The repository
-remains private; a future-publication goal is not authorization to publish.
+is now public.
 
 ## Verified result
 
