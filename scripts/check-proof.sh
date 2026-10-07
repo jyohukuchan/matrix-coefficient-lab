@@ -21,6 +21,8 @@ git diff --exit-code "$baseline" -- \
   "$spec_root/Tensor/ComplexMatrixTensor.lean" \
   "$spec_root/Polynomial/ExpressionFamily.lean"
 
+python3 scripts/verify-dependencies.py "$project_root"
+
 cd -- lean
 # This target imports the public entry point, preserves the complex theorem,
 # checks arbitrary universes and representative fields, and audits axioms.

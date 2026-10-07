@@ -39,7 +39,12 @@ and axiom checks, and fresh-environment kernel replay before a final verdict.
 ## Reports
 
 - [Specification and semantics](adversarial/specification.md).
-- Proof/algebra and reproducibility reports pending integration.
+- [Algebra and generalized proof](adversarial/algebra.md).
+- [Trust, reproducibility, and claims](adversarial/reproducibility.md).
+
+Reports preserve each reviewer's observations at the reviewed commit. Paths,
+line numbers, and statements that a report was written outside Git refer to
+that original review; this coordinator record tracks subsequent resolutions.
 
 ## Pending verification
 

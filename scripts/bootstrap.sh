@@ -13,6 +13,7 @@ fi
 # hook applies the included upstream fixed-point compatibility patch.
 lake update
 git -C "$project_root" diff --exit-code HEAD -- lean/lake-manifest.json lean/lean-toolchain
+python3 "$project_root/scripts/verify-dependencies.py" "$project_root"
 lake exe cache get
 
 printf '%s\n' 'Dependencies and Mathlib cache prepared. Run focused proof checks from lean/.'
