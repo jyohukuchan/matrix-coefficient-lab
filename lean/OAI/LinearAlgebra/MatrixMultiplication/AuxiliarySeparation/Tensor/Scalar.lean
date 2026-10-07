@@ -18,18 +18,20 @@ open MatrixMultiplication.Foundation
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 /-- Splitting the diagonal index set splits its scalar tensor into two blocks. -/
 theorem scalarTensor_add_reindex (m n : ℕ) :
     Tensor.pullback (finSumFinEquiv : Fin m ⊕ Fin n ≃ Fin (m + n))
-      finSumFinEquiv finSumFinEquiv (scalarTensor (m + n)) =
-      sumTensor (scalarTensor m) (scalarTensor n) := by
+      finSumFinEquiv finSumFinEquiv ((scalarTensor (K := K)) (m + n)) =
+      sumTensor ((scalarTensor (K := K)) m) ((scalarTensor (K := K)) n) := by
   funext x y z
   simp only [Tensor.pullback, scalarTensor,
     (finSumFinEquiv : Fin m ⊕ Fin n ≃ Fin (m + n)).injective.eq_iff]
   cases x <;> cases y <;> cases z <;> simp [sumTensor, scalarTensor]
 
 /-- A diagonal scalar tensor has its evident decomposition into simple terms. -/
-theorem scalarTensor_rankAtMost (r : ℕ) : Tensor.RankAtMost (scalarTensor r) r := by
+theorem scalarTensor_rankAtMost (r : ℕ) : Tensor.RankAtMost ((scalarTensor (K := K)) r) r := by
   classical
   refine ⟨(fun i x => if x = i then 1 else 0),
     (fun i y => if y = i then 1 else 0), (fun i z => if z = i then 1 else 0), ?_⟩
@@ -38,9 +40,9 @@ theorem scalarTensor_rankAtMost (r : ℕ) : Tensor.RankAtMost (scalarTensor r) r
   split_ifs <;> simp_all
 
 /-- The diagonal flattening also gives the matching lower bound. -/
-@[simp] theorem exactRank_scalarTensor (r : ℕ) : exactRank (scalarTensor r) = r := by
+@[simp] theorem exactRank_scalarTensor (r : ℕ) : exactRank ((scalarTensor (K := K)) r) = r := by
   apply le_antisymm (exactRank_le (scalarTensor_rankAtMost r))
-  have h := (exactRank_spec (scalarTensor r)).card_le_of_identity id id id
+  have h := (exactRank_spec ((scalarTensor (K := K)) r)).card_le_of_identity id id id
     (by intro i j; simp [scalarTensor])
   simpa only [Fintype.card_fin] using h
 
@@ -48,21 +50,21 @@ namespace TensorSemiring
 
 /-- Addition of the diagonal index sets is semiring addition. -/
 theorem classOf_scalarTensor_add (m n : ℕ) :
-    classOf (scalarTensor (m + n)) =
-      classOf (scalarTensor m) + classOf (scalarTensor n) := by
-  have h := classOf_eq_of_reindex _ _ _ (scalarTensor_add_reindex m n)
+    classOf ((scalarTensor (K := K)) (m + n)) =
+      classOf ((scalarTensor (K := K)) m) + classOf ((scalarTensor (K := K)) n) := by
+  have h := classOf_eq_of_reindex _ _ _ (scalarTensor_add_reindex (K := K) m n)
   exact h.symm.trans (classOf_sum _ _)
 
 @[simp] theorem classOf_scalarTensor_zero :
-    classOf (scalarTensor 0) = (0 : TensorClass) := by
-  have h : scalarTensor 0 = 0 := by
+    classOf ((scalarTensor (K := K)) 0) = (0 : (TensorClass K)) := by
+  have h : (scalarTensor (K := K)) 0 = 0 := by
     funext x
     exact Fin.elim0 x
   rw [h, classOf_zero]
 
 @[simp] theorem classOf_scalarTensor_one :
-    classOf (scalarTensor 1) = (1 : TensorClass) := by
-  change classOf (scalarTensor 1) = classOf (fun (_ _ _ : PUnit.{1}) => (1 : ℂ))
+    classOf ((scalarTensor (K := K)) 1) = (1 : (TensorClass K)) := by
+  change classOf ((scalarTensor (K := K)) 1) = classOf (fun (_ _ _ : PUnit.{1}) => (1 : K))
   apply classOf_eq_of_reindex (Equiv.equivPUnit (Fin 1))
     (Equiv.equivPUnit (Fin 1)) (Equiv.equivPUnit (Fin 1))
   funext x y z
@@ -70,19 +72,19 @@ theorem classOf_scalarTensor_add (m n : ℕ) :
 
 /-- Natural numbers in the quotient semiring have their intended tensor meaning. -/
 @[simp] theorem classOf_scalarTensor (r : ℕ) :
-    classOf (scalarTensor r) = (r : TensorClass) := by
+    classOf ((scalarTensor (K := K)) r) = (r : (TensorClass K)) := by
   induction r with
   | zero => exact classOf_scalarTensor_zero
   | succ r ih =>
       simpa only [Nat.cast_add, Nat.cast_one, Nat.cast_succ,
         classOf_scalarTensor_one, ih] using
-        classOf_scalarTensor_add r 1
+        classOf_scalarTensor_add (K := K) r 1
 
 /-- Exact rank decompositions are precisely restrictions of diagonal tensors. -/
 theorem rankAtMost_iff_isRestriction_scalarTensor
     {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
-    (T : Tensor ℂ X Y Z) (r : ℕ) :
-    Tensor.RankAtMost T r ↔ IsRestriction T (scalarTensor r) := by
+    (T : Tensor K X Y Z) (r : ℕ) :
+    Tensor.RankAtMost T r ↔ IsRestriction T ((scalarTensor (K := K)) r) := by
   constructor
   · rintro ⟨a, b, c, h⟩
     refine ⟨(fun x i => a i x), (fun y i => b i y), (fun z i => c i z), ?_⟩
@@ -95,42 +97,42 @@ theorem rankAtMost_iff_isRestriction_scalarTensor
 /-- The restriction order below a natural number is exactly the usual rank bound. -/
 theorem classOf_le_nat_iff_rankAtMost
     {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
-    (T : Tensor ℂ X Y Z) (r : ℕ) :
-    classOf T ≤ (r : TensorClass) ↔ Tensor.RankAtMost T r := by
+    (T : Tensor K X Y Z) (r : ℕ) :
+    classOf T ≤ (r : (TensorClass K)) ↔ Tensor.RankAtMost T r := by
   rw [← classOf_scalarTensor r, classOf_le_iff]
   exact (rankAtMost_iff_isRestriction_scalarTensor T r).symm
 
 /-- Rank takes its usual value on natural numbers in the tensor semiring. -/
-@[simp] theorem rank_natCast (r : ℕ) : rank (r : TensorClass) = r := by
+@[simp] theorem rank_natCast (r : ℕ) : rank (r : (TensorClass K)) = r := by
   rw [← classOf_scalarTensor r, rank_classOf, exactRank_scalarTensor]
 
 /-- The rank is a natural-number upper bound in the restriction order. -/
-theorem le_rank (T : TensorClass) : T ≤ (rank T : TensorClass) := by
+theorem le_rank (T : (TensorClass K)) : T ≤ (rank T : (TensorClass K)) := by
   induction T using Quotient.inductionOn with
   | h T =>
-    change tensorClass T ≤ (exactRank T.coeff : TensorClass)
+    change tensorClass T ≤ (exactRank T.coeff : (TensorClass K))
     rw [← classOf_coeff T]
     exact (classOf_le_nat_iff_rankAtMost T.coeff (exactRank T.coeff)).mpr
       (exactRank_spec T.coeff)
 
 /-- The tensor restriction order induces the usual order on natural numbers. -/
 @[simp] theorem natCast_le_natCast_iff (m n : ℕ) :
-    (m : TensorClass) ≤ (n : TensorClass) ↔ m ≤ n := by
+    (m : (TensorClass K)) ≤ (n : (TensorClass K)) ↔ m ≤ n := by
   constructor
   · intro h
     simpa only [rank_natCast] using rank_mono h
   · intro h
     obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le h
     rw [Nat.cast_add]
-    simpa only [add_zero] using add_mono (le_refl (m : TensorClass)) (zero_le (k : TensorClass))
+    simpa only [add_zero] using add_mono (le_refl (m : (TensorClass K))) (zero_le (k : (TensorClass K)))
 
 /-- A natural multiple of any nonzero tensor contains any prescribed tensor
 by restriction. -/
-theorem le_nat_mul_of_ne_zero (T S : TensorClass) (hS : S ≠ 0) :
-    T ≤ (rank T : TensorClass) * S := by
+theorem le_nat_mul_of_ne_zero (T S : (TensorClass K)) (hS : S ≠ 0) :
+    T ≤ (rank T : (TensorClass K)) * S := by
   apply (le_rank T).trans
   simpa only [mul_one] using
-    mul_mono (le_refl (rank T : TensorClass)) (one_le_of_ne_zero hS)
+    mul_mono (le_refl (rank T : (TensorClass K))) (one_le_of_ne_zero hS)
 
 end TensorSemiring
 end MatrixMultiplication.AuxiliarySeparation

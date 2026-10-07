@@ -18,10 +18,12 @@ open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation.Character
 
-variable (χ : Character)
+variable {K : Type*} [Field K]
+
+variable (χ : (Character K))
 
 /-- The reflected character exchanges the second and third tensor legs. -/
-def swap23Character : Character where
+def swap23Character : (Character K) where
   value T := χ.value (fun x z y => T x y z)
   nonneg T := χ.nonneg (fun x z y => T x y z)
   map_zero := χ.map_zero
@@ -52,18 +54,18 @@ def swap23Character : Character where
     exact χ.monotone (fun x z y => T x y z) A C B
 
 @[simp] theorem swap23Character_value {X Y Z : Type}
-    [Fintype X] [Fintype Y] [Fintype Z] (T : Tensor ℂ X Y Z) :
+    [Fintype X] [Fintype Y] [Fintype Z] (T : Tensor K X Y Z) :
     χ.swap23Character.value T = χ.value (fun x z y => T x y z) := rfl
 
 /-- The three cyclic orders followed by their reflected orders. -/
-def permutedCharacter (i : Fin 6) : Character :=
+def permutedCharacter (i : Fin 6) : (Character K) :=
   ![χ, χ.cyclicCharacter, χ.cyclicCharacter.cyclicCharacter,
     χ.swap23Character, χ.swap23Character.cyclicCharacter,
     χ.swap23Character.cyclicCharacter.cyclicCharacter] i
 
 /-- The six permuted characters give exactly the sixfold product on any legs. -/
 theorem prod_permutedCharacter_value {X Y Z : Type}
-    [Fintype X] [Fintype Y] [Fintype Z] (T : Tensor ℂ X Y Z) :
+    [Fintype X] [Fintype Y] [Fintype Z] (T : Tensor K X Y Z) :
     (∏ i : Fin 6, (χ.permutedCharacter i).value T) = χ.sixfoldProduct T := by
   simp only [Fin.prod_univ_succ, Fin.prod_univ_zero, mul_one]
   change χ.value T * (χ.value (fun y z x => T x y z) *

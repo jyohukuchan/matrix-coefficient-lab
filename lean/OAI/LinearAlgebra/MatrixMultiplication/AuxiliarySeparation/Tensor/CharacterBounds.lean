@@ -18,7 +18,9 @@ open scoped BigOperators Classical
 
 namespace MatrixMultiplication.AuxiliarySeparation.Character
 
-variable (χ : Character)
+variable {K : Type*} [Field K]
+
+variable (χ : (Character K))
 
 section Embeddings
 
@@ -28,7 +30,7 @@ variable [Fintype X'] [Fintype Y'] [Fintype Z']
 variable [DecidableEq X'] [DecidableEq Y'] [DecidableEq Z']
 
 /-- Extending finite coordinates by zero does not change a character value. -/
-theorem value_extendByZero (T : Tensor ℂ X Y Z)
+theorem value_extendByZero (T : Tensor K X Y Z)
     (fx : X → X') (fy : Y → Y') (fz : Z → Z')
     (hx : Function.Injective fx) (hy : Function.Injective fy)
     (hz : Function.Injective fz) :
@@ -58,14 +60,14 @@ section Powers
 variable {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]
 
 /-- Tensor powers turn a character value into an ordinary natural power. -/
-@[simp] theorem value_power (T : Tensor ℂ X Y Z) (n : ℕ) :
+@[simp] theorem value_power (T : Tensor K X Y Z) (n : ℕ) :
     χ.value (Tensor.power T n) = χ.value T ^ n := by
   induction n with
   | zero =>
       have heq : Tensor.power T 0 = Tensor.pullback
           (Equiv.equivPUnit (Fin 0 → X))
           (Equiv.equivPUnit (Fin 0 → Y))
-          (Equiv.equivPUnit (Fin 0 → Z)) unitTensor := by
+          (Equiv.equivPUnit (Fin 0 → Z)) (unitTensor (K := K)) := by
         funext x y z
         simp [Tensor.power, Tensor.pullback, unitTensor]
       rw [heq, χ.value_reindex, χ.map_one, pow_zero]
@@ -81,13 +83,13 @@ variable {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]
       rw [heq, χ.value_reindex, χ.map_product, ih, pow_succ, mul_comm]
 
 /-- Full independent copies contribute their exact multiplicity. -/
-theorem value_copies (T : Tensor ℂ X Y Z) (r : ℕ) :
+theorem value_copies (T : Tensor K X Y Z) (r : ℕ) :
     χ.value (Tensor.directSum (fun _ : Fin r => T)) = r * χ.value T := by
   rw [χ.map_directSum]
   simp
 
 /-- The character cost of an exact number of full copies of a tensor power. -/
-theorem value_power_copies (T : Tensor ℂ X Y Z) (r n : ℕ) :
+theorem value_power_copies (T : Tensor K X Y Z) (r n : ℕ) :
     χ.value (Tensor.directSum (fun _ : Fin r => Tensor.power T n)) =
       r * χ.value T ^ n := by
   rw [χ.value_copies, χ.value_power]
@@ -101,15 +103,15 @@ variable {X Y Z : ι → Type}
 variable [∀ i, Fintype (X i)] [∀ i, Fintype (Y i)] [∀ i, Fintype (Z i)]
 
 /-- A branch extended to the common ambient sigma coordinate spaces. -/
-def paddedBranch (T : ∀ i, Tensor ℂ (X i) (Y i) (Z i)) (i : ι) :
-    Tensor ℂ (Σ i, X i) (Σ i, Y i) (Σ i, Z i) :=
+def paddedBranch (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι) :
+    Tensor K (Σ i, X i) (Σ i, Y i) (Σ i, Z i) :=
   Tensor.restrict
     (fun x a => if Sigma.mk i a = x then 1 else 0)
     (fun y b => if Sigma.mk i b = y then 1 else 0)
     (fun z c => if Sigma.mk i c = z then 1 else 0) (T i)
 
 @[simp] theorem value_paddedBranch
-    (T : ∀ i, Tensor ℂ (X i) (Y i) (Z i)) (i : ι) :
+    (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι) :
     χ.value (paddedBranch T i) = χ.value (T i) := by
   simpa only [paddedBranch] using
     χ.value_extendByZero (T i) (Sigma.mk i) (Sigma.mk i) (Sigma.mk i)
@@ -119,14 +121,14 @@ def paddedBranch (T : ∀ i, Tensor ℂ (X i) (Y i) (Z i)) (i : ι) :
 
 omit [Fintype ι] in
 @[simp] theorem paddedBranch_matching
-    (T : ∀ i, Tensor ℂ (X i) (Y i) (Z i))
+    (T : ∀ i, Tensor K (X i) (Y i) (Z i))
     (i : ι) (x : X i) (y : Y i) (z : Z i) :
     paddedBranch T i ⟨i, x⟩ ⟨i, y⟩ ⟨i, z⟩ = T i x y z := by
   simp [paddedBranch, Tensor.restrict, ite_mul, mul_ite]
 
 omit [Fintype ι] in
 theorem paddedBranch_zero_left
-    (T : ∀ i, Tensor ℂ (X i) (Y i) (Z i)) (i : ι)
+    (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι)
     (x : Σ i, X i) (y : Σ i, Y i) (z : Σ i, Z i) (hx : x.1 ≠ i) :
     paddedBranch T i x y z = 0 := by
   have hzero : ∀ a : X i, Sigma.mk i a ≠ x :=
@@ -135,7 +137,7 @@ theorem paddedBranch_zero_left
 
 omit [Fintype ι] in
 theorem paddedBranch_zero_middle
-    (T : ∀ i, Tensor ℂ (X i) (Y i) (Z i)) (i : ι)
+    (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι)
     (x : Σ i, X i) (y : Σ i, Y i) (z : Σ i, Z i) (hy : y.1 ≠ i) :
     paddedBranch T i x y z = 0 := by
   have hzero : ∀ b : Y i, Sigma.mk i b ≠ y :=
@@ -144,7 +146,7 @@ theorem paddedBranch_zero_middle
 
 omit [Fintype ι] in
 theorem paddedBranch_zero_right
-    (T : ∀ i, Tensor ℂ (X i) (Y i) (Z i)) (i : ι)
+    (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι)
     (x : Σ i, X i) (y : Σ i, Y i) (z : Σ i, Z i) (hz : z.1 ≠ i) :
     paddedBranch T i x y z = 0 := by
   have hzero : ∀ c : Z i, Sigma.mk i c ≠ z :=
@@ -153,7 +155,7 @@ theorem paddedBranch_zero_right
 
 /-- Redundant outer labels give a zero extension of the varying-dimension sum. -/
 theorem directSum_paddedBranch
-    (T : ∀ i, Tensor ℂ (X i) (Y i) (Z i)) :
+    (T : ∀ i, Tensor K (X i) (Y i) (Z i)) :
     Tensor.directSum (paddedBranch T) = Tensor.restrict
       (fun (x' : ι × (Σ i, X i)) x => if (x.1, x) = x' then 1 else 0)
       (fun (y' : ι × (Σ i, Y i)) y => if (y.1, y) = y' then 1 else 0)
@@ -201,7 +203,7 @@ theorem directSum_paddedBranch
 
 /-- Additivity holds even when each summand has different coordinate types. -/
 theorem value_dependentDirectSum
-    (T : ∀ i, Tensor ℂ (X i) (Y i) (Z i)) :
+    (T : ∀ i, Tensor K (X i) (Y i) (Z i)) :
     χ.value (Tensor.dependentDirectSum T) = ∑ i, χ.value (T i) := by
   have h := χ.value_extendByZero (Tensor.dependentDirectSum T)
     (fun x => (x.1, x)) (fun y => (y.1, y)) (fun z => (z.1, z))

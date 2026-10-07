@@ -12,30 +12,32 @@ and a rank bound `r` becomes the bound `r ^ (1 / t)`.
 -/
 
 namespace MatrixMultiplication.AuxiliarySeparation
+
+variable {K : Type*} [Field K]
 namespace Character
 
 open MatrixMultiplication.Foundation
 
-variable (χ : Character)
+variable (χ : (Character K))
 variable {X Y Z U V W : Type}
 variable [Fintype X] [Fintype Y] [Fintype Z]
 variable [Fintype U] [Fintype V] [Fintype W]
 
-theorem symmetrizedProfile_nonneg (t : ℝ) (T : Tensor ℂ X Y Z) :
+theorem symmetrizedProfile_nonneg (t : ℝ) (T : Tensor K X Y Z) :
     0 ≤ χ.symmetrizedProfile t T :=
   Real.rpow_nonneg (χ.sixfoldProduct_nonneg T) _
 
-theorem symmetrizedProfile_pos (t : ℝ) {T : Tensor ℂ X Y Z} (hT : T ≠ 0) :
+theorem symmetrizedProfile_pos (t : ℝ) {T : Tensor K X Y Z} (hT : T ≠ 0) :
     0 < χ.symmetrizedProfile t T :=
   Real.rpow_pos_of_pos (χ.sixfoldProduct_pos hT) _
 
 theorem one_le_symmetrizedProfile {t : ℝ} (ht : 0 < t)
-    {T : Tensor ℂ X Y Z} (hT : T ≠ 0) : 1 ≤ χ.symmetrizedProfile t T := by
+    {T : Tensor K X Y Z} (hT : T ≠ 0) : 1 ≤ χ.symmetrizedProfile t T := by
   exact Real.one_le_rpow (χ.one_le_sixfoldProduct hT) (by positivity)
 
 /-- Tensor products become products of normalized profile values. -/
-theorem symmetrizedProfile_product (t : ℝ) (T : Tensor ℂ X Y Z)
-    (S : Tensor ℂ U V W) :
+theorem symmetrizedProfile_product (t : ℝ) (T : Tensor K X Y Z)
+    (S : Tensor K U V W) :
     χ.symmetrizedProfile t (Tensor.product T S) =
       χ.symmetrizedProfile t T * χ.symmetrizedProfile t S := by
   simp only [symmetrizedProfile, χ.sixfoldProduct_product]
@@ -43,7 +45,7 @@ theorem symmetrizedProfile_product (t : ℝ) (T : Tensor ℂ X Y Z)
 
 /-- Positive normalization preserves the order of the underlying sixfold products. -/
 theorem symmetrizedProfile_le_iff {t : ℝ} (ht : 0 < t)
-    (T : Tensor ℂ X Y Z) (S : Tensor ℂ U V W) :
+    (T : Tensor K X Y Z) (S : Tensor K U V W) :
     χ.symmetrizedProfile t T ≤ χ.symmetrizedProfile t S ↔
       χ.sixfoldProduct T ≤ χ.sixfoldProduct S := by
   exact Real.rpow_le_rpow_iff (χ.sixfoldProduct_nonneg T)
@@ -51,7 +53,7 @@ theorem symmetrizedProfile_le_iff {t : ℝ} (ht : 0 < t)
 
 /-- The symmetrized profile has the rank bound used in Section 5. -/
 theorem symmetrizedProfile_le_rank {t : ℝ} (ht : 0 < t)
-    {T : Tensor ℂ X Y Z} {r : ℕ} (h : Tensor.RankAtMost T r) :
+    {T : Tensor K X Y Z} {r : ℕ} (h : Tensor.RankAtMost T r) :
     χ.symmetrizedProfile t T ≤ (r : ℝ) ^ (1 / t) := by
   calc
     χ.symmetrizedProfile t T ≤ ((r : ℝ) ^ 6) ^ (1 / (6 * t)) :=
@@ -65,7 +67,7 @@ theorem symmetrizedProfile_le_rank {t : ℝ} (ht : 0 < t)
 
 /-- A factor `c ^ (6*t)` in the sixfold product becomes `c` in the profile. -/
 theorem mul_symmetrizedProfile_le_of_le {t c : ℝ} (ht : 0 < t) (hc : 0 ≤ c)
-    (T : Tensor ℂ X Y Z) (S : Tensor ℂ U V W)
+    (T : Tensor K X Y Z) (S : Tensor K U V W)
     (h : c ^ (6 * t) * χ.sixfoldProduct T ≤ χ.sixfoldProduct S) :
     c * χ.symmetrizedProfile t T ≤ χ.symmetrizedProfile t S := by
   have hp := Real.rpow_le_rpow

@@ -19,43 +19,45 @@ open scoped BigOperators Classical
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 variable {M : ℕ} {X : Type} {Y Z : Fin M → Type}
 variable [Fintype X] [∀ i, Fintype (Y i)] [∀ i, Fintype (Z i)]
 
 /-- Branches sharing their first input but with independently sized other legs. -/
-def sharedFirstDependentTensor (B : ∀ i, Tensor ℂ X (Y i) (Z i)) :
-    Tensor ℂ X (Σ i, Y i) (Σ i, Z i) :=
+def sharedFirstDependentTensor (B : ∀ i, Tensor K X (Y i) (Z i)) :
+    Tensor K X (Σ i, Y i) (Σ i, Z i) :=
   fun x y z => if h : z.1 = y.1 then B y.1 x y.2 (h ▸ z.2) else 0
 
 /-- A branch in the two common sigma coordinate spaces, with zero padding. -/
-def paddedSharedBranch (B : ∀ i, Tensor ℂ X (Y i) (Z i)) (i : Fin M) :
-    Tensor ℂ X (Σ i, Y i) (Σ i, Z i) :=
+def paddedSharedBranch (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M) :
+    Tensor K X (Σ i, Y i) (Σ i, Z i) :=
   Tensor.restrict (fun x' x => if x = x' then 1 else 0)
     (fun y b => if Sigma.mk i b = y then 1 else 0)
     (fun z c => if Sigma.mk i c = z then 1 else 0) (B i)
 
 omit [Fintype X] [∀ i, Fintype (Y i)] [∀ i, Fintype (Z i)] in
 @[simp] theorem sharedFirstDependentTensor_matching
-    (B : ∀ i, Tensor ℂ X (Y i) (Z i)) (i : Fin M)
+    (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M)
     (x : X) (y : Y i) (z : Z i) :
     sharedFirstDependentTensor B x ⟨i, y⟩ ⟨i, z⟩ = B i x y z := by
   simp [sharedFirstDependentTensor]
 
 @[simp] theorem paddedSharedBranch_matching
-    (B : ∀ i, Tensor ℂ X (Y i) (Z i)) (i : Fin M)
+    (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M)
     (x : X) (y : Y i) (z : Z i) :
     paddedSharedBranch B i x ⟨i, y⟩ ⟨i, z⟩ = B i x y z := by
   simp [paddedSharedBranch, Tensor.restrict, ite_mul, mul_ite]
 
 theorem paddedSharedBranch_pullback
-    (B : ∀ i, Tensor ℂ X (Y i) (Z i)) (i : Fin M) :
+    (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M) :
     Tensor.pullback id (Sigma.mk i) (Sigma.mk i) (paddedSharedBranch B i) = B i := by
   funext x y z
   exact paddedSharedBranch_matching B i x y z
 
 /-- A nonzero branch remains nonzero after padding. -/
 theorem paddedSharedBranch_ne_zero
-    (B : ∀ i, Tensor ℂ X (Y i) (Z i)) (i : Fin M) (hB : B i ≠ 0) :
+    (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M) (hB : B i ≠ 0) :
     paddedSharedBranch B i ≠ 0 := by
   intro h
   apply hB
@@ -63,7 +65,7 @@ theorem paddedSharedBranch_ne_zero
   rfl
 
 theorem paddedSharedBranch_zero_middle
-    (B : ∀ i, Tensor ℂ X (Y i) (Z i)) (i : Fin M)
+    (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M)
     (x : X) (y : Σ i, Y i) (z : Σ i, Z i) (hy : y.1 ≠ i) :
     paddedSharedBranch B i x y z = 0 := by
   have hzero : ∀ b : Y i, Sigma.mk i b ≠ y :=
@@ -71,7 +73,7 @@ theorem paddedSharedBranch_zero_middle
   simp [paddedSharedBranch, Tensor.restrict, hzero]
 
 theorem paddedSharedBranch_zero_right
-    (B : ∀ i, Tensor ℂ X (Y i) (Z i)) (i : Fin M)
+    (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M)
     (x : X) (y : Σ i, Y i) (z : Σ i, Z i) (hz : z.1 ≠ i) :
     paddedSharedBranch B i x y z = 0 := by
   have hzero : ∀ c : Z i, Sigma.mk i c ≠ z :=
@@ -80,7 +82,7 @@ theorem paddedSharedBranch_zero_right
 
 /-- Redundant branch labels zero-extend the varying-dimension shared tensor. -/
 theorem sharedFirstTensor_paddedSharedBranch
-    (B : ∀ i, Tensor ℂ X (Y i) (Z i)) :
+    (B : ∀ i, Tensor K X (Y i) (Z i)) :
     sharedFirstTensor (paddedSharedBranch B) = Tensor.restrict
       (fun (x' : X) x => if x = x' then 1 else 0)
       (fun (y' : Fin M × (Σ i, Y i)) y => if (y.1, y) = y' then 1 else 0)
@@ -118,8 +120,8 @@ theorem sharedFirstTensor_paddedSharedBranch
 namespace Character
 
 /-- Padding a branch changes no character value. -/
-@[simp] theorem value_paddedSharedBranch (χ : Character)
-    (B : ∀ i, Tensor ℂ X (Y i) (Z i)) (i : Fin M) :
+@[simp] theorem value_paddedSharedBranch (χ : (Character K))
+    (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M) :
     χ.value (paddedSharedBranch B i) = χ.value (B i) := by
   simpa only [paddedSharedBranch, id_eq] using
     χ.value_extendByZero (B i) id (Sigma.mk i) (Sigma.mk i)
@@ -128,8 +130,8 @@ namespace Character
       (fun _ _ h => eq_of_heq (Sigma.mk.inj h).2)
 
 /-- Passing to uniform ambient branch spaces adds no character cost. -/
-@[simp] theorem value_sharedFirstTensor_padded (χ : Character)
-    (B : ∀ i, Tensor ℂ X (Y i) (Z i)) :
+@[simp] theorem value_sharedFirstTensor_padded (χ : (Character K))
+    (B : ∀ i, Tensor K X (Y i) (Z i)) :
     χ.value (sharedFirstTensor (paddedSharedBranch B)) =
       χ.value (sharedFirstDependentTensor B) := by
   rw [sharedFirstTensor_paddedSharedBranch]

@@ -21,15 +21,17 @@ open MatrixMultiplication.Foundation Polynomial
 
 namespace MatrixMultiplication.AuxiliarySeparation.DeterminantFiltration
 
+variable {K : Type*} [Field K]
+
 abbrev Index (e : ℕ) := Sum (Fin (e + 2)) (Fin e)
 
 /-- The ordered quotient/kernel vectors in the actual polynomial pair space. -/
-def vector (e : ℕ) : Index e → DeterminantKernel.FormPair ℂ :=
+def vector (e : ℕ) : Index e → DeterminantKernel.FormPair K :=
   Sum.elim (DeterminantKernel.quotientVector e) (DeterminantKernel.kernelVector e)
 
 /-- All multiplication coefficients in the explicit adapted bases.
 Here `a=d+1`, `b=e+1`, and no first-leg change of coordinates occurs. -/
-def adaptedTensor (d e : ℕ) : Tensor ℂ (Fin (d + 1)) (Index e) (Index (d + e))
+def adaptedTensor (d e : ℕ) : Tensor K (Fin (d + 1)) (Index e) (Index (d + e))
   | i, .inl j, .inl k => if i.val + j.val = k.val then 1 else 0
   | i, .inl j, .inr k =>
       if j.val = e + 1 ∧ i.val < d ∧ e + i.val = k.val then 1 else 0
@@ -37,15 +39,15 @@ def adaptedTensor (d e : ℕ) : Tensor ℂ (Fin (d + 1)) (Index e) (Index (d + e
   | i, .inr j, .inr k => if i.val + j.val = k.val then 1 else 0
 
 /-- The associated graded tensor, whose two branches still share the first leg. -/
-def gradedTensor (d e : ℕ) : Tensor ℂ (Fin (d + 1)) (Index e) (Index (d + e))
+def gradedTensor (d e : ℕ) : Tensor K (Fin (d + 1)) (Index e) (Index (d + e))
   | i, .inl j, .inl k => if i.val + j.val = k.val then 1 else 0
   | _, .inl _, .inr _ => 0
   | _, .inr _, .inl _ => 0
   | i, .inr j, .inr k => if i.val + j.val = k.val then 1 else 0
 
 private theorem sum_coordinate {n r : ℕ} (hr : r < n)
-    (v : Fin n → DeterminantKernel.FormPair ℂ) :
-    (∑ k : Fin n, (if r = k.val then (1 : ℂ) else 0) • v k) = v ⟨r, hr⟩ := by
+    (v : Fin n → DeterminantKernel.FormPair K) :
+    (∑ k : Fin n, (if r = k.val then (1 : K) else 0) • v k) = v ⟨r, hr⟩ := by
   have h (k : Fin n) : r = k.val ↔ k = ⟨r, hr⟩ := by
     constructor
     · intro hk
@@ -58,8 +60,8 @@ private theorem sum_coordinate {n r : ℕ} (hr : r < n)
 
 /-- Exact coordinate reconstruction of every first-leg slice, in common bases. -/
 theorem adaptedTensor_reconstruct (d e : ℕ) (i : Fin (d + 1)) (j : Index e) :
-    (∑ k : Index (d + e), adaptedTensor d e i j k • vector (d + e) k) =
-      DeterminantKernel.multiply (X ^ i.val) (vector e j) := by
+    (∑ k : Index (d + e), adaptedTensor (K := K) d e i j k • vector (K := K) (d + e) k) =
+      DeterminantKernel.multiply (X ^ i.val) (vector (K := K) e j) := by
   have hi : i.val ≤ d := by omega
   rcases j with j | j
   · by_cases hj : j.val ≤ e
@@ -77,14 +79,14 @@ theorem adaptedTensor_reconstruct (d e : ℕ) (i : Fin (d + 1)) (j : Index e) :
           Sum.elim_inr, hi', true_and]
         rw [sum_coordinate (by omega), sum_coordinate (by omega)]
         have h := DeterminantKernel.multiply_quotientVector_top_cross
-          (R := ℂ) d e i.val hi'
+          (R := K) d e i.val hi'
         simpa only [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using h.symm
       · have hi'' : i.val = d := by omega
         simp only [Fintype.sum_sum_type, adaptedTensor, vector, Sum.elim_inl,
           Sum.elim_inr, hi', and_false, false_and, ↓reduceIte, zero_smul,
           Finset.sum_const_zero, add_zero]
         rw [sum_coordinate (by omega)]
-        have h := DeterminantKernel.multiply_quotientVector_top_last (R := ℂ) d e
+        have h := DeterminantKernel.multiply_quotientVector_top_last (R := K) d e
         simpa only [hi'', Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using h.symm
   · simp only [Fintype.sum_sum_type, adaptedTensor, vector, Sum.elim_inl,
       Sum.elim_inr, zero_smul, Finset.sum_const_zero, zero_add]
@@ -93,13 +95,13 @@ theorem adaptedTensor_reconstruct (d e : ℕ) (i : Fin (d + 1)) (j : Index e) :
 
 /-- The reconstruction uniquely determines every tensor coefficient. -/
 theorem adaptedTensor_unique (d e : ℕ)
-    (T : Tensor ℂ (Fin (d + 1)) (Index e) (Index (d + e)))
-    (hT : ∀ i j, (∑ k, T i j k • vector (d + e) k) =
-      DeterminantKernel.multiply (X ^ i.val) (vector e j)) :
-    T = adaptedTensor d e := by
+    (T : Tensor K (Fin (d + 1)) (Index e) (Index (d + e)))
+    (hT : ∀ i j, (∑ k, T i j k • vector (K := K) (d + e) k) =
+      DeterminantKernel.multiply (X ^ i.val) (vector (K := K) e j)) :
+    T = adaptedTensor (K := K) d e := by
   funext i j k
-  have h := (DeterminantKernel.adaptedVectors_linearIndependent (R := ℂ) (d + e))
-  have hs : ∑ z, (T i j z - adaptedTensor d e i j z) • vector (d + e) z = 0 := by
+  have h := (DeterminantKernel.adaptedVectors_linearIndependent (R := K) (d + e))
+  have hs : ∑ z, (T i j z - adaptedTensor (K := K) d e i j z) • vector (K := K) (d + e) z = 0 := by
     simp_rw [sub_smul]
     rw [Finset.sum_sub_distrib, hT, adaptedTensor_reconstruct, sub_self]
   exact sub_eq_zero.mp ((Fintype.linearIndependent_iff.mp h) _ hs k)
@@ -107,50 +109,50 @@ theorem adaptedTensor_unique (d e : ℕ)
 /-- The quotient branch is exactly `C(a,b+1)`. -/
 theorem gradedTensor_quotient (d e : ℕ) (i : Fin (d + 1))
     (j : Fin (e + 2)) (k : Fin (d + e + 2)) :
-    gradedTensor d e i (.inl j) (.inl k) =
-      convolution (d + 1) (e + 2) i j (Fin.cast (by omega) k) := by
+    gradedTensor (K := K) d e i (.inl j) (.inl k) =
+      convolution (K := K) (d + 1) (e + 2) i j (Fin.cast (by omega) k) := by
   simp only [gradedTensor, convolution, Fin.val_cast]
 
 /-- The kernel branch is exactly `C(a,b-1)`. -/
 theorem gradedTensor_kernel (d e : ℕ) (i : Fin (d + 1))
     (j : Fin e) (k : Fin (d + e)) :
-    gradedTensor d e i (.inr j) (.inr k) =
-      convolution (d + 1) e i j (Fin.cast (by omega) k) := by
+    gradedTensor (K := K) d e i (.inr j) (.inr k) =
+      convolution (K := K) (d + 1) e i j (Fin.cast (by omega) k) := by
   simp only [gradedTensor, convolution, Fin.val_cast]
 
 @[simp] theorem adaptedTensor_kernel_to_quotient (d e : ℕ)
     (i : Fin (d + 1)) (j : Fin e) (k : Fin (d + e + 2)) :
-    adaptedTensor d e i (.inr j) (.inl k) = 0 := rfl
+    adaptedTensor (K := K) d e i (.inr j) (.inl k) = 0 := rfl
 
 /-- Polynomial diagonal maps; scaling the quotient input by `X` clears
 the negative input-kernel weight without changing the leading tensor. -/
-def inputScale (e : ℕ) : Index e → ℂ[X]
+def inputScale (e : ℕ) : Index e → K[X]
   | .inl _ => X
   | .inr _ => 1
 
-def outputScale (e : ℕ) : Index e → ℂ[X]
+def outputScale (e : ℕ) : Index e → K[X]
   | .inl _ => 1
   | .inr _ => X
 
-def diagonalMap {I : Type*} [DecidableEq I] (s : I → ℂ[X]) : I → I → ℂ[X] :=
+def diagonalMap {I : Type*} [DecidableEq I] (s : I → K[X]) : I → I → K[X] :=
   fun i j => if i = j then s i else 0
 
-private theorem restrict_diagonal {I J K : Type*}
-    [Fintype I] [Fintype J] [Fintype K]
-    [DecidableEq I] [DecidableEq J] [DecidableEq K]
-    (a : I → ℂ[X]) (b : J → ℂ[X]) (c : K → ℂ[X])
-    (T : Tensor ℂ[X] I J K) (i : I) (j : J) (k : K) :
-    Tensor.restrict (diagonalMap a) (diagonalMap b) (diagonalMap c) T i j k =
+private theorem restrict_diagonal {I J N : Type*}
+    [Fintype I] [Fintype J] [Fintype N]
+    [DecidableEq I] [DecidableEq J] [DecidableEq N]
+    (a : I → K[X]) (b : J → K[X]) (c : N → K[X])
+    (T : Tensor K[X] I J N) (i : I) (j : J) (k : N) :
+    Tensor.restrict (diagonalMap (K := K) a) (diagonalMap (K := K) b) (diagonalMap (K := K) c) T i j k =
       a i * b j * c k * T i j k := by
   simp [Tensor.restrict, diagonalMap, ite_mul, mul_ite]
 
 /-- A checked polynomial degeneration to the two matched convolution branches. -/
 def degeneration (d e : ℕ) :
-    Tensor.PolynomialRestrictionDegeneration (adaptedTensor d e)
-      (gradedTensor d e) 1 0 1 1 where
-  leftMap := diagonalMap (fun _ => 1)
-  middleMap := diagonalMap (inputScale e)
-  rightMap := diagonalMap (outputScale (d + e))
+    Tensor.PolynomialRestrictionDegeneration (adaptedTensor (K := K) d e)
+      (gradedTensor (K := K) d e) 1 0 1 1 where
+  leftMap := diagonalMap (K := K) (fun _ => 1)
+  middleMap := diagonalMap (K := K) (inputScale (K := K) e)
+  rightMap := diagonalMap (K := K) (outputScale (K := K) (d + e))
   left_degree := by
     intro i j
     simp only [diagonalMap]
@@ -187,12 +189,12 @@ abbrev OriginalIndex (e : ℕ) := Sum (Fin (e + 1)) (Fin (e + 1))
 
 /-- The original monomial bases in the `s` and `w` components. -/
 def originalBasis (e : ℕ) :
-    Module.Basis (OriginalIndex e) ℂ (DeterminantBasis.BoundedPair ℂ e) :=
-  (Polynomial.degreeLT.basis ℂ (e + 1)).prod (Polynomial.degreeLT.basis ℂ (e + 1))
+    Module.Basis (OriginalIndex e) K (DeterminantBasis.BoundedPair K e) :=
+  (Polynomial.degreeLT.basis K (e + 1)).prod (Polynomial.degreeLT.basis K (e + 1))
 
 private theorem degree_shift_lt (d e : ℕ) (i : Fin (d + 1))
-    (p : Polynomial.degreeLT ℂ (e + 1)) :
-    ((X : ℂ[X]) ^ i.val * (p : ℂ[X])).degree < (d + e + 1 : ℕ) := by
+    (p : Polynomial.degreeLT K (e + 1)) :
+    ((X : K[X]) ^ i.val * (p : K[X])).degree < (d + e + 1 : ℕ) := by
   rw [Polynomial.degree_lt_iff_coeff_zero]
   intro n hn
   rw [Polynomial.coeff_X_pow_mul']
@@ -204,49 +206,49 @@ private theorem degree_shift_lt (d e : ℕ) (i : Fin (d + 1))
 
 /-- Multiplication by a fixed first-input monomial between the bounded spaces. -/
 def boundedShift (d e : ℕ) (i : Fin (d + 1)) :
-    Polynomial.degreeLT ℂ (e + 1) →ₗ[ℂ] Polynomial.degreeLT ℂ (d + e + 1) where
-  toFun p := ⟨X ^ i.val * (p : ℂ[X]), Polynomial.mem_degreeLT.mpr (degree_shift_lt d e i p)⟩
+    Polynomial.degreeLT K (e + 1) →ₗ[K] Polynomial.degreeLT K (d + e + 1) where
+  toFun p := ⟨X ^ i.val * (p : K[X]), Polynomial.mem_degreeLT.mpr (degree_shift_lt d e i p)⟩
   map_add' p q := by apply Subtype.ext; simp [mul_add]
   map_smul' c p := by apply Subtype.ext; simp [Polynomial.smul_eq_C_mul]; ring
 
 /-- The same first monomial multiplies both components. -/
 def boundedMultiply (d e : ℕ) (i : Fin (d + 1)) :
-    DeterminantBasis.BoundedPair ℂ e →ₗ[ℂ] DeterminantBasis.BoundedPair ℂ (d + e) :=
-  (boundedShift d e i).prodMap (boundedShift d e i)
+    DeterminantBasis.BoundedPair K e →ₗ[K] DeterminantBasis.BoundedPair K (d + e) :=
+  (boundedShift (K := K) d e i).prodMap (boundedShift (K := K) d e i)
 
 @[simp] theorem forget_boundedMultiply (d e : ℕ) (i : Fin (d + 1))
-    (p : DeterminantBasis.BoundedPair ℂ e) :
-    DeterminantBasis.forget (d + e) (boundedMultiply d e i p) =
+    (p : DeterminantBasis.BoundedPair K e) :
+    DeterminantBasis.forget (d + e) (boundedMultiply (K := K) d e i p) =
       DeterminantKernel.multiply (X ^ i.val) (DeterminantBasis.forget e p) := rfl
 
 /-- Polynomial multiplication in its original monomial coordinates. -/
 def sourceTensor (d e : ℕ) :
-    Tensor ℂ (Fin (d + 1)) (OriginalIndex e) (OriginalIndex (d + e)) :=
-  fun i j k => (originalBasis (d + e)).repr
-    (boundedMultiply d e i (originalBasis e j)) k
+    Tensor K (Fin (d + 1)) (OriginalIndex e) (OriginalIndex (d + e)) :=
+  fun i j k => (originalBasis (K := K) (d + e)).repr
+    (boundedMultiply (K := K) d e i (originalBasis (K := K) e j)) k
 
 @[simp] theorem sourceTensor_inl_inl (d e : ℕ) (i : Fin (d + 1))
     (j : Fin (e + 1)) (k : Fin (d + e + 1)) :
-    sourceTensor d e i (.inl j) (.inl k) =
-      convolution (d + 1) (e + 1) i j (Fin.cast (by omega) k) := by
+    sourceTensor (K := K) d e i (.inl j) (.inl k) =
+      convolution (K := K) (d + 1) (e + 1) i j (Fin.cast (by omega) k) := by
   simp [sourceTensor, originalBasis, boundedMultiply, boundedShift,
     ← pow_add, convolution, eq_comm]
 
 @[simp] theorem sourceTensor_inr_inr (d e : ℕ) (i : Fin (d + 1))
     (j : Fin (e + 1)) (k : Fin (d + e + 1)) :
-    sourceTensor d e i (.inr j) (.inr k) =
-      convolution (d + 1) (e + 1) i j (Fin.cast (by omega) k) := by
+    sourceTensor (K := K) d e i (.inr j) (.inr k) =
+      convolution (K := K) (d + 1) (e + 1) i j (Fin.cast (by omega) k) := by
   simp [sourceTensor, originalBasis, boundedMultiply, boundedShift,
     ← pow_add, convolution, eq_comm]
 
 @[simp] theorem sourceTensor_inl_inr (d e : ℕ) (i : Fin (d + 1))
     (j : Fin (e + 1)) (k : Fin (d + e + 1)) :
-    sourceTensor d e i (.inl j) (.inr k) = 0 := by
+    sourceTensor (K := K) d e i (.inl j) (.inr k) = 0 := by
   simp [sourceTensor, originalBasis, boundedMultiply, boundedShift]
 
 @[simp] theorem sourceTensor_inr_inl (d e : ℕ) (i : Fin (d + 1))
     (j : Fin (e + 1)) (k : Fin (d + e + 1)) :
-    sourceTensor d e i (.inr j) (.inl k) = 0 := by
+    sourceTensor (K := K) d e i (.inr j) (.inl k) = 0 := by
   simp [sourceTensor, originalBasis, boundedMultiply, boundedShift]
 
 /-- Record the polynomial coordinate and the choice of `s` or `w` separately. -/
@@ -257,84 +259,84 @@ def originalCoordinate (e : ℕ) : OriginalIndex e → Fin (e + 1) × Bool
 /-- The source is exactly polynomial convolution tensored with a two-coordinate
 dot product whose singleton is on the unchanged first leg. -/
 theorem sourceTensor_product (d e : ℕ) :
-    sourceTensor d e =
+    sourceTensor (K := K) d e =
       Tensor.pullback (fun i : Fin (d + 1) => (i, ())) (originalCoordinate e)
         (fun k => (Fin.cast (by omega) (originalCoordinate (d + e) k).1,
           (originalCoordinate (d + e) k).2))
-        (Tensor.product (convolution (d + 1) (e + 1))
-          (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := ℂ) Bool)))) := by
+        (Tensor.product (convolution (K := K) (d + 1) (e + 1))
+          (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := K) Bool)))) := by
   funext i j k
   rcases j with j | j <;> rcases k with k | k <;>
     simp [Tensor.pullback, Tensor.product, Tensor.cyclic, Tensor.dotPairing,
       originalCoordinate]
 
 /-- The input matrix has adapted vectors as columns in the original basis. -/
-def inputChange (e : ℕ) (j : Index e) (old : OriginalIndex e) : ℂ :=
-  (originalBasis e).repr (DeterminantBasis.basis ℂ e j) old
+def inputChange (e : ℕ) (j : Index e) (old : OriginalIndex e) : K :=
+  (originalBasis (K := K) e).repr (DeterminantBasis.basis K e j) old
 
 /-- The output-dual matrix uses the inverse basis change, as required for tensors. -/
-def outputDualChange (e : ℕ) (k : Index e) (old : OriginalIndex e) : ℂ :=
-  (DeterminantBasis.basis ℂ e).repr (originalBasis e old) k
+def outputDualChange (e : ℕ) (k : Index e) (old : OriginalIndex e) : K :=
+  (DeterminantBasis.basis K e).repr (originalBasis (K := K) e old) k
 
 /-- The first input is unchanged, including throughout the basis change. -/
-def fixedFirst (d : ℕ) (i j : Fin (d + 1)) : ℂ := if i = j then 1 else 0
+def fixedFirst (d : ℕ) (i j : Fin (d + 1)) : K := if i = j then 1 else 0
 
 private theorem restrict_fixedFirst (d e : ℕ)
-    (B : Index e → OriginalIndex e → ℂ)
-    (C : Index (d + e) → OriginalIndex (d + e) → ℂ)
-    (T : Tensor ℂ (Fin (d + 1)) (OriginalIndex e) (OriginalIndex (d + e)))
+    (B : Index e → OriginalIndex e → K)
+    (C : Index (d + e) → OriginalIndex (d + e) → K)
+    (T : Tensor K (Fin (d + 1)) (OriginalIndex e) (OriginalIndex (d + e)))
     (i : Fin (d + 1)) (j : Index e) (k : Index (d + e)) :
-    Tensor.restrict (fixedFirst d) B C T i j k =
+    Tensor.restrict (fixedFirst (K := K) d) B C T i j k =
       ∑ y, ∑ z, B j y * C k z * T i y z := by
   simp [Tensor.restrict, fixedFirst, ite_mul]
 
 theorem boundedMultiply_adapted_coordinates (d e : ℕ) (i : Fin (d + 1))
     (j : Index e) (k : Index (d + e)) :
-    (DeterminantBasis.basis ℂ (d + e)).repr
-      (boundedMultiply d e i (DeterminantBasis.basis ℂ e j)) k =
-      adaptedTensor d e i j k := by
+    (DeterminantBasis.basis K (d + e)).repr
+      (boundedMultiply (K := K) d e i (DeterminantBasis.basis K e j)) k =
+      adaptedTensor (K := K) d e i j k := by
   have h := adaptedTensor_unique d e
-    (fun i j k => (DeterminantBasis.basis ℂ (d + e)).repr
-      (boundedMultiply d e i (DeterminantBasis.basis ℂ e j)) k) ?_
+    (fun i j k => (DeterminantBasis.basis K (d + e)).repr
+      (boundedMultiply (K := K) d e i (DeterminantBasis.basis K e j)) k) ?_
   · exact congrFun (congrFun (congrFun h i) j) k
   · intro i j
-    have hsum := congrArg (DeterminantBasis.forget (R := ℂ) (d + e))
-      ((DeterminantBasis.basis ℂ (d + e)).sum_repr
-        (boundedMultiply d e i (DeterminantBasis.basis ℂ e j)))
+    have hsum := congrArg (DeterminantBasis.forget (R := K) (d + e))
+      ((DeterminantBasis.basis K (d + e)).sum_repr
+        (boundedMultiply (K := K) d e i (DeterminantBasis.basis K e j)))
     simpa only [map_sum, map_smul, DeterminantBasis.forget_basis,
       forget_boundedMultiply, vector] using hsum
 
 /-- A concrete restriction, with the identity first map, changes the original
 two-copy convolution into the simultaneously triangular coefficient tensor. -/
 theorem sourceTensor_coordinate_change (d e : ℕ) :
-    Tensor.restrict (fixedFirst d) (inputChange e) (outputDualChange (d + e))
-      (sourceTensor d e) = adaptedTensor d e := by
+    Tensor.restrict (fixedFirst (K := K) d) (inputChange (K := K) e) (outputDualChange (K := K) (d + e))
+      (sourceTensor (K := K) d e) = adaptedTensor (K := K) d e := by
   funext i j k
   rw [restrict_fixedFirst]
   simp only [inputChange, outputDualChange, sourceTensor]
   calc
     (∑ y, ∑ z,
-        (originalBasis e).repr (DeterminantBasis.basis ℂ e j) y *
-          (DeterminantBasis.basis ℂ (d + e)).repr (originalBasis (d + e) z) k *
-          (originalBasis (d + e)).repr (boundedMultiply d e i (originalBasis e y)) z) =
-        ∑ y, (originalBasis e).repr (DeterminantBasis.basis ℂ e j) y *
-          (DeterminantBasis.basis ℂ (d + e)).repr
-            (boundedMultiply d e i (originalBasis e y)) k := by
+        (originalBasis (K := K) e).repr (DeterminantBasis.basis K e j) y *
+          (DeterminantBasis.basis K (d + e)).repr (originalBasis (K := K) (d + e) z) k *
+          (originalBasis (K := K) (d + e)).repr (boundedMultiply (K := K) d e i (originalBasis (K := K) e y)) z) =
+        ∑ y, (originalBasis (K := K) e).repr (DeterminantBasis.basis K e j) y *
+          (DeterminantBasis.basis K (d + e)).repr
+            (boundedMultiply (K := K) d e i (originalBasis (K := K) e y)) k := by
       apply Finset.sum_congr rfl
       intro y hy
       simp only [mul_assoc]
       rw [← Finset.mul_sum]
       congr 1
-      exact (DeterminantBasis.basis ℂ (d + e)).sum_repr_mul_repr
-        (originalBasis (d + e)) _ k
-    _ = (DeterminantBasis.basis ℂ (d + e)).repr
-          (boundedMultiply d e i (DeterminantBasis.basis ℂ e j)) k := by
-      have hsum := congrArg (fun p => (DeterminantBasis.basis ℂ (d + e)).repr
-          (boundedMultiply d e i p) k)
-        ((originalBasis e).sum_repr (DeterminantBasis.basis ℂ e j))
+      exact (DeterminantBasis.basis K (d + e)).sum_repr_mul_repr
+        (originalBasis (K := K) (d + e)) _ k
+    _ = (DeterminantBasis.basis K (d + e)).repr
+          (boundedMultiply (K := K) d e i (DeterminantBasis.basis K e j)) k := by
+      have hsum := congrArg (fun p => (DeterminantBasis.basis K (d + e)).repr
+          (boundedMultiply (K := K) d e i p) k)
+        ((originalBasis (K := K) e).sum_repr (DeterminantBasis.basis K e j))
       simpa only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply,
         smul_eq_mul] using hsum
-    _ = adaptedTensor d e i j k := boundedMultiply_adapted_coordinates d e i j k
+    _ = adaptedTensor (K := K) d e i j k := boundedMultiply_adapted_coordinates d e i j k
 
 end MatrixMultiplication.AuxiliarySeparation.DeterminantFiltration
 

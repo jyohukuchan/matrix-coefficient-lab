@@ -10,10 +10,15 @@ namespace OAI
 
 namespace MatrixMultiplication
 
+/-- The square matrix multiplication exponent over every field is at most `9/4`. -/
+theorem omega_le_nine_quarters (F : Type*) [Field F] :
+    Arithmetic.omega F ≤ (9 : ℝ) / 4 :=
+  AuxiliarySeparation.omega_le_nine_quarters F
+
 /-- The complex square matrix multiplication exponent is at most `9/4`. -/
 theorem complex_omega_le_nine_quarters :
     Arithmetic.omega ℂ ≤ (9 : ℝ) / 4 :=
-  AuxiliarySeparation.omega_le_nine_quarters
+  omega_le_nine_quarters ℂ
 
 /-- The complex dual matrix multiplication exponent is greater than `0.465`. -/
 theorem complex_alpha_gt_93_div_200 :

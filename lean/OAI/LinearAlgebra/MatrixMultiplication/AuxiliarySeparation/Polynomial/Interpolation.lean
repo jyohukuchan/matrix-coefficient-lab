@@ -1,4 +1,5 @@
 import OAI.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialDegenerationComposition
+import Mathlib.Data.Set.Finite.Basic
 
 namespace OAI
 
@@ -6,48 +7,54 @@ namespace OAI
 # Exact interpolation away from zero
 
 The coefficient-extraction theorem already proved for matrix multiplication is
-used here with the nonzero nodes `1, ..., D + 1`.  In particular a polynomial
+used here with any fixed `D + 1` distinct nonzero field elements.  In particular a polynomial
 degeneration can be recovered by a finite sum of its ordinary restrictions at
 nonzero parameters, with the leading power divided out at each parameter.
 -/
 
 noncomputable section
 
-open scoped BigOperators
+open scoped BigOperators Classical
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K] [Infinite K]
+
 open MatrixMultiplication.Foundation
 
-/-- An explicit set of `D + 1` nonzero complex interpolation parameters. -/
-def interpolationNode (D : ℕ) (i : Fin (D + 1)) : ℂ := (i.val + 1 : ℕ)
+/-- Distinct nonzero interpolation parameters exist over every infinite field. -/
+def interpolationNode (D : ℕ) (i : Fin (D + 1)) : K :=
+  ((Set.finite_singleton (0 : K)).infinite_compl.natEmbedding _ i.val).val
 
 theorem interpolationNode_injective (D : ℕ) :
-    Function.Injective (interpolationNode D) := by
+    Function.Injective (interpolationNode (K := K) D) := by
   intro i j hij
   apply Fin.ext
-  exact Nat.add_right_cancel (Nat.cast_injective hij)
+  apply ((Set.finite_singleton (0 : K)).infinite_compl.natEmbedding _).injective
+  exact Subtype.ext hij
 
 theorem interpolationNode_ne_zero (D : ℕ) (i : Fin (D + 1)) :
-    interpolationNode D i ≠ 0 := by
-  change ((i.val + 1 : ℕ) : ℂ) ≠ 0
-  exact Nat.cast_ne_zero.mpr (Nat.succ_ne_zero i.val)
+    interpolationNode (K := K) D i ≠ 0 := by
+  have h := ((Set.finite_singleton (0 : K)).infinite_compl.natEmbedding _ i.val).property
+  simpa only [interpolationNode, Set.mem_compl_iff, Set.mem_singleton_iff] using h
 
+omit [Infinite K] in
 /-- The constant-coefficient functional expressed in the Lagrange basis. -/
 def constantInterpolationWeight {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (nodes : ι → ℂ) (i : ι) : ℂ :=
+    (nodes : ι → K) (i : ι) : K :=
   (Lagrange.basis Finset.univ nodes i).coeff 0
 
+omit [Infinite K] in
 /-- Exact constant recovery; this specializes the existing coefficient theorem. -/
 theorem constant_eq_sum_eval {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (nodes : ι → ℂ) (hinj : Function.Injective nodes) (p : Polynomial ℂ)
+    (nodes : ι → K) (hinj : Function.Injective nodes) (p : Polynomial K)
     (hdegree : p.degree < Fintype.card ι) :
     p.coeff 0 = ∑ i, constantInterpolationWeight nodes i * p.eval (nodes i) := by
   simpa only [constantInterpolationWeight, mul_comm] using
     Tensor.coeff_eq_sum_eval nodes hinj p 0 hdegree
 
 /-- A degree-`D` polynomial is recovered at zero using only nonzero parameters. -/
-theorem constant_eq_sum_nonzero_eval (D : ℕ) (p : Polynomial ℂ)
+theorem constant_eq_sum_nonzero_eval (D : ℕ) (p : Polynomial K)
     (hdegree : p.degree ≤ D) :
     p.coeff 0 = ∑ i, constantInterpolationWeight (interpolationNode D) i *
       p.eval (interpolationNode D i) := by
@@ -55,11 +62,12 @@ theorem constant_eq_sum_nonzero_eval (D : ℕ) (p : Polynomial ℂ)
   simp only [Fintype.card_fin]
   exact lt_of_le_of_lt hdegree (WithBot.coe_lt_coe.mpr (Nat.lt_succ_self D))
 
+omit [Infinite K] in
 /-- Removing a leading power before interpolation only requires evaluations at
 nonzero nodes.  The degree bound is on the normalized polynomial. -/
 theorem leading_eq_sum_normalized_eval {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (nodes : ι → ℂ) (hinj : Function.Injective nodes)
-    (hnonzero : ∀ i, nodes i ≠ 0) (p q : Polynomial ℂ) (d : ℕ)
+    (nodes : ι → K) (hinj : Function.Injective nodes)
+    (hnonzero : ∀ i, nodes i ≠ 0) (p q : Polynomial K) (d : ℕ)
     (hp : p = Polynomial.X ^ d * q) (hdegree : q.degree < Fintype.card ι) :
     p.coeff d = ∑ i, constantInterpolationWeight nodes i *
       (nodes i ^ d)⁻¹ * p.eval (nodes i) := by
@@ -80,7 +88,7 @@ theorem leading_eq_sum_normalized_eval {ι : Type*} [Fintype ι] [DecidableEq ι
 
 /-- A leading coefficient is a finite linear combination of normalized
 evaluations, assuming all lower coefficients vanish. -/
-theorem leading_eq_sum_nonzero_eval (D d : ℕ) (p : Polynomial ℂ)
+theorem leading_eq_sum_nonzero_eval (D d : ℕ) (p : Polynomial K)
     (hvanish : ∀ j < d, p.coeff j = 0) (hdegree : p.degree ≤ D) :
     p.coeff d = ∑ i, constantInterpolationWeight (interpolationNode D) i *
       (interpolationNode D i ^ d)⁻¹ * p.eval (interpolationNode D i) := by
@@ -98,13 +106,14 @@ section PolynomialRestriction
 
 variable {X Y Z X' Y' Z' : Type*}
 variable [Fintype X] [Fintype Y] [Fintype Z]
-variable {T : Tensor ℂ X Y Z} {U : Tensor ℂ X' Y' Z'}
+variable {T : Tensor K X Y Z} {U : Tensor K X' Y' Z'}
 variable {k Lx Ly Lz : ℕ}
 
+omit [Infinite K] in
 /-- Evaluating the polynomial restriction evaluates its three local maps. -/
 theorem restrictionDegeneration_eval
     (L : Tensor.PolynomialRestrictionDegeneration T U k Lx Ly Lz)
-    (t : ℂ) (x' : X') (y' : Y') (z' : Z') :
+    (t : K) (x' : X') (y' : Y') (z' : Z') :
     (L.basePolynomial x' y' z').eval t =
       Tensor.restrict (fun a x => (L.leftMap a x).eval t)
         (fun b y => (L.middleMap b y).eval t)
@@ -112,6 +121,7 @@ theorem restrictionDegeneration_eval
   simp only [Tensor.PolynomialRestrictionDegeneration.basePolynomial, Tensor.restrict,
     Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C]
 
+omit [Infinite K] in
 /-- The degree of a polynomial restriction is bounded by the sum of the
 degrees of its three local maps. -/
 theorem restrictionDegeneration_degree
@@ -134,6 +144,7 @@ theorem restrictionDegeneration_degree
     (Polynomial.natDegree_mul_le_of_le
       (Polynomial.natDegree_mul_le_of_le hA hB) hC) hconstant
 
+omit [Infinite K] in
 /-- The existing polynomial-approximation API applies to a polynomial
 restriction as soon as the source tensor has a rank bound. -/
 def restrictionDegeneration_approximation
@@ -151,8 +162,22 @@ than raising the single-copy interpolation overhead to the tensor power. -/
 theorem restrictionDegeneration_power_rankAtMost
     (L : Tensor.PolynomialRestrictionDegeneration T U k Lx Ly Lz)
     {r : ℕ} (hT : Tensor.RankAtMost T r) (n : ℕ) :
-    Tensor.RankAtMost (Tensor.power U n) (((Lx + Ly + Lz) * n + 1) * r ^ n) :=
-  (restrictionDegeneration_approximation L hT).rank_power n
+    Tensor.RankAtMost (Tensor.power U n) (((Lx + Ly + Lz) * n + 1) * r ^ n) := by
+  let A := restrictionDegeneration_approximation L hT
+  have hdegree (x' : Fin n → X') (y' : Fin n → Y') (z' : Fin n → Z') :
+      ((A.power n).polynomial x' y' z').degree <
+        Fintype.card (Fin ((Lx + Ly + Lz) * n + 1)) := by
+    simp only [Fintype.card_fin]
+    exact lt_of_le_of_lt ((A.power n).degree_bound x' y' z')
+      (WithBot.coe_lt_coe.mpr (Nat.lt_succ_self ((Lx + Ly + Lz) * n)))
+  have h := (A.power n).rank_bound.coeff
+    (interpolationNode ((Lx + Ly + Lz) * n)) (interpolationNode_injective _)
+    (k * n) hdegree
+  have hleading : (fun x' y' z' => ((A.power n).polynomial x' y' z').coeff (k * n)) =
+      Tensor.power U n := by
+    funext x' y' z'
+    exact (A.power n).leading x' y' z'
+  simpa only [hleading, Fintype.card_fin] using h
 
 /-- A polynomial degeneration yields an exact finite sum of ordinary
 restrictions at nonzero parameters.  There are `Lx + Ly + Lz + 1` terms. -/

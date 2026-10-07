@@ -10,12 +10,12 @@ import Mathlib.Tactic
 namespace OAI
 
 /-!
-# The tensor map with exactly `5M` copies
+# The tensor map with an arbitrary Fourier period
 
 The branches have a common first coordinate space and common sizes on the other
 two legs. Their second and third coordinates carry a matching sector label.
 The three maps below are independent linear substitutions on the three legs of
-`5M` complete copies of the source tensor.
+`L` complete copies of the source tensor.
 -/
 
 noncomputable section
@@ -25,7 +25,8 @@ open MatrixMultiplication.Foundation
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
-variable {M : ℕ} {X Y Z : Type*}
+variable {K : Type*} [Field K]
+variable {M L : ℕ} {X Y Z : Type*}
 
 /-- The paper numbers sectors from one, while `Fin M` numbers them from zero. -/
 def sectorNumber (i : Fin M) : ℤ := (i.val : ℤ) + 1
@@ -43,30 +44,30 @@ theorem sectorNumber_injective : Function.Injective (@sectorNumber M) := by
   omega
 
 /-- Branches sharing X, with matching and disjoint Y and Z sectors. -/
-def sharedFirstTensor (B : Fin M → Tensor ℂ X Y Z) :
-    Tensor ℂ X (Fin M × Y) (Fin M × Z) :=
+def sharedFirstTensor (B : Fin M → Tensor K X Y Z) :
+    Tensor K X (Fin M × Y) (Fin M × Z) :=
   fun x y z => if y.1 = z.1 then B y.1 x y.2 z.2 else 0
 
 /-- The first local Fourier substitution guesses the missing sector. -/
-def firstProjectionMap (ζ : ℂ) :
-    (X × Fin M) → (Fin (5 * M) × X) → ℂ := by
+def firstProjectionMap (ζ : K) :
+    (X × Fin M) → (Fin L × X) → K := by
   classical
   exact fun x r => if r.2 = x.1 then
     ζ ^ ((r.1.val : ℤ) * (2 * sectorNumber x.2)) else 0
 
 /-- The second local map knows the sector through its original coordinate. -/
-def secondProjectionMap (ζ : ℂ) :
-    ((Fin M × Y) × Fin M) → (Fin (5 * M) × (Fin M × Y)) → ℂ := by
+def secondProjectionMap (ζ : K) :
+    ((Fin M × Y) × Fin M) → (Fin L × (Fin M × Y)) → K := by
   classical
   exact fun y r => if r.2 = y.1 then
     ζ ^ ((r.1.val : ℤ) * (sectorNumber y.2 - sectorNumber y.1.1)) else 0
 
 /-- The third local map carries the single Fourier normalization factor. -/
-def thirdProjectionMap (ζ : ℂ) :
-    ((Fin M × Z) × Fin M) → (Fin (5 * M) × (Fin M × Z)) → ℂ := by
+def thirdProjectionMap (ζ : K) :
+    ((Fin M × Z) × Fin M) → (Fin L × (Fin M × Z)) → K := by
   classical
   exact fun z r => if r.2 = z.1 then
-    (5 * M : ℂ)⁻¹ *
+    (L : K)⁻¹ *
       ζ ^ ((r.1.val : ℤ) * (-sectorNumber z.2 - sectorNumber z.1.1)) else 0
 
 private theorem restrict_constantCopies
@@ -97,48 +98,48 @@ private theorem restrict_constantCopies_delta
   simp [ite_mul, mul_ite, Finset.sum_mul]
 
 /-- The exact coefficient tensor after Fourier projection, before weighting. -/
-def projectedTensor (ζ : ℂ) (B : Fin M → Tensor ℂ X Y Z) :
-    Tensor ℂ (X × Fin M) ((Fin M × Y) × Fin M) ((Fin M × Z) × Fin M) :=
+def projectedTensor (ζ : K) (L : ℕ) (B : Fin M → Tensor K X Y Z) :
+    Tensor K (X × Fin M) ((Fin M × Y) × Fin M) ((Fin M × Z) × Fin M) :=
   fun x y z => if y.1.1 = z.1.1 then
-    finiteFourierCoefficient ζ (5 * M)
+    finiteFourierCoefficient ζ L
       (phase (sectorNumber x.2) (sectorNumber y.1.1)
         (sectorNumber y.2) (sectorNumber z.2)) (B y.1.1 x.1 y.1.2 z.1.2)
     else 0
 
-/-- The paper's `5M` copies and its three explicit local Fourier maps realize
+/-- The `L` copies and its three explicit local Fourier maps realize
 the projected tensor by an ordinary restriction. -/
 theorem finiteProjection_restrict [Fintype X] [Fintype Y] [Fintype Z]
-    (ζ : ℂ) (hζ : ζ ≠ 0) (B : Fin M → Tensor ℂ X Y Z) :
+    (ζ : K) (L : ℕ) (hζ : ζ ≠ 0) (B : Fin M → Tensor K X Y Z) :
     Tensor.restrict (firstProjectionMap ζ) (secondProjectionMap ζ)
         (thirdProjectionMap ζ)
-        (Tensor.directSum (fun _ : Fin (5 * M) => sharedFirstTensor B)) =
-      projectedTensor ζ B := by
+        (Tensor.directSum (fun _ : Fin L => sharedFirstTensor B)) =
+      projectedTensor ζ L B := by
   classical
   funext x y z
   unfold firstProjectionMap secondProjectionMap thirdProjectionMap
-  rw [restrict_constantCopies_delta (R := Fin (5 * M))
+  rw [restrict_constantCopies_delta (R := Fin L)
     (sharedFirstTensor B) Prod.fst Prod.fst Prod.fst
     (fun x r => ζ ^ ((r.val : ℤ) * (2 * sectorNumber x.2)))
     (fun y r => ζ ^ ((r.val : ℤ) * (sectorNumber y.2 - sectorNumber y.1.1)))
-    (fun z r => (5 * M : ℂ)⁻¹ *
+    (fun z r => (L : K)⁻¹ *
       ζ ^ ((r.val : ℤ) * (-sectorNumber z.2 - sectorNumber z.1.1))) x y z]
   by_cases hyz : y.1.1 = z.1.1
   · simp only [sharedFirstTensor, projectedTensor, hyz, ↓reduceIte]
-    have hterm (r : Fin (5 * M)) :
+    have hterm (r : Fin L) :
         ζ ^ ((r.val : ℤ) * (2 * sectorNumber x.2)) *
           ζ ^ ((r.val : ℤ) * (sectorNumber y.2 - sectorNumber y.1.1)) *
-          ((5 * M : ℂ)⁻¹ *
+          ((L : K)⁻¹ *
             ζ ^ ((r.val : ℤ) * (-sectorNumber z.2 - sectorNumber z.1.1))) =
-        (5 * M : ℂ)⁻¹ *
+        (L : K)⁻¹ *
           ζ ^ ((r.val : ℤ) * phase (sectorNumber x.2) (sectorNumber y.1.1)
             (sectorNumber y.2) (sectorNumber z.2)) := by
       rw [← hyz]
       calc
-        _ = (5 * M : ℂ)⁻¹ *
+        _ = (L : K)⁻¹ *
             (ζ ^ ((r.val : ℤ) * (2 * sectorNumber x.2)) *
             ζ ^ ((r.val : ℤ) * (sectorNumber y.2 - sectorNumber y.1.1)) *
             ζ ^ ((r.val : ℤ) * (-sectorNumber z.2 - sectorNumber y.1.1))) := by ring
-        _ = (5 * M : ℂ)⁻¹ * ζ ^
+        _ = (L : K)⁻¹ * ζ ^
             ((r.val : ℤ) * (2 * sectorNumber x.2) +
              (r.val : ℤ) * (sectorNumber y.2 - sectorNumber y.1.1) +
              (r.val : ℤ) * (-sectorNumber z.2 - sectorNumber y.1.1)) := by
@@ -149,62 +150,64 @@ theorem finiteProjection_restrict [Fintype X] [Fintype Y] [Fintype Z]
     rw [← Finset.mul_sum,
       Fin.sum_univ_eq_sum_range (fun r : ℕ => ζ ^ ((r : ℤ) *
         phase (sectorNumber x.2) (sectorNumber y.1.1)
-          (sectorNumber y.2) (sectorNumber z.2))) (5 * M)]
+          (sectorNumber y.2) (sectorNumber z.2))) L]
     unfold finiteFourierCoefficient
     rw [← Finset.sum_mul]
-    simp only [Nat.cast_mul, Nat.cast_ofNat, mul_assoc]
+    simp only [mul_assoc]
   · simp [sharedFirstTensor, projectedTensor, hyz]
 
 /-- The polynomial after the Fourier projection and square weighting. -/
-def separationPolynomial (ζ : ℂ) (B : Fin M → Tensor ℂ X Y Z) :
-    Tensor (Polynomial ℂ) (X × Fin M)
+def separationPolynomial (ζ : K) (L : ℕ) (B : Fin M → Tensor K X Y Z) :
+    Tensor (Polynomial K) (X × Fin M)
       ((Fin M × Y) × Fin M) ((Fin M × Z) × Fin M) :=
   fun x y z => if y.1.1 = z.1.1 then
-    projectedBranchPolynomial ζ M (sectorNumber x.2) (sectorNumber y.1.1)
+    projectedBranchPolynomial ζ L (sectorNumber x.2) (sectorNumber y.1.1)
       (sectorNumber y.2) (sectorNumber z.2) (B y.1.1 x.1 y.1.2 z.1.2)
     else 0
 
 /-- The surviving tensor: sector labels match on all three legs, while the
 additional second/third coordinates form a dot product. -/
-def separationTarget (B : Fin M → Tensor ℂ X Y Z) :
-    Tensor ℂ (X × Fin M) ((Fin M × Y) × Fin M) ((Fin M × Z) × Fin M) :=
+def separationTarget (B : Fin M → Tensor K X Y Z) :
+    Tensor K (X × Fin M) ((Fin M × Y) × Fin M) ((Fin M × Z) × Fin M) :=
   fun x y z => if x.2 = y.1.1 ∧ y.1.1 = z.1.1 ∧ y.2 = z.2 then
     B y.1.1 x.1 y.1.2 z.1.2 else 0
 
 /-- The square-weighted polynomial has exactly the advertised constant tensor. -/
-theorem separationPolynomial_coeff_zero {ζ : ℂ} (hM : 0 < M)
-    (hζ : IsPrimitiveRoot ζ (5 * M)) (B : Fin M → Tensor ℂ X Y Z) :
-    (fun x y z => (separationPolynomial ζ B x y z).coeff 0) =
+theorem separationPolynomial_coeff_zero {ζ : K} (hM : 0 < M)
+    (hL : 5 * M ≤ L) (hLcast : (L : K) ≠ 0)
+    (hζ : IsPrimitiveRoot ζ L) (B : Fin M → Tensor K X Y Z) :
+    (fun x y z => (separationPolynomial ζ L B x y z).coeff 0) =
       separationTarget B := by
   classical
   funext x y z
   by_cases hyz : y.1.1 = z.1.1
   · simp only [separationPolynomial, hyz, ↓reduceIte]
-    rw [projectedBranchPolynomial_coeff_zero hM hζ
+    rw [projectedBranchPolynomial_coeff_zero hM hL hLcast hζ
       (sectorNumber_bounds _) (sectorNumber_bounds _)
       (sectorNumber_bounds _) (sectorNumber_bounds _)]
     simp only [sectorNumber_injective.eq_iff, separationTarget, hyz, true_and]
   · simp [separationPolynomial, separationTarget, hyz]
 
 /-- Its degree is bounded for each fixed finite separation construction. -/
-theorem separationPolynomial_degree {ζ : ℂ} (hM : 0 < M)
-    (hζ : IsPrimitiveRoot ζ (5 * M)) (B : Fin M → Tensor ℂ X Y Z)
+theorem separationPolynomial_degree {ζ : K} (hM : 0 < M)
+    (hL : 5 * M ≤ L) (hLcast : (L : K) ≠ 0)
+    (hζ : IsPrimitiveRoot ζ L) (B : Fin M → Tensor K X Y Z)
     (x : X × Fin M) (y : (Fin M × Y) × Fin M) (z : (Fin M × Z) × Fin M) :
-    (separationPolynomial ζ B x y z).degree ≤ ((M - 1) ^ 2 : ℕ) := by
+    (separationPolynomial ζ L B x y z).degree ≤ ((M - 1) ^ 2 : ℕ) := by
   apply Polynomial.degree_le_of_natDegree_le
   rw [Polynomial.natDegree_le_iff_coeff_eq_zero]
   intro n hn
   by_cases hyz : y.1.1 = z.1.1
   · simp only [separationPolynomial, hyz, ↓reduceIte]
-    exact projectedBranchPolynomial_coeff_eq_zero_of_lt hM hζ
+    exact projectedBranchPolynomial_coeff_eq_zero_of_lt hM hL hLcast hζ
       (sectorNumber_bounds _) (sectorNumber_bounds _)
       (sectorNumber_bounds _) (sectorNumber_bounds _) hn _
   · simp [separationPolynomial, hyz]
 
 private theorem restrict_target_scalars
     {A B C A' B' C' : Type*} [Fintype A] [Fintype B] [Fintype C]
-    (T : Tensor ℂ A B C) (a : A' → A → ℂ) (b : B' → B → ℂ)
-    (c : C' → C → ℂ) (s : A' → ℂ) (t : B' → ℂ) (u : C' → ℂ) :
+    (T : Tensor K A B C) (a : A' → A → K) (b : B' → B → K)
+    (c : C' → C → K) (s : A' → K) (t : B' → K) (u : C' → K) :
     Tensor.restrict (fun x i => s x * a x i) (fun y j => t y * b y j)
         (fun z k => u z * c z k) T =
       fun x y z => (s x * t y * u z) * Tensor.restrict a b c T x y z := by
@@ -219,48 +222,49 @@ private theorem restrict_target_scalars
   ring
 
 /-- The first local Fourier map followed by its integer weight. -/
-def firstSeparationMap (ζ t : ℂ) (x : X × Fin M) (r : Fin (5 * M) × X) : ℂ :=
+def firstSeparationMap (ζ t : K) (x : X × Fin M) (r : Fin L × X) : K :=
   t ^ firstWeight (sectorNumber x.2) * firstProjectionMap ζ x r
 
 /-- The second local Fourier map followed by its possibly negative weight. -/
-def secondSeparationMap (ζ t : ℂ) (y : (Fin M × Y) × Fin M)
-    (r : Fin (5 * M) × (Fin M × Y)) : ℂ :=
+def secondSeparationMap (ζ t : K) (y : (Fin M × Y) × Fin M)
+    (r : Fin L × (Fin M × Y)) : K :=
   t ^ secondWeight (sectorNumber y.1.1) (sectorNumber y.2) * secondProjectionMap ζ y r
 
 /-- The third local Fourier map followed by its possibly negative weight. -/
-def thirdSeparationMap (ζ t : ℂ) (z : (Fin M × Z) × Fin M)
-    (r : Fin (5 * M) × (Fin M × Z)) : ℂ :=
+def thirdSeparationMap (ζ t : K) (z : (Fin M × Z) × Fin M)
+    (r : Fin L × (Fin M × Z)) : K :=
   t ^ thirdWeight (sectorNumber z.1.1) (sectorNumber z.2) * thirdProjectionMap ζ z r
 
 theorem weightedProjection_restrict [Fintype X] [Fintype Y] [Fintype Z]
-    (ζ t : ℂ) (hζ : ζ ≠ 0) (B : Fin M → Tensor ℂ X Y Z) :
+    (ζ t : K) (L : ℕ) (hζ : ζ ≠ 0) (B : Fin M → Tensor K X Y Z) :
     Tensor.restrict (firstSeparationMap ζ t) (secondSeparationMap ζ t)
         (thirdSeparationMap ζ t)
-        (Tensor.directSum (fun _ : Fin (5 * M) => sharedFirstTensor B)) =
+        (Tensor.directSum (fun _ : Fin L => sharedFirstTensor B)) =
       fun x y z =>
         (t ^ firstWeight (sectorNumber x.2) *
           t ^ secondWeight (sectorNumber y.1.1) (sectorNumber y.2) *
           t ^ thirdWeight (sectorNumber z.1.1) (sectorNumber z.2)) *
-            projectedTensor ζ B x y z := by
+            projectedTensor ζ L B x y z := by
   unfold firstSeparationMap secondSeparationMap thirdSeparationMap
-  rw [restrict_target_scalars, finiteProjection_restrict ζ hζ B]
+  rw [restrict_target_scalars, finiteProjection_restrict ζ L hζ B]
 
 /-- At every nonzero parameter the polynomial tensor is an ordinary restriction
-of exactly `5M` complete source copies. -/
+of `L` complete source copies. -/
 theorem separationPolynomial_eval [Fintype X] [Fintype Y] [Fintype Z]
-    {ζ : ℂ} (hM : 0 < M) (hζ : IsPrimitiveRoot ζ (5 * M))
-    (B : Fin M → Tensor ℂ X Y Z) (t : ℂ) (ht : t ≠ 0) :
-    (fun x y z => (separationPolynomial ζ B x y z).eval t) =
+    {ζ : K} (hM : 0 < M) (hL : 5 * M ≤ L) (hLcast : (L : K) ≠ 0)
+    (hζ : IsPrimitiveRoot ζ L)
+    (B : Fin M → Tensor K X Y Z) (t : K) (ht : t ≠ 0) :
+    (fun x y z => (separationPolynomial ζ L B x y z).eval t) =
       Tensor.restrict (firstSeparationMap ζ t) (secondSeparationMap ζ t)
         (thirdSeparationMap ζ t)
-        (Tensor.directSum (fun _ : Fin (5 * M) => sharedFirstTensor B)) := by
-  rw [weightedProjection_restrict ζ t (hζ.ne_zero (by omega)) B]
+        (Tensor.directSum (fun _ : Fin L => sharedFirstTensor B)) := by
+  rw [weightedProjection_restrict ζ t L (hζ.ne_zero (by omega)) B]
   funext x y z
   by_cases hyz : y.1.1 = z.1.1
   · simp only [separationPolynomial, projectedTensor, hyz, ↓reduceIte,
       projectedBranchPolynomial, Polynomial.eval_monomial]
     simp only [← hyz]
-    rw [fiveMFourierCoefficient_eq_ite hM hζ
+    rw [fiveMFourierCoefficient_eq_ite hM hL hLcast hζ
       (sectorNumber_bounds _) (sectorNumber_bounds _)
       (sectorNumber_bounds _) (sectorNumber_bounds _)]
     split_ifs with hp
@@ -311,11 +315,11 @@ theorem finiteSeparation_degeneratesTo [Fintype X] [Fintype Y] [Fintype Z]
   let ζ : ℂ := Complex.exp (2 * Real.pi * Complex.I / (5 * M : ℕ))
   have hζ : IsPrimitiveRoot ζ (5 * M) :=
     Complex.isPrimitiveRoot_exp _ (by omega)
-  rw [← separationPolynomial_coeff_zero hM hζ B]
-  apply polynomial_degeneration_of_nonzero_restrictions _ (separationPolynomial ζ B)
+  rw [← separationPolynomial_coeff_zero hM le_rfl (by exact_mod_cast (show 5 * M ≠ 0 by omega)) hζ B]
+  apply polynomial_degeneration_of_nonzero_restrictions _ (separationPolynomial ζ (5 * M) B)
   intro t ht
   exact ⟨firstSeparationMap ζ t, secondSeparationMap ζ t, thirdSeparationMap ζ t,
-    separationPolynomial_eval hM hζ B t ht⟩
+    separationPolynomial_eval hM le_rfl (by exact_mod_cast (show 5 * M ≠ 0 by omega)) hζ B t ht⟩
 
 /-- The first-leg relabeling adds the trivial first coordinate of the dot product. -/
 def separationFirstEquiv : (X × Fin M) ≃ (Fin M × (X × Unit)) where
@@ -329,12 +333,12 @@ def separationSideEquiv (A : Type*) : ((Fin M × A) × Fin M) ≃
     (Fin M × (A × Fin M)) := Equiv.prodAssoc _ _ _
 
 /-- The separated target, expressed as a genuine full direct sum of products. -/
-theorem separationTarget_eq_directSum (B : Fin M → Tensor ℂ X Y Z) :
+theorem separationTarget_eq_directSum (B : Fin M → Tensor K X Y Z) :
     separationTarget B =
       Tensor.pullback
         separationFirstEquiv (separationSideEquiv Y) (separationSideEquiv Z)
         (Tensor.directSum (fun h => Tensor.product (B h)
-          (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := ℂ) (Fin M)))))) := by
+          (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := K) (Fin M)))))) := by
   classical
   funext x y z
   simp only [separationTarget, Tensor.pullback, Tensor.directSum, Tensor.product,

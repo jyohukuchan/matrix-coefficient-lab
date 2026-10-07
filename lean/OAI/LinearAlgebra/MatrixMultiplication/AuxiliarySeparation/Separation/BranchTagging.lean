@@ -19,6 +19,8 @@ open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 variable {M : ℕ} {X Y Z : Type}
 variable [Fintype X] [Fintype Y] [Fintype Z]
 
@@ -26,7 +28,7 @@ omit [Fintype X] [Fintype Y] [Fintype Z] in
 /-- Recovering the two coordinate labels identifies the tagged tensor with
 the coefficientwise sum of the branches. -/
 theorem sharedFirstTensor_pullback_labels
-    (B : Fin M → Tensor ℂ X Y Z) (ly : Y → Fin M) (lz : Z → Fin M)
+    (B : Fin M → Tensor K X Y Z) (ly : Y → Fin M) (lz : Z → Fin M)
     (hsupport : ∀ i x y z, B i x y z ≠ 0 → ly y = i ∧ lz z = i) :
     Tensor.pullback id (fun y => (ly y, y)) (fun z => (lz z, z))
       (sharedFirstTensor B) = ∑ i, B i := by
@@ -51,8 +53,8 @@ namespace Character
 
 /-- Branch labels determined by both non-shared coordinates can be inserted
 or forgotten without changing a character. -/
-theorem value_sharedFirstTensor_eq_sum (χ : Character)
-    (B : Fin M → Tensor ℂ X Y Z) (ly : Y → Fin M) (lz : Z → Fin M)
+theorem value_sharedFirstTensor_eq_sum (χ : (Character K))
+    (B : Fin M → Tensor K X Y Z) (ly : Y → Fin M) (lz : Z → Fin M)
     (hsupport : ∀ i x y z, B i x y z ≠ 0 → ly y = i ∧ lz z = i) :
     χ.value (sharedFirstTensor B) = χ.value (∑ i, B i) := by
   have hs : ∀ x y z, sharedFirstTensor B x y z ≠ 0 →
