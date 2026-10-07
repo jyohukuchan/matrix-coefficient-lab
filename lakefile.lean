@@ -15,8 +15,7 @@ require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @ "d13f23b723b8a846827a245b89c10fc7d3f11612"
 
 @[default_target]
-lean_lib OAI where
-  globs := #[.one `OAI.LinearAlgebra.MatrixMultiplication.AllFieldsAudit]
+lean_lib OAI
 
 -- Independent environments for the frozen Comparator challenge and its solution.
 -- The challenge intentionally contains theorem holes and is never imported by OAI.
