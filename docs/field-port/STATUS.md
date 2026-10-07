@@ -1,9 +1,11 @@
 # Field-generalization status
 
-Last updated: 2026-10-06. **The requested all-fields proof and verification
-are complete.** There are no remaining Lean proof or audit failures.
+Last updated: 2026-10-06. **The all-fields proof and adversarial audit passed.**
+The README now explains the OpenAI source fork, premise, theorem-statement diff,
+proof changes, exact conclusions, and verification limits. The repository
+remains private; a future-publication goal is not authorization to publish.
 
-## Result
+## Verified result
 
 ```lean
 theorem OAI.MatrixMultiplication.omega_le_nine_quarters
@@ -11,84 +13,64 @@ theorem OAI.MatrixMultiplication.omega_le_nine_quarters
     OAI.MatrixMultiplication.Arithmetic.omega F ≤ (9 : ℝ) / 4
 ```
 
-The field universe is arbitrary. The original `Arithmetic.omega`, program
-correctness and operation-count definitions in `Model.lean` are unchanged.
-The explicit epsilon-cost theorem and original complex specialization also
-compile. No characteristic, finiteness, separability or algebraic-closedness
-assumption is required on F.
+The original arithmetic model is unchanged. The field universe is arbitrary;
+no characteristic, finiteness, separability, perfectness, or algebraic-closedness
+hypothesis is imposed on F. The explicit positive-epsilon cost theorem and
+original public complex specialization also passed.
 
-## Verification
+Over finite fields, the original program predicate is correctness on
+field-valued inputs, not formal polynomial equality. The separate exact
+coefficient-rank theorem supplies the algebraic certificate used by this proof.
+The expanded audit checks that statement and records the distinction on F₂.
 
-- Auxiliary Main passed (9053 jobs).
-- Public Main, including the retained upstream results, passed (9436 jobs).
-- `bash scripts/check-proof.sh` passed (9437 jobs).
-- Arbitrary-universe and characteristic-2/3/5 examples passed, as did rational,
-  real and complex examples and the original explicit correctness/cost claim.
-- Six guarded axiom checks passed with only `propext`, `Classical.choice`,
-  and `Quot.sound`. No `sorryAx` or additional mathematical axioms occur.
-- Independent algebra, spectral/descent, and arithmetic-specification reviews
-  found no weakened definitions or hidden field premises.
+## Verification completed
 
-See [VERIFICATION.md](VERIFICATION.md) for exact commands and qualifications,
-and [REVIEW.md](REVIEW.md) for the proof route. No build process is active.
+- Core proof `9bd2a64fa47efe678664b5401b6a8ea6d93238ad`: auxiliary all-fields
+  Main and its full OAI import chain rebuilt from committed source in an
+  isolated checkout with initially empty OAI build outputs.
+- Fresh `leanchecker --fresh` replay of the auxiliary Main and every imported
+  declaration passed with exit 0. The isolated source tree remained unchanged.
+- Expanded audit `704431ea67e20489dba45b47c70813a6075c554c`:
+  `scripts/check-proof.sh` passed with exit 0. It includes the public entry
+  point, arbitrary-universe and representative-field examples, explicit
+  program cost, exact coefficient-rank witness, and ten axiom guards.
+- Every guarded declaration uses exactly `propext`, `Classical.choice`, and
+  `Quot.sound`. Scratch controls with an added axiom and `sorry` were both
+  rejected by their guards; the compiler exited 1 with exactly those errors.
+- Eleven original specification/builder files match the immutable baseline.
+  All ten dependency source pins and the exact compatibility patch passed.
+- Three fresh adversarial source reviews found no fatal defect. A stale
+  five/six comment was corrected. Two new test-proof elaboration errors were
+  repaired without changing their statements or the main theorem.
+- Subsequent notices on 41 modified upstream files change only comments:
+  removing those exact headers restores every pre-notice source byte.
 
-## Repository and environment
+The isolated fresh build covers the core dependency chain, not the entire
+public entry point: the broader build was stopped before unrelated retained
+results finished. The canonical public build was checked separately using
+its cache. Third-party pinned caches were reused. The replay uses Lean's own
+kernel, not an independent kernel implementation. No verification process
+remains active. See [VERIFICATION.md](VERIFICATION.md) and
+[ADVERSARIAL.md](ADVERSARIAL.md) for evidence and coverage limits.
 
-- Canonical checkout: `/Users/selanavot/Documents/Codex/2026-10-06/ope/work/matrix-multiplication-all-fields`
-- Private repository: https://github.com/selanavot/matrix-multiplication-all-fields
-- Development PR: https://github.com/selanavot/matrix-multiplication-all-fields/pull/1
-- Implementation branch: `codex/matrix-multiplication-all-fields`
-- Preserved baseline tag: `openai-baseline-adc7f12`, at `d2336fc`.
-- Exact public source: `openai/math` commit `adc7f1241b42e322a6451854ab7e4b4c146bf78a`.
-- Initial partial checkpoint: `826d7bb`; infrastructure checkpoint: `2e23d75`.
-- Checked auxiliary proof checkpoint: `d56ef0a`; guarded audit/review checkpoint: `ae8fdd5`.
-- Lean: `leanprover/lean4:v4.34.1`.
-- Mathlib: `d13f23b723b8a846827a245b89c10fc7d3f11612`.
-- fixed-point-theorems: `770940ddf9878cf61952ed53d910b92bca841838`, with the included upstream compatibility patch.
+## Stable references and continuation
 
-The user explicitly authorizes private repository creation, pushes, PRs and
-merges. Visibility was repeatedly verified as `PRIVATE` / `isPrivate: true`.
-No public fork, upstream PR or publication is authorized. PR1 is the
-canonical record of the final merge state. The baseline tag remains the
-review reference after merging.
+- Repository: https://github.com/selanavot/matrix-multiplication-all-fields
+- Original proof integration: [PR 1](https://github.com/selanavot/matrix-multiplication-all-fields/pull/1),
+  tag `all-fields-proof-v1` at `9bd2a64`.
+- Audit and README integration: [PR 2](https://github.com/selanavot/matrix-multiplication-all-fields/pull/2).
+- Immutable baseline: `d2336fc571f1f8cdabf0c6d3a2d3ef1ec3327653`, tag
+  `openai-baseline-adc7f12`, preserving OpenAI source commit
+  `adc7f1241b42e322a6451854ab7e4b4c146bf78a`.
+- Lean: `leanprover/lean4:v4.34.1`; dependencies are pinned in the manifest.
 
-For reproduction, run `bash scripts/bootstrap.sh` followed by
-`bash scripts/check-proof.sh` from the repository root. The manifest has ten
-exact Git revisions and no local-path dependency entries. Local ignored cache
-links reuse the downloaded Mathlib cache. The old `../openai-math` clone is a
-read-only reference; `../lean-focus` is a retired harness. Use only the
-canonical checkout's `lean/` directory for direct Lake commands.
+For new proof changes, run `scripts/check-proof.sh`; `scripts/check-kernel.sh`
+adds fresh kernel replay. Run those scripts from the repository root and
+direct Lake commands from `lean/`. Use one worker by default and only one
+coordinator for compiler processes. Do not rerun the
+non-idempotent initial port scripts or use the retired focus harness.
 
-## Proof architecture
-
-1. Parameterize actual finite tensors, characters, the rank exponent, and the
-   spectral argument by the scalar field K.
-2. In an algebraically closed field, choose Fourier period 5M or 5M+1 so its
-   scalar cast is nonzero. The resulting finite overhead is at most 6M.
-3. Interpolate at arbitrary distinct nonzero points; no integer-node or
-   characteristic-zero assumption is needed.
-4. Apply the original determinant/sector and real growth argument to obtain
-   the 9/4 exact-rank bound over algebraically closed fields.
-5. Descend all powers of one finite decomposition through one fixed finite
-   coefficient algebra: rank grows by at most its dimension squared, a
-   constant independent of the tensor power.
-6. Remove that constant in the exponent and use the original generic program
-   model to conclude the bound for each field F via its own algebraic closure.
-
-## Continuation cautions
-
-- Preserve the proven theorem and original model. Future source changes must
-  pass `scripts/check-proof.sh`; `sorry` or extra mathematical axioms are
-  unacceptable in the final proof dependencies.
-- Only one coordinator starts Lake builds. Concurrent builds against shared
-  artifacts caused contention and transient missing-olean errors.
-- Do not rerun the external initial port scripts; they are not idempotent.
-- Some unchanged upstream comparator files intentionally contain placeholders;
-  the final theorem's guarded axiom audit confirms it does not depend on them.
-- Complex topological degeneration lemmas remain specialized. The all-fields
-  argument uses algebraic interpolation instead.
-- Human review of the formalization is still useful. Historical novelty,
-  author intent, exact omega, and practical constants were not established.
-
-Agent ownership/history is retained in `agents/`. All assigned components
-are finished; the root note and this file are authoritative for final status.
+Preserve the baseline and original model. Do not change visibility, contact
+upstream, or publish without explicit authorization. Historical novelty,
+author intent, exact omega, practical constants, and an effective algorithm
+generator remain outside the established result.

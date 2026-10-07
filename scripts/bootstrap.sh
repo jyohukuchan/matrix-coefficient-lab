@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export LEAN_NUM_THREADS="${LEAN_NUM_THREADS:-1}"
 
 project_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd -- "$project_root/lean"
@@ -12,6 +13,8 @@ fi
 # The committed configuration pins every direct dependency. Its post-update
 # hook applies the included upstream fixed-point compatibility patch.
 lake update
+git -C "$project_root" diff --exit-code HEAD -- lean/lake-manifest.json lean/lean-toolchain
+python3 "$project_root/scripts/verify-dependencies.py" "$project_root"
 lake exe cache get
 
 printf '%s\n' 'Dependencies and Mathlib cache prepared. Run focused proof checks from lean/.'

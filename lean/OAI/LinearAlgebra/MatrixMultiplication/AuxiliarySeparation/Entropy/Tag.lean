@@ -1,3 +1,9 @@
+/-
+Upstream source and modification notice
+Modified from OpenAI's matrix-multiplication sources to support arbitrary fields.
+See UPSTREAM.md for provenance and changes; Apache-2.0 license retained in LICENSE.
+-/
+
 import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Character.Basic
 import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Growth.PolynomialOverhead
 import OAI.LinearAlgebra.MatrixMultiplication.Entropy.ComplexTypeEntropy
@@ -183,7 +189,7 @@ variable {I X Y Z : Type} [Fintype I] [DecidableEq I]
 
 /-- For a character, nonzero tensors supply all positivity needed by the
 entropy limit. The only quantitative premise is the finite integral-type
-comparison with the paper's fixed loss five. -/
+comparison with the field-independent fixed loss six. -/
 theorem log_tag_of_integral_type_comparison (χ : (Character K))
     (q : FiniteLaw I) (T : Tensor K X Y Z)
     (B : ∀ a, Tensor K (BX a) (BY a) (BZ a)) (p : ℝ)
