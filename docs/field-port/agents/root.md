@@ -2,6 +2,20 @@
 
 ## Active adversarial audit (2026-10-06)
 
+Latest process state: the fresh kernel replay in session 75218 **passed with
+exit 0**. Its log contains the correct auxiliary Main module name, and the
+isolated checkout still matches `9bd2a64` exactly. The sole active build is
+canonical `bash scripts/check-proof.sh`, execution session **47121**, log
+`../adversarial-expanded-check.log`, source commit `00595b5`. Auxiliary Main
+and public Main have rebuilt; expanded AllFieldsAudit is still running.
+After success run `../AdversarialControls.lean` directly (expected exit 1 from
+exactly two axiom-list guard mismatches), then finish the README and docs.
+Draft final verification record: `../VERIFICATION-public-draft.md`, with
+explicit placeholders for still-pending results. A concise attribution script
+`../prepare-upstream-notices.py` is prepared but must be applied only after
+Lean checks, with an external snapshot and `--verify` byte-preservation check.
+The earlier process narrative below is historical; this paragraph is current.
+
 The user requested three fresh adversarial reviewers. Agents `adversarial_spec`,
 `adversarial_proof`, and `adversarial_repro` are auditing merged proof commit
 `9bd2a64fa47efe678664b5401b6a8ea6d93238ad` read-only. Their owned reports are

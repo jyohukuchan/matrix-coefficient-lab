@@ -50,8 +50,7 @@ example (F : Type u) [Field F] (ε : ℝ) (hε : 0 < ε) :
   refine ⟨n, R, hn, hRank, hR.trans ?_⟩
   apply Real.rpow_le_rpow_of_exponent_le
   · exact_mod_cast (show 1 ≤ n by omega)
-  · exact add_le_add_right
-      (AuxiliarySeparation.exactRankExponent_le_nine_quarters_allFields F) ε
+  · linarith [AuxiliarySeparation.exactRankExponent_le_nine_quarters_allFields F]
 
 -- Regression witnesses for the distinction in the original Model.Correct:
 -- x^2 = x as functions on F₂, but not as formal polynomials over F₂.
@@ -60,7 +59,7 @@ example : ∀ x : ZMod 2, x ^ 2 = x := by decide
 example : (Polynomial.X : Polynomial (ZMod 2)) ^ 2 ≠ Polynomial.X := by
   intro h
   have hcoeff := congrArg (fun p : Polynomial (ZMod 2) => p.coeff 2) h
-  norm_num at hcoeff
+  norm_num [Polynomial.coeff_X] at hcoeff
 
 example (F : Type u) [Field F] (ε : ℝ) (hε : 0 < ε) :
     ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ, 1 ≤ n →
