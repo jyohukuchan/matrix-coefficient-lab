@@ -263,3 +263,43 @@ the textbook definition of ω:
 
 These reviews are AI review, not human peer review. The Lean checks retain
 the usual trust in Lean's kernel, Mathlib and the toolchain.
+
+## Root-package validation for Reservoir (2026-10-07)
+
+Packaging checkpoint: `146f0395da3fe4b31a35fecc16f2b214eb514d1d`, based on
+`429e5db6ef5085689248d03abbd112e5ca85b7ab`. The Lake configuration, manifest,
+and toolchain now live at the repository root; sources remain under `lean/`.
+A new two-line `lean/OAI.lean` entry point imports `AllFieldsAudit` and makes
+plain `lake build` meaningful. The Comparator challenge is not in that
+import closure.
+
+All existing OAI proof sources, the frozen challenge and solution, Comparator
+configuration and pins, and the compatibility patch are byte-identical to
+that base. The manifest was normalized to Lake's generated formatting;
+its parsed JSON, including all ten dependency revisions, is unchanged.
+The Lean toolchain is unchanged.
+
+Sequential checks from the repository root all exited 0:
+
+- `bash scripts/bootstrap.sh`: the root post-update hook found the exact
+  compatibility patch, all ten dependency checks passed, and the matching
+  Mathlib cache was available. The committed manifest remained unchanged.
+- `LEAN_NUM_THREADS=1 lake build`: built the new `OAI` entry point and its
+  theorem/audit import closure (9057-job incremental graph).
+- `bash scripts/check-proof.sh`: original-file comparison, dependency checks,
+  and the guarded public audit passed (9055-job incremental graph).
+- `lake reservoir-config 1.0.0`: exported valid metadata for
+  `matrixMultiplicationAllFields`, version `0.1.0`, license `Apache-2.0`, with
+  `doIndex: true`.
+- `python3 scripts/check-comparator.py --trusted-local --comparator-dir ../comparator --negative-controls`:
+  accepted all five theorems and their dependent definitions, audited axioms,
+  and completed Lean-kernel replay. Both controls were rejected: changed
+  `Gate.cost` and forbidden `sorryAx`. The frozen challenge hash was unchanged.
+
+The run reused pinned third-party and project build caches, explicitly
+relocated from the old nested layout. It was not a fresh source rebuild.
+Comparator used its trusted-local macOS runner and Lean's own kernel, with
+no Linux build sandbox or independent kernel. Later changes in this PR only
+clarify documentation and record these outcomes. These local checks establish
+packaging readiness, not an observed Reservoir listing or a completed build
+on Reservoir's infrastructure.

@@ -43,3 +43,15 @@ attribution comment added in Arithmetic/Growth.lean. No proof-body changes.
 bash scripts/check-proof.sh: exit 0 (9055-job incremental graph).
 AllFields and AllFieldsAudit built; original-file, dependency and axiom checks passed.
 Comparator replay and negative controls were not repeated for this merge.
+
+Root-package recheck (2026-10-07)
+PackagingCheckpoint: 146f0395da3fe4b31a35fecc16f2b214eb514d1d
+CommandFromRepositoryRoot: python3 scripts/check-comparator.py --trusted-local --comparator-dir ../comparator --negative-controls
+ExitCode: 0
+Lean default kernel accepts the solution
+Your solution is okay!
+PASS: five theorems, frozen definitions, standard axioms, Lean kernel replay.
+PASS negative control ChangedCost: exit 1; Const does not match between challenge and target
+PASS negative control SorryProof: exit 1; Illegal axiom detected: 'sorryAx'
+ChallengeSHA256: 22c1867ae6ed025318a6010447f997e14513cfe421d11c619cf1950985df1106
+Scope: same pinned tools and frozen specification; relocated root runner; cached builds; trusted-local macOS; Lean kernel only.

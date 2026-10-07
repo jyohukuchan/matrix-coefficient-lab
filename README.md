@@ -4,7 +4,7 @@ This is a focused source fork of [OpenAI's mathematics repository](https://githu
 
 The extension of OpenAI's proof to arbitrary fields was found and formalized by **consumer-grade GPT-6 Astra and GPT-6.1 Sol**, working under Sela Navot's direction. Lean checked the resulting formal proof; the verification scope is documented below.
 
-The sources are extracted from the `MatrixMultiplication` subtree at OpenAI commit [`adc7f1241b42e322a6451854ab7e4b4c146bf78a`](https://github.com/openai/math/tree/adc7f1241b42e322a6451854ab7e4b4c146bf78a/lean/OAI/LinearAlgebra/MatrixMultiplication), packaged as a standalone Lake project. Only the 126 OAI modules in the import closure of the all-fields theorem and its audit are kept: 120 upstream modules, 40 of them modified, plus 6 new files. OpenAI's other matrix-multiplication results in that subtree (the dual exponent, rectangular and conditional bounds, and their numerical certificates) are omitted. So is the complex-only program layer through which OpenAI's complex proof reached `Model.lean`, which this fork's generic arithmetic bridge replaces. The preserved tag `openai-baseline-adc7f12` records that subtree before the extension. The accompanying OpenAI preprint is [*An Upper Bound of 9/4 for the Matrix Multiplication Exponent*](https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/preprints/Matrix-Multiplication-Nine-Fourths-October-2-2026/build/paper.tex). See [UPSTREAM.md](UPSTREAM.md) for provenance.
+The sources are extracted from the `MatrixMultiplication` subtree at OpenAI commit [`adc7f1241b42e322a6451854ab7e4b4c146bf78a`](https://github.com/openai/math/tree/adc7f1241b42e322a6451854ab7e4b4c146bf78a/lean/OAI/LinearAlgebra/MatrixMultiplication), packaged as a standalone Lake project. The matrix-multiplication subtree keeps only the 126 OAI modules in the import closure of the all-fields theorem and its audit: 120 upstream modules, 40 of them modified, plus 6 new files. OpenAI's other matrix-multiplication results in that subtree (the dual exponent, rectangular and conditional bounds, and their numerical certificates) are omitted. So is the complex-only program layer through which OpenAI's complex proof reached `Model.lean`, which this fork's generic arithmetic bridge replaces. The preserved tag `openai-baseline-adc7f12` records that subtree before the extension. The accompanying OpenAI preprint is [*An Upper Bound of 9/4 for the Matrix Multiplication Exponent*](https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/preprints/Matrix-Multiplication-Nine-Fourths-October-2-2026/build/paper.tex). See [UPSTREAM.md](UPSTREAM.md) for provenance.
 
 ## Premise and theorem-statement diff
 
@@ -82,7 +82,8 @@ bash scripts/check-kernel.sh
 The Lake project lives at the repository root: [`lakefile.lean`](lakefile.lean),
 [`lake-manifest.json`](lake-manifest.json), and [`lean-toolchain`](lean-toolchain).
 Lean sources remain under `lean/`, configured through the package's `srcDir`.
-Plain `lake build` builds the `OAI` default target, including the public
+The small [`OAI` package entry point](lean/OAI.lean) imports the audit.
+Plain `lake build` builds this default target, including the public
 `AllFields` theorem and `AllFieldsAudit`. It does not build the separate
 Comparator challenge with its deliberate specification holes. For a focused
 check, run `LEAN_NUM_THREADS=1 lake build OAI.LinearAlgebra.MatrixMultiplication.AllFields`

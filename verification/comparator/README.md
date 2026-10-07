@@ -144,3 +144,11 @@ in `Arithmetic/Growth.lean`. The standard audit passed again against the new
 `AllFields` entry point (9055-job incremental graph). The Comparator replay
 and negative-control results above remain the earlier recorded run; they
 were not repeated for this documentation conflict resolution.
+
+The relocated root-package runner was verified at checkpoint
+`146f0395da3fe4b31a35fecc16f2b214eb514d1d` on 2026-10-07. The same trusted-local
+command, with `--comparator-dir ../comparator --negative-controls`, exited 0:
+all five real theorems passed, the Lean kernel accepted the solution, and
+both the changed-cost and `sorryAx` controls were rejected. The frozen
+challenge, solution, config, and tool pins were unchanged. Dependency and
+project caches were reused. See the [root-package verification record](../../docs/field-port/VERIFICATION.md#root-package-validation-for-reservoir-2026-10-07).
