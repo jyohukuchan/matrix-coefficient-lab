@@ -22,13 +22,15 @@ open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 open TensorSemiring
 
 namespace Character
 
 /-- A character has a well-defined value on mutual-restriction classes. -/
-def valueOnTensorClass (χ : Character) : TensorClass → ℝ :=
-  Quotient.lift (fun T : FiniteTensor => χ.value T.coeff) (by
+def valueOnTensorClass (χ : (Character K)) : (TensorClass K) → ℝ :=
+  Quotient.lift (fun T : (FiniteTensor K) => χ.value T.coeff) (by
     intro T S h
     apply le_antisymm
     · rcases h.1 with ⟨A, B, C, heq⟩
@@ -38,17 +40,17 @@ def valueOnTensorClass (χ : Character) : TensorClass → ℝ :=
       rw [heq]
       exact χ.monotone T.coeff A B C)
 
-@[simp] theorem valueOnTensorClass_tensorClass (χ : Character) (T : FiniteTensor) :
+@[simp] theorem valueOnTensorClass_tensorClass (χ : (Character K)) (T : (FiniteTensor K)) :
     χ.valueOnTensorClass (tensorClass T) = χ.value T.coeff := rfl
 
 /-- Passing to a finite natural-coordinate presentation preserves the value. -/
-@[simp] theorem valueOnTensorClass_classOf (χ : Character)
+@[simp] theorem valueOnTensorClass_classOf (χ : (Character K))
     {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]
-    (T : Tensor ℂ X Y Z) : χ.valueOnTensorClass (classOf T) = χ.value T :=
+    (T : Tensor K X Y Z) : χ.valueOnTensorClass (classOf T) = χ.value T :=
   χ.value_reindex T _ _ _
 
 /-- Restriction monotonicity descends to the quotient order. -/
-theorem valueOnTensorClass_monotone (χ : Character) : Monotone χ.valueOnTensorClass := by
+theorem valueOnTensorClass_monotone (χ : (Character K)) : Monotone χ.valueOnTensorClass := by
   intro T S h
   induction T using Quotient.inductionOn with | h T =>
   induction S using Quotient.inductionOn with | h S =>
@@ -58,18 +60,18 @@ theorem valueOnTensorClass_monotone (χ : Character) : Monotone χ.valueOnTensor
   rw [heq]
   exact χ.monotone S.coeff A B C
 
-@[simp] theorem valueOnTensorClass_zero (χ : Character) :
+@[simp] theorem valueOnTensorClass_zero (χ : (Character K)) :
     χ.valueOnTensorClass 0 = 0 := by
-  change χ.valueOnTensorClass (classOf (0 : Tensor ℂ Empty Empty Empty)) = 0
+  change χ.valueOnTensorClass (classOf (0 : Tensor K Empty Empty Empty)) = 0
   rw [χ.valueOnTensorClass_classOf, χ.map_zero]
 
-@[simp] theorem valueOnTensorClass_one (χ : Character) :
+@[simp] theorem valueOnTensorClass_one (χ : (Character K)) :
     χ.valueOnTensorClass 1 = 1 := by
-  change χ.valueOnTensorClass (classOf unitTensor) = 1
+  change χ.valueOnTensorClass (classOf (unitTensor (K := K))) = 1
   rw [χ.valueOnTensorClass_classOf, χ.map_one]
 
 /-- Multiplicativity is unchanged on passing to tensor classes. -/
-theorem valueOnTensorClass_mul (χ : Character) (T S : TensorClass) :
+theorem valueOnTensorClass_mul (χ : (Character K)) (T S : (TensorClass K)) :
     χ.valueOnTensorClass (T * S) = χ.valueOnTensorClass T * χ.valueOnTensorClass S := by
   induction T using Quotient.inductionOn with | h T =>
   induction S using Quotient.inductionOn with | h S =>
@@ -80,7 +82,7 @@ theorem valueOnTensorClass_mul (χ : Character) (T S : TensorClass) :
   exact χ.map_product T.coeff S.coeff
 
 /-- Additivity is unchanged on passing to tensor classes. -/
-theorem valueOnTensorClass_add (χ : Character) (T S : TensorClass) :
+theorem valueOnTensorClass_add (χ : (Character K)) (T S : (TensorClass K)) :
     χ.valueOnTensorClass (T + S) = χ.valueOnTensorClass T + χ.valueOnTensorClass S := by
   induction T using Quotient.inductionOn with | h T =>
   induction S using Quotient.inductionOn with | h S =>
@@ -91,24 +93,24 @@ theorem valueOnTensorClass_add (χ : Character) (T S : TensorClass) :
   exact χ.value_sumTensor T.coeff S.coeff
 
 /-- A coefficient-level character descends to a normalized semiring homomorphism. -/
-def toTensorClassHom (χ : Character) : TensorClass →+* ℝ where
+def toTensorClassHom (χ : (Character K)) : (TensorClass K) →+* ℝ where
   toFun := χ.valueOnTensorClass
   map_zero' := χ.valueOnTensorClass_zero
   map_one' := χ.valueOnTensorClass_one
   map_add' := χ.valueOnTensorClass_add
   map_mul' := χ.valueOnTensorClass_mul
 
-theorem toTensorClassHom_monotone (χ : Character) : Monotone χ.toTensorClassHom :=
+theorem toTensorClassHom_monotone (χ : (Character K)) : Monotone χ.toTensorClassHom :=
   χ.valueOnTensorClass_monotone
 
-@[simp] theorem toTensorClassHom_classOf (χ : Character)
+@[simp] theorem toTensorClassHom_classOf (χ : (Character K))
     {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]
-    (T : Tensor ℂ X Y Z) : χ.toTensorClassHom (classOf T) = χ.value T :=
+    (T : Tensor K X Y Z) : χ.toTensorClassHom (classOf T) = χ.value T :=
   χ.valueOnTensorClass_classOf T
 
 /-- A monotone semiring homomorphism on tensor classes gives a character on all
 finite coefficient tensors. Normalization follows from preservation of `0` and `1`. -/
-def ofTensorClassHom (φ : TensorClass →+* ℝ) (hφ : Monotone φ) : Character where
+def ofTensorClassHom (φ : (TensorClass K) →+* ℝ) (hφ : Monotone φ) : (Character K) where
   value := fun T => φ (classOf T)
   nonneg := by
     intro X Y Z hX hY hZ T
@@ -131,14 +133,14 @@ def ofTensorClassHom (φ : TensorClass →+* ℝ) (hφ : Monotone φ) : Characte
     apply hφ
     exact (classOf_le_iff _ _).mpr ⟨A, B, C, rfl⟩
 
-@[simp] theorem ofTensorClassHom_value (φ : TensorClass →+* ℝ) (hφ : Monotone φ)
+@[simp] theorem ofTensorClassHom_value (φ : (TensorClass K) →+* ℝ) (hφ : Monotone φ)
     {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]
-    (T : Tensor ℂ X Y Z) : (ofTensorClassHom φ hφ).value T = φ (classOf T) := rfl
+    (T : Tensor K X Y Z) : (ofTensorClassHom φ hφ).value T = φ (classOf T) := rfl
 
 /-- Equality of all coefficient-level values determines a character. -/
-@[ext] theorem ext {χ ψ : Character}
+@[ext] theorem ext {χ ψ : (Character K)}
     (h : ∀ {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]
-      (T : Tensor ℂ X Y Z), χ.value T = ψ.value T) : χ = ψ := by
+      (T : Tensor K X Y Z), χ.value T = ψ.value T) : χ = ψ := by
   cases χ
   cases ψ
   congr
@@ -146,7 +148,7 @@ def ofTensorClassHom (φ : TensorClass →+* ℝ) (hφ : Monotone φ) : Characte
   exact h T
 
 /-- Descending and then lifting recovers the original coefficient-level character. -/
-@[simp] theorem ofTensorClassHom_toTensorClassHom (χ : Character) :
+@[simp] theorem ofTensorClassHom_toTensorClassHom (χ : (Character K)) :
     ofTensorClassHom χ.toTensorClassHom χ.toTensorClassHom_monotone = χ := by
   apply ext
   intro X Y Z hX hY hZ T
@@ -154,7 +156,7 @@ def ofTensorClassHom (φ : TensorClass →+* ℝ) (hφ : Monotone φ) : Characte
 
 /-- Lifting and then descending recovers the original semiring homomorphism. -/
 @[simp] theorem toTensorClassHom_ofTensorClassHom
-    (φ : TensorClass →+* ℝ) (hφ : Monotone φ) :
+    (φ : (TensorClass K) →+* ℝ) (hφ : Monotone φ) :
     (ofTensorClassHom φ hφ).toTensorClassHom = φ := by
   apply RingHom.ext
   intro T
@@ -163,7 +165,7 @@ def ofTensorClassHom (φ : TensorClass →+* ℝ) (hφ : Monotone φ) : Characte
   rw [classOf_coeff]
 
 /-- Concrete characters are exactly monotone real-valued tensor semiring homomorphisms. -/
-def tensorClassHomEquiv : Character ≃ {φ : TensorClass →+* ℝ // Monotone φ} where
+def tensorClassHomEquiv : (Character K) ≃ {φ : (TensorClass K) →+* ℝ // Monotone φ} where
   toFun χ := ⟨χ.toTensorClassHom, χ.toTensorClassHom_monotone⟩
   invFun φ := ofTensorClassHom φ.1 φ.2
   left_inv := ofTensorClassHom_toTensorClassHom

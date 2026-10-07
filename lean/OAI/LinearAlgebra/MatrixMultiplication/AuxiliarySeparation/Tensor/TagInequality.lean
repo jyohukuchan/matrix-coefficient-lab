@@ -23,24 +23,26 @@ open scoped BigOperators Classical
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K] [IsAlgClosed K]
+
 variable {s : ℕ} {X Y Z : Type}
   [Fintype X] [Fintype Y] [Fintype Z]
 
 /-- A word prescribes one branch tensor at each tensor-product position. -/
-def branchWordTensor (B : Fin s → Tensor ℂ X Y Z) {n : ℕ} (w : Fin n → Fin s) :
-    Tensor ℂ (Fin n → X) (Fin n → Y) (Fin n → Z) :=
+def branchWordTensor (B : Fin s → Tensor K X Y Z) {n : ℕ} (w : Fin n → Fin s) :
+    Tensor K (Fin n → X) (Fin n → Y) (Fin n → Z) :=
   fun x y z => ∏ i, B (w i) (x i) (y i) (z i)
 
 /-- The canonical branch word tensor evaluates multiplicatively. -/
-theorem Character.value_branchWordTensor (χ : Character)
-    (B : Fin s → Tensor ℂ X Y Z) {n : ℕ} (w : Fin n → Fin s) :
+theorem Character.value_branchWordTensor (χ : (Character K))
+    (B : Fin s → Tensor K X Y Z) {n : ℕ} (w : Fin n → Fin s) :
     χ.value (branchWordTensor B w) = ∏ i, χ.value (B (w i)) := by
   induction n with
   | zero =>
       have hzero : branchWordTensor B w = Tensor.pullback
           (Equiv.equivPUnit (Fin 0 → X))
           (Equiv.equivPUnit (Fin 0 → Y))
-          (Equiv.equivPUnit (Fin 0 → Z)) unitTensor := by
+          (Equiv.equivPUnit (Fin 0 → Z)) (unitTensor (K := K)) := by
         funext x y z
         simp [branchWordTensor, Tensor.pullback, unitTensor]
       rw [hzero, χ.value_reindex, χ.map_one]
@@ -58,8 +60,8 @@ theorem Character.value_branchWordTensor (χ : Character)
       rfl
 
 /-- All words of an exact type have the same character value. -/
-theorem Character.value_exact_branchWordTensor (χ : Character)
-    (B : Fin s → Tensor ℂ X Y Z) (counts : Fin s → ℕ) (w : ExactWords counts) :
+theorem Character.value_exact_branchWordTensor (χ : (Character K))
+    (B : Fin s → Tensor K X Y Z) (counts : Fin s → ℕ) (w : ExactWords counts) :
     χ.value (branchWordTensor B w.val) = ∏ a, χ.value (B a) ^ counts a := by
   rw [χ.value_branchWordTensor,
     ← Fintype.prod_fiberwise' w.val (fun a => χ.value (B a))]
@@ -78,7 +80,7 @@ def typeWordCoordinate (counts : Fin s → ℕ)
 omit [Fintype X] [Fintype Y] [Fintype Z] in
 /-- Restricting both split legs to one exact type produces a shared-first
 tensor whose branches are precisely the prescribed branch products. -/
-theorem exactType_power_pullback (B : Fin s → Tensor ℂ X Y Z)
+theorem exactType_power_pullback (B : Fin s → Tensor K X Y Z)
     (counts : Fin s → ℕ)
     (e : Fin (Fintype.card (ExactWords counts)) ≃ ExactWords counts) :
     Tensor.pullback id (typeWordCoordinate counts e) (typeWordCoordinate counts e)
@@ -98,8 +100,8 @@ theorem exactType_power_pullback (B : Fin s → Tensor ℂ X Y Z)
     simp [hi]
 
 /-- The exact-type restriction never exceeds the source power in character. -/
-theorem Character.exactType_value_le_power (χ : Character)
-    (B : Fin s → Tensor ℂ X Y Z) (counts : Fin s → ℕ)
+theorem Character.exactType_value_le_power (χ : (Character K))
+    (B : Fin s → Tensor K X Y Z) (counts : Fin s → ℕ)
     (e : Fin (Fintype.card (ExactWords counts)) ≃ ExactWords counts) :
     χ.value (sharedFirstTensor (fun h => branchWordTensor B (e h).val)) ≤
       χ.value (sharedFirstTensor B) ^ (∑ a, counts a) := by
@@ -108,20 +110,20 @@ theorem Character.exactType_value_le_power (χ : Character)
 
 /-- The finite separation construction and exact-type restriction give the
 integral inequality, with no assumed character comparison. -/
-theorem Character.integral_type_comparison (χ : Character)
-    (B : Fin s → Tensor ℂ X Y Z) (counts : Fin s → ℕ) :
+theorem Character.integral_type_comparison (χ : (Character K))
+    (B : Fin s → Tensor K X Y Z) (counts : Fin s → ℕ) :
     (Fintype.card (ExactWords counts) : ℝ) ^ χ.pX *
         ∏ a, χ.value (B a) ^ counts a ≤
-      5 * χ.value (sharedFirstTensor B) ^ (∑ a, counts a) := by
+      6 * χ.value (sharedFirstTensor B) ^ (∑ a, counts a) := by
   let M := Fintype.card (ExactWords counts)
   let e : Fin M ≃ ExactWords counts := (Fintype.equivFin _).symm
-  let W : Fin M → Tensor ℂ (Fin (∑ a, counts a) → X)
+  let W : Fin M → Tensor K (Fin (∑ a, counts a) → X)
       (Fin (∑ a, counts a) → Y) (Fin (∑ a, counts a) → Z) :=
     fun h => branchWordTensor B (e h).val
   have hM : 0 < M := by
     simpa only [M, Fintype.card_eq_nat_card] using exactWords_card_pos counts
   have hsep : ((M : ℝ) * ∏ a, χ.value (B a) ^ counts a) * (M : ℝ) ^ χ.pX ≤
-      5 * (M : ℝ) * χ.value (sharedFirstTensor W) := by
+      6 * (M : ℝ) * χ.value (sharedFirstTensor W) := by
     simpa only [W, χ.value_exact_branchWordTensor, Finset.sum_const,
       Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] using
       χ.finiteSeparation_bound hM W
@@ -130,11 +132,11 @@ theorem Character.integral_type_comparison (χ : Character)
     χ.exactType_value_le_power B counts e
   have hcancel : (M : ℝ) *
       ((M : ℝ) ^ χ.pX * ∏ a, χ.value (B a) ^ counts a) ≤
-        (M : ℝ) * (5 * χ.value (sharedFirstTensor B) ^ (∑ a, counts a)) := by
+        (M : ℝ) * (6 * χ.value (sharedFirstTensor B) ^ (∑ a, counts a)) := by
     calc
       _ = ((M : ℝ) * ∏ a, χ.value (B a) ^ counts a) * (M : ℝ) ^ χ.pX := by ring
-      _ ≤ 5 * (M : ℝ) * χ.value (sharedFirstTensor W) := hsep
-      _ ≤ 5 * (M : ℝ) * χ.value (sharedFirstTensor B) ^ (∑ a, counts a) :=
+      _ ≤ 6 * (M : ℝ) * χ.value (sharedFirstTensor W) := hsep
+      _ ≤ 6 * (M : ℝ) * χ.value (sharedFirstTensor B) ^ (∑ a, counts a) :=
         mul_le_mul_of_nonneg_left hsource (by positivity)
       _ = _ := by ring
   have hbound := (mul_le_mul_iff_right₀ (Nat.cast_pos.mpr hM : (0 : ℝ) < M)).mp hcancel
@@ -142,7 +144,7 @@ theorem Character.integral_type_comparison (χ : Character)
 
 omit [Fintype X] [Fintype Y] [Fintype Z] in
 /-- A nonzero branch remains visible in the tensor with a shared first leg. -/
-theorem sharedFirstTensor_ne_zero_of_branch (B : Fin s → Tensor ℂ X Y Z)
+theorem sharedFirstTensor_ne_zero_of_branch (B : Fin s → Tensor K X Y Z)
     (a : Fin s) (ha : B a ≠ 0) : sharedFirstTensor B ≠ 0 := by
   intro h
   apply ha
@@ -153,8 +155,8 @@ theorem sharedFirstTensor_ne_zero_of_branch (B : Fin s → Tensor ℂ X Y Z)
 /-- The actual shared-input tensor tag inequality, including probability laws
 with zero coordinates. The branch labels are disjoint on the second and third
 legs, while the first coordinate is shared. -/
-theorem Character.sharedFirst_tag (χ : Character)
-    (q : FiniteLaw (Fin s)) (B : Fin s → Tensor ℂ X Y Z)
+theorem Character.sharedFirst_tag (χ : (Character K))
+    (q : FiniteLaw (Fin s)) (B : Fin s → Tensor K X Y Z)
     (hB : ∀ a, B a ≠ 0) :
     Real.exp (χ.pX * finiteEntropy q.mass) *
         ∏ a, χ.value (B a) ^ q.mass a ≤ χ.value (sharedFirstTensor B) := by
@@ -171,8 +173,8 @@ theorem Character.sharedFirst_tag (χ : Character)
   simpa only [Fintype.card_eq_nat_card] using χ.integral_type_comparison B counts
 
 /-- The logarithmic form of the actual tensor tag inequality. -/
-theorem Character.log_sharedFirst_tag (χ : Character)
-    (q : FiniteLaw (Fin s)) (B : Fin s → Tensor ℂ X Y Z)
+theorem Character.log_sharedFirst_tag (χ : (Character K))
+    (q : FiniteLaw (Fin s)) (B : Fin s → Tensor K X Y Z)
     (hB : ∀ a, B a ≠ 0) :
     χ.pX * finiteEntropy q.mass + ∑ a, q.mass a * Real.log (χ.value (B a)) ≤
       Real.log (χ.value (sharedFirstTensor B)) := by
@@ -194,8 +196,8 @@ variable {U V : Fin s → Type} [∀ a, Fintype (U a)] [∀ a, Fintype (V a)]
 
 /-- Branches may have different second- and third-leg dimensions. Padding
 those spaces preserves their character values and the shared-input tensor. -/
-theorem Character.sharedFirstDependent_tag (χ : Character)
-    (q : FiniteLaw (Fin s)) (B : ∀ a, Tensor ℂ X (U a) (V a))
+theorem Character.sharedFirstDependent_tag (χ : (Character K))
+    (q : FiniteLaw (Fin s)) (B : ∀ a, Tensor K X (U a) (V a))
     (hB : ∀ a, B a ≠ 0) :
     Real.exp (χ.pX * finiteEntropy q.mass) *
         ∏ a, χ.value (B a) ^ q.mass a ≤ χ.value (sharedFirstDependentTensor B) := by
@@ -204,8 +206,8 @@ theorem Character.sharedFirstDependent_tag (χ : Character)
       (fun a => paddedSharedBranch_ne_zero B a (hB a))
 
 /-- The logarithmic tag inequality for branches with varying dimensions. -/
-theorem Character.log_sharedFirstDependent_tag (χ : Character)
-    (q : FiniteLaw (Fin s)) (B : ∀ a, Tensor ℂ X (U a) (V a))
+theorem Character.log_sharedFirstDependent_tag (χ : (Character K))
+    (q : FiniteLaw (Fin s)) (B : ∀ a, Tensor K X (U a) (V a))
     (hB : ∀ a, B a ≠ 0) :
     χ.pX * finiteEntropy q.mass + ∑ a, q.mass a * Real.log (χ.value (B a)) ≤
       Real.log (χ.value (sharedFirstDependentTensor B)) := by

@@ -16,11 +16,13 @@ open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation.TensorSemiring
 
+variable {K : Type*} [Field K]
+
 variable {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
 
 private theorem classOf_directSum_reindex {ι κ : Type*}
     [Fintype ι] [Fintype κ] [DecidableEq ι] [DecidableEq κ]
-    (T : κ → Tensor ℂ X Y Z) (e : ι ≃ κ) :
+    (T : κ → Tensor K X Y Z) (e : ι ≃ κ) :
     classOf (Tensor.directSum (fun i => T (e i))) = classOf (Tensor.directSum T) := by
   apply classOf_eq_of_reindex (Equiv.prodCongr e (Equiv.refl X))
     (Equiv.prodCongr e (Equiv.refl Y)) (Equiv.prodCongr e (Equiv.refl Z))
@@ -29,7 +31,7 @@ private theorem classOf_directSum_reindex {ι κ : Type*}
 
 private theorem classOf_directSum_option {ι : Type*} [Fintype ι] [di : DecidableEq ι]
     [dopt : DecidableEq (Option ι)]
-    (T : Option ι → Tensor ℂ X Y Z) :
+    (T : Option ι → Tensor K X Y Z) :
     classOf (Tensor.directSum T) =
       classOf (T none) + classOf (Tensor.directSum (fun i => T (some i))) := by
   rw [← classOf_sum]
@@ -45,13 +47,13 @@ private theorem classOf_directSum_option {ι : Type*} [Fintype ι] [di : Decidab
 
 /-- Passing to tensor classes converts every finite block direct sum to a sum. -/
 theorem classOf_directSum {ι : Type*} [Fintype ι] [dec : DecidableEq ι]
-    (T : ι → Tensor ℂ X Y Z) :
+    (T : ι → Tensor K X Y Z) :
     classOf (Tensor.directSum T) = ∑ i, classOf (T i) := by
   have hdec : dec = (fun a b => Classical.propDecidable (a = b)) := Subsingleton.elim _ _
   subst dec
   classical
   refine Fintype.induction_empty_option
-    (P := fun ι _ => ∀ T : ι → Tensor ℂ X Y Z,
+    (P := fun ι _ => ∀ T : ι → Tensor K X Y Z,
       classOf (Tensor.directSum T) = ∑ i, classOf (T i)) ?_ ?_ ?_ ι T
   · intro α β _ e ih S
     let : Fintype α := Fintype.ofEquiv β e.symm

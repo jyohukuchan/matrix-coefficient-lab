@@ -16,6 +16,8 @@ character-growth assumptions remain explicit in the final implications.
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 open MatrixMultiplication.Foundation
 
 /-- Rounding strictly down works at integers too: use `ceil x - 1`. -/
@@ -78,9 +80,9 @@ theorem exponent_le_of_integer_rounding_of_pos {ν τ : ℝ} (hν : 0 < ν)
 bound. The detecting character is allowed to depend on both `d` and `k`. -/
 theorem exponent_le_of_detecting_characters {ν τ : ℝ} (hτ : 0 ≤ τ)
     (detect : ∀ d : ℕ, 2 ≤ d → ∀ k : ℕ, (k : ℝ) < (d : ℝ) ^ ν →
-      ∃ χ : Character, (k : ℝ) ≤ χ.value (Tensor.matrixMultiplication d d d))
-    (bound : ∀ χ : Character, ∀ d : ℕ, 2 ≤ d →
-      χ.value (Tensor.matrixMultiplication d d d) ≤ (d : ℝ) ^ τ) :
+      ∃ χ : (Character K), (k : ℝ) ≤ χ.value ((matrixMultiplicationTensor (K := K)) d d d))
+    (bound : ∀ χ : (Character K), ∀ d : ℕ, 2 ≤ d →
+      χ.value ((matrixMultiplicationTensor (K := K)) d d d) ≤ (d : ℝ) ^ τ) :
     ν ≤ τ := by
   apply exponent_le_of_integer_rounding hτ
   intro d hd
@@ -93,12 +95,12 @@ theorem exponent_le_of_detecting_characters {ν τ : ℝ} (hτ : 0 ≤ τ)
 /-- The character growth bound can be supplied as a uniform bound on its
 exponent sum, together with the matrix-value identity. -/
 theorem exponent_le_of_detecting_character_exponents {ν τ : ℝ} (hτ : 0 ≤ τ)
-    (exponentSum : Character → ℝ)
-    (value : ∀ χ : Character, ∀ d : ℕ, 2 ≤ d →
-      χ.value (Tensor.matrixMultiplication d d d) = (d : ℝ) ^ exponentSum χ)
-    (upper : ∀ χ : Character, exponentSum χ ≤ τ)
+    (exponentSum : (Character K) → ℝ)
+    (value : ∀ χ : (Character K), ∀ d : ℕ, 2 ≤ d →
+      χ.value ((matrixMultiplicationTensor (K := K)) d d d) = (d : ℝ) ^ exponentSum χ)
+    (upper : ∀ χ : (Character K), exponentSum χ ≤ τ)
     (detect : ∀ d : ℕ, 2 ≤ d → ∀ k : ℕ, (k : ℝ) < (d : ℝ) ^ ν →
-      ∃ χ : Character, (k : ℝ) ≤ χ.value (Tensor.matrixMultiplication d d d)) :
+      ∃ χ : (Character K), (k : ℝ) ≤ χ.value ((matrixMultiplicationTensor (K := K)) d d d)) :
     ν ≤ τ := by
   apply exponent_le_of_detecting_characters hτ detect
   intro χ d hd
@@ -110,11 +112,11 @@ theorem exponent_le_of_detecting_character_exponents {ν τ : ℝ} (hτ : 0 ≤ 
 inputs visible rather than incorporated into the definition of `ν`. -/
 theorem exactRankExponent_le_nine_quarters_of_characters
     (detect : ∀ d : ℕ, 2 ≤ d → ∀ k : ℕ,
-      (k : ℝ) < (d : ℝ) ^ exactRankExponent →
-      ∃ χ : Character, (k : ℝ) ≤ χ.value (Tensor.matrixMultiplication d d d))
-    (bound : ∀ χ : Character, ∀ d : ℕ, 2 ≤ d →
-      χ.value (Tensor.matrixMultiplication d d d) ≤ (d : ℝ) ^ (9 / 4 : ℝ)) :
-    exactRankExponent ≤ 9 / 4 :=
+      (k : ℝ) < (d : ℝ) ^ (exactRankExponent K) →
+      ∃ χ : (Character K), (k : ℝ) ≤ χ.value ((matrixMultiplicationTensor (K := K)) d d d))
+    (bound : ∀ χ : (Character K), ∀ d : ℕ, 2 ≤ d →
+      χ.value ((matrixMultiplicationTensor (K := K)) d d d) ≤ (d : ℝ) ^ (9 / 4 : ℝ)) :
+    (exactRankExponent K) ≤ 9 / 4 :=
   exponent_le_of_detecting_characters (by norm_num) detect bound
 
 end MatrixMultiplication.AuxiliarySeparation

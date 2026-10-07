@@ -21,11 +21,13 @@ open scoped BigOperators
 namespace MatrixMultiplication.AuxiliarySeparation
 namespace Character
 
-variable (χ : Character)
+variable {K : Type*} [Field K]
+
+variable (χ : Character K)
 variable {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]
 
 /-- Scalar multiplication is a restriction, including when the scalar is zero. -/
-theorem value_scale_le (c : ℂ) (T : Tensor ℂ X Y Z) :
+theorem value_scale_le (c : K) (T : Tensor K X Y Z) :
     χ.value (fun x y z => c * T x y z) ≤ χ.value T := by
   classical
   have heq : Tensor.restrict
@@ -41,14 +43,14 @@ theorem value_scale_le (c : ℂ) (T : Tensor ℂ X Y Z) :
     (fun z' z => if z = z' then 1 else 0)
 
 /-- Nonzero scalar multiplication preserves a character. -/
-theorem value_scale (c : ℂ) (hc : c ≠ 0) (T : Tensor ℂ X Y Z) :
+theorem value_scale (c : K) (hc : c ≠ 0) (T : Tensor K X Y Z) :
     χ.value (fun x y z => c * T x y z) = χ.value T := by
   apply le_antisymm (χ.value_scale_le c T)
   have h := χ.value_scale_le c⁻¹ (fun x y z => c * T x y z)
   simpa only [← mul_assoc, inv_mul_cancel₀ hc, one_mul] using h
 
 /-- Adding tensors is a restriction of their independent direct sum. -/
-theorem value_sum_le {ι : Type} [Fintype ι] (T : ι → Tensor ℂ X Y Z) :
+theorem value_sum_le {ι : Type} [Fintype ι] (T : ι → Tensor K X Y Z) :
     χ.value (fun x y z => ∑ i, T i x y z) ≤ ∑ i, χ.value (T i) := by
   classical
   have heq : Tensor.restrict
@@ -64,12 +66,12 @@ theorem value_sum_le {ι : Type} [Fintype ι] (T : ι → Tensor ℂ X Y Z) :
 
 /-- Exact interpolation bounds any polynomial coefficient by the sum of the
 character values of finitely many evaluation tensors. -/
-theorem value_coefficient_le (P : Tensor (Polynomial ℂ) X Y Z) (d D : ℕ)
+theorem value_coefficient_le [Infinite K] (P : Tensor (Polynomial K) X Y Z) (d D : ℕ)
     (hdegree : ∀ x y z, (P x y z).degree ≤ D) :
     χ.value (fun x y z => (P x y z).coeff d) ≤
       ∑ i : Fin (D + 1), χ.value (fun x y z => (P x y z).eval (interpolationNode D i)) := by
   classical
-  let w : Fin (D + 1) → ℂ := fun i =>
+  let w : Fin (D + 1) → K := fun i =>
     (Lagrange.basis Finset.univ (interpolationNode D) i).coeff d
   have heq : (fun x y z => (P x y z).coeff d) =
       fun x y z => ∑ i : Fin (D + 1), w i * (P x y z).eval (interpolationNode D i) := by
@@ -86,10 +88,10 @@ theorem value_coefficient_le (P : Tensor (Polynomial ℂ) X Y Z) (d D : ℕ)
 
 /-- A uniform bound on nonzero evaluations bounds the leading tensor.  The
 proof uses tensor powers and removes their linear interpolation overhead. -/
-theorem value_le_of_polynomialApproximation
-    {U : Tensor ℂ X Y Z} {r d D : ℕ}
+theorem value_le_of_polynomialApproximation [Infinite K]
+    {U : Tensor K X Y Z} {r d D : ℕ}
     (A : Tensor.PolynomialApproximation U r d D) {b : ℝ} (hb : 0 ≤ b)
-    (hbound : ∀ t : ℂ, t ≠ 0 →
+    (hbound : ∀ t : K, t ≠ 0 →
       χ.value (fun x y z => (A.polynomial x y z).eval t) ≤ b) :
     χ.value U ≤ b := by
   apply le_of_pow_le_linear_mul_pow (K := (D : ℝ)) hb
@@ -125,12 +127,12 @@ theorem value_le_of_polynomialApproximation
       ring
 
 omit [Fintype Z] in
-private theorem exists_rankAtMost (T : Tensor ℂ X Y Z) :
+private theorem exists_rankAtMost (T : Tensor K X Y Z) :
     ∃ r : ℕ, Tensor.RankAtMost T r := by
   classical
-  let a : X × Y → X → ℂ := fun p x => if p.1 = x then 1 else 0
-  let b : X × Y → Y → ℂ := fun p y => if p.2 = y then 1 else 0
-  let c : X × Y → Z → ℂ := fun p z => T p.1 p.2 z
+  let a : X × Y → X → K := fun p x => if p.1 = x then 1 else 0
+  let b : X × Y → Y → K := fun p y => if p.2 = y then 1 else 0
+  let c : X × Y → Z → K := fun p z => T p.1 p.2 z
   have heq : T = fun x y z => ∑ p, Tensor.rankOne (a p) (b p) (c p) x y z := by
     funext x y z
     simp [Tensor.rankOne, a, b, c, Fintype.sum_prod_type, ite_mul, mul_ite]
@@ -138,9 +140,9 @@ private theorem exists_rankAtMost (T : Tensor ℂ X Y Z) :
 
 /-- The character axioms imply monotonicity under polynomial degeneration.
 Continuity of the character is neither assumed nor used. -/
-theorem value_polynomialRestrictionDegeneration_le
+theorem value_polynomialRestrictionDegeneration_le [Infinite K]
     {X' Y' Z' : Type} [Fintype X'] [Fintype Y'] [Fintype Z']
-    {T : Tensor ℂ X Y Z} {U : Tensor ℂ X' Y' Z'} {k Lx Ly Lz : ℕ}
+    {T : Tensor K X Y Z} {U : Tensor K X' Y' Z'} {k Lx Ly Lz : ℕ}
     (L : Tensor.PolynomialRestrictionDegeneration T U k Lx Ly Lz) :
     χ.value U ≤ χ.value T := by
   obtain ⟨r, hr⟩ := exists_rankAtMost T

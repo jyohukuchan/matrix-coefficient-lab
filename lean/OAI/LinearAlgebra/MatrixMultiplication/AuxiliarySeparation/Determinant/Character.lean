@@ -23,9 +23,11 @@ open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation.DeterminantFiltration
 
+variable {K : Type*} [Field K]
+
 /-- The two graded blocks, padded with zeros in common coordinate spaces. -/
 def branch (d e : ℕ) (n : Fin 2) :
-    Tensor ℂ (Fin (d + 1)) (Index e) (Index (d + e))
+    Tensor K (Fin (d + 1)) (Index e) (Index (d + e))
   | i, .inl j, .inl k => if n = 0 then if i.val + j.val = k.val then 1 else 0 else 0
   | i, .inr j, .inr k => if n = 1 then if i.val + j.val = k.val then 1 else 0 else 0
   | _, _, _ => 0
@@ -61,10 +63,10 @@ namespace Character
 
 open DeterminantFiltration
 
-variable (χ : Character)
+variable (χ : (Character K))
 
 theorem value_determinant_branch_zero (d e : ℕ) :
-    χ.value (branch d e 0) = χ.value (convolution (d + 1) (e + 2)) := by
+    χ.value (branch d e 0) = χ.value ((convolution (K := K)) (d + 1) (e + 2)) := by
   let fz : Fin ((d + 1) + (e + 2) - 1) → Index (d + e) :=
     fun k => .inl (Fin.cast (by omega) k)
   have hfz : Function.Injective fz := by
@@ -81,13 +83,13 @@ theorem value_determinant_branch_zero (d e : ℕ) :
   have hv := χ.value_eq_pullback_of_support (branch d e 0) id Sum.inl fz
     Function.injective_id Sum.inl_injective hfz hs
   have ht : Tensor.pullback id Sum.inl fz (branch d e 0) =
-      convolution (d + 1) (e + 2) := by
+      (convolution (K := K)) (d + 1) (e + 2) := by
     funext i j k
     simp [Tensor.pullback, branch, fz, convolution]
   simpa only [ht] using hv
 
 theorem value_determinant_branch_one (d e : ℕ) :
-    χ.value (branch d e 1) = χ.value (convolution (d + 1) e) := by
+    χ.value (branch d e 1) = χ.value ((convolution (K := K)) (d + 1) e) := by
   let fz : Fin ((d + 1) + e - 1) → Index (d + e) :=
     fun k => .inr (Fin.cast (by omega) k)
   have hfz : Function.Injective fz := by
@@ -104,20 +106,20 @@ theorem value_determinant_branch_one (d e : ℕ) :
   have hv := χ.value_eq_pullback_of_support (branch d e 1) id Sum.inr fz
     Function.injective_id Sum.inr_injective hfz hs
   have ht : Tensor.pullback id Sum.inr fz (branch d e 1) =
-      convolution (d + 1) e := by
+      (convolution (K := K)) (d + 1) e := by
     funext i j k
     simp [Tensor.pullback, branch, fz, convolution]
   simpa only [ht] using hv
 
 private theorem value_bool_dot :
-    χ.value (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := ℂ) Bool))) =
+    χ.value (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := K) Bool))) =
       (2 : ℝ) ^ χ.pX := by
   have hv := χ.value_reindex
-    (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := ℂ) Bool)))
+    (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := K) Bool)))
     (Equiv.refl Unit) finTwoEquiv finTwoEquiv
   have ht : Tensor.pullback (Equiv.refl Unit) finTwoEquiv finTwoEquiv
-      (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := ℂ) Bool))) =
-        Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := ℂ) (Fin 2))) := by
+      (Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := K) Bool))) =
+        Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := K) (Fin 2))) := by
     funext i j k
     simp [Tensor.pullback, Tensor.cyclic, Tensor.dotPairing]
   rw [ht] at hv
@@ -126,7 +128,7 @@ private theorem value_bool_dot :
 /-- The auxiliary dot product is charged once, on the actual source tensor. -/
 theorem value_determinant_source_le (d e : ℕ) :
     χ.value (sourceTensor d e) ≤
-      (2 : ℝ) ^ χ.pX * χ.value (convolution (d + 1) (e + 1)) := by
+      (2 : ℝ) ^ χ.pX * χ.value ((convolution (K := K)) (d + 1) (e + 1)) := by
   rw [sourceTensor_product]
   apply (χ.value_pullback_le _ _ _ _).trans_eq
   rw [χ.map_product, χ.value_bool_dot]
@@ -135,7 +137,7 @@ theorem value_determinant_source_le (d e : ℕ) :
 /-- Actual basis-change and degeneration certificates give this comparison. -/
 theorem value_determinant_graded_le (d e : ℕ) :
     χ.value (gradedTensor d e) ≤
-      (2 : ℝ) ^ χ.pX * χ.value (convolution (d + 1) (e + 1)) := by
+      (2 : ℝ) ^ χ.pX * χ.value ((convolution (K := K)) (d + 1) (e + 1)) := by
   calc
     χ.value (gradedTensor d e) ≤ χ.value (adaptedTensor d e) :=
       χ.value_polynomialRestrictionDegeneration_le (degeneration d e)
@@ -149,9 +151,9 @@ theorem value_determinant_graded_le (d e : ℕ) :
 theorem convolution_concavity_tag_dims (d e : ℕ) (he : 0 < e)
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     Real.exp (χ.pX * Real.binEntropy q) *
-        χ.value (convolution (d + 1) (e + 2)) ^ q *
-        χ.value (convolution (d + 1) e) ^ (1 - q) ≤
-      (2 : ℝ) ^ χ.pX * χ.value (convolution (d + 1) (e + 1)) := by
+        χ.value ((convolution (K := K)) (d + 1) (e + 2)) ^ q *
+        χ.value ((convolution (K := K)) (d + 1) e) ^ (1 - q) ≤
+      (2 : ℝ) ^ χ.pX * χ.value ((convolution (K := K)) (d + 1) (e + 1)) := by
   have ht := χ.sharedFirst_tag (binaryLaw q hq₀ hq₁) (branch d e)
     (branch_ne_zero d e he)
   rw [χ.value_sharedFirstTensor_eq_sum (branch d e)
@@ -166,9 +168,9 @@ theorem convolution_concavity_tag_dims (d e : ℕ) (he : 0 < e)
 theorem convolution_concavity_tag (a b : ℕ) (ha : 0 < a) (hb : 2 ≤ b)
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     Real.exp (χ.pX * Real.binEntropy q) *
-        χ.value (convolution a (b + 1)) ^ q *
-        χ.value (convolution a (b - 1)) ^ (1 - q) ≤
-      (2 : ℝ) ^ χ.pX * χ.value (convolution a b) := by
+        χ.value ((convolution (K := K)) a (b + 1)) ^ q *
+        χ.value ((convolution (K := K)) a (b - 1)) ^ (1 - q) ≤
+      (2 : ℝ) ^ χ.pX * χ.value ((convolution (K := K)) a b) := by
   obtain ⟨d, rfl⟩ : ∃ d, a = d + 1 := ⟨a - 1, by omega⟩
   obtain ⟨e, rfl, he⟩ : ∃ e, b = e + 1 ∧ 0 < e := ⟨b - 1, by omega, by omega⟩
   simpa [Nat.add_assoc] using χ.convolution_concavity_tag_dims d e he q hq₀ hq₁

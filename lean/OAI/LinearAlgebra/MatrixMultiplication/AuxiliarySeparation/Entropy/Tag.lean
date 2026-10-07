@@ -22,6 +22,8 @@ open scoped BigOperators Topology
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 variable {A : Type*} [Fintype A] [DecidableEq A]
 
 /-- The character contribution of all words of one prescribed type. -/
@@ -182,34 +184,34 @@ variable {I X Y Z : Type} [Fintype I] [DecidableEq I]
 /-- For a character, nonzero tensors supply all positivity needed by the
 entropy limit. The only quantitative premise is the finite integral-type
 comparison with the paper's fixed loss five. -/
-theorem log_tag_of_integral_type_comparison (χ : Character)
-    (q : FiniteLaw I) (T : Tensor ℂ X Y Z)
-    (B : ∀ a, Tensor ℂ (BX a) (BY a) (BZ a)) (p : ℝ)
+theorem log_tag_of_integral_type_comparison (χ : (Character K))
+    (q : FiniteLaw I) (T : Tensor K X Y Z)
+    (B : ∀ a, Tensor K (BX a) (BY a) (BZ a)) (p : ℝ)
     (hT : T ≠ 0) (hB : ∀ a, B a ≠ 0)
     (hfinite : ∀ counts : I → ℕ, 0 < ∑ a, counts a →
       (Fintype.card (ExactWords counts) : ℝ) ^ p *
           ∏ a, χ.value (B a) ^ counts a ≤
-        5 * χ.value T ^ (∑ a, counts a)) :
+        6 * χ.value T ^ (∑ a, counts a)) :
     p * finiteEntropy q.mass + ∑ a, q.mass a * Real.log (χ.value (B a)) ≤
       Real.log (χ.value T) :=
   MatrixMultiplication.AuxiliarySeparation.log_tag_of_integral_bounds q (fun a => χ.value (B a)) p
-    (χ.value T) 5 (fun a => lt_of_lt_of_le zero_lt_one (χ.one_le_value (hB a)))
+    (χ.value T) 6 (fun a => lt_of_lt_of_le zero_lt_one (χ.one_le_value (hB a)))
     (lt_of_lt_of_le zero_lt_one (χ.one_le_value hT)) (by norm_num) hfinite
 
 /-- The entropy-weighted tag bound, once the finite matched-type tensor
 comparison has been established. -/
-theorem tag_of_integral_type_comparison (χ : Character)
-    (q : FiniteLaw I) (T : Tensor ℂ X Y Z)
-    (B : ∀ a, Tensor ℂ (BX a) (BY a) (BZ a)) (p : ℝ)
+theorem tag_of_integral_type_comparison (χ : (Character K))
+    (q : FiniteLaw I) (T : Tensor K X Y Z)
+    (B : ∀ a, Tensor K (BX a) (BY a) (BZ a)) (p : ℝ)
     (hT : T ≠ 0) (hB : ∀ a, B a ≠ 0)
     (hfinite : ∀ counts : I → ℕ, 0 < ∑ a, counts a →
       (Fintype.card (ExactWords counts) : ℝ) ^ p *
           ∏ a, χ.value (B a) ^ counts a ≤
-        5 * χ.value T ^ (∑ a, counts a)) :
+        6 * χ.value T ^ (∑ a, counts a)) :
     Real.exp (p * finiteEntropy q.mass) * ∏ a, χ.value (B a) ^ q.mass a ≤
       χ.value T :=
   MatrixMultiplication.AuxiliarySeparation.tag_of_integral_bounds q (fun a => χ.value (B a)) p
-    (χ.value T) 5 (fun a => lt_of_lt_of_le zero_lt_one (χ.one_le_value (hB a)))
+    (χ.value T) 6 (fun a => lt_of_lt_of_le zero_lt_one (χ.one_le_value (hB a)))
     (lt_of_lt_of_le zero_lt_one (χ.one_le_value hT)) (by norm_num) hfinite
 
 end Character

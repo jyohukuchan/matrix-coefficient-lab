@@ -14,8 +14,10 @@ polynomial constructions bound the sum of their dot-product exponents by
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 /-- The polynomial inequalities bound the actual exact-rank exponent. -/
-theorem exactRankExponent_le_nine_quarters : exactRankExponent ≤ (9 : ℝ) / 4 := by
+theorem exactRankExponent_le_nine_quarters : (exactRankExponent K) ≤ (9 : ℝ) / 4 := by
   apply exactRankExponent_le_nine_quarters_of_characters
   · intro d hd k hk
     exact exists_detecting_character hd hk

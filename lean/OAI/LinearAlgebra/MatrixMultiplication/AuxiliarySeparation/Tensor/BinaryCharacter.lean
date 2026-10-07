@@ -17,17 +17,19 @@ open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation.Character
 
+variable {K : Type*} [Field K]
+
 /-- A character is additive on binary direct sums with arbitrary finite
 coordinate types. -/
-theorem value_sumTensor (χ : Character)
+theorem value_sumTensor (χ : (Character K))
     {X Y Z U V W : Type}
     [Fintype X] [Fintype Y] [Fintype Z]
     [Fintype U] [Fintype V] [Fintype W]
-    (T : Tensor ℂ X Y Z) (S : Tensor ℂ U V W) :
+    (T : Tensor K X Y Z) (S : Tensor K U V W) :
     χ.value (sumTensor T S) = χ.value T + χ.value S := by
   classical
   let family : (b : Bool) →
-      Tensor ℂ (bif b then U else X) (bif b then V else Y) (bif b then W else Z)
+      Tensor K (bif b then U else X) (bif b then V else Y) (bif b then W else Z)
     | false => T
     | true => S
   let : ∀ b : Bool, Fintype (bif b then U else X) :=

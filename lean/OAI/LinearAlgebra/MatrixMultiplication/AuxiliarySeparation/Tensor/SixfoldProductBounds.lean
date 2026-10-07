@@ -13,17 +13,19 @@ the product by the sixth power of its size.
 -/
 
 namespace MatrixMultiplication.AuxiliarySeparation
+
+variable {K : Type*} [Field K]
 namespace Character
 
 open MatrixMultiplication.Foundation
 
-variable (χ : Character)
+variable (χ : (Character K))
 variable {X Y Z U V W : Type}
 variable [Fintype X] [Fintype Y] [Fintype Z]
 variable [Fintype U] [Fintype V] [Fintype W]
 
 /-- Taking the product over all six leg orders preserves tensor multiplication. -/
-theorem sixfoldProduct_product (T : Tensor ℂ X Y Z) (S : Tensor ℂ U V W) :
+theorem sixfoldProduct_product (T : Tensor K X Y Z) (S : Tensor K U V W) :
     χ.sixfoldProduct (Tensor.product T S) = χ.sixfoldProduct T * χ.sixfoldProduct S := by
   unfold sixfoldProduct
   change χ.value (Tensor.product T S) *
@@ -36,12 +38,12 @@ theorem sixfoldProduct_product (T : Tensor ℂ X Y Z) (S : Tensor ℂ U V W) :
   ring
 
 /-- All six factors of the symmetrized product are nonnegative. -/
-theorem sixfoldProduct_nonneg (T : Tensor ℂ X Y Z) : 0 ≤ χ.sixfoldProduct T := by
+theorem sixfoldProduct_nonneg (T : Tensor K X Y Z) : 0 ≤ χ.sixfoldProduct T := by
   exact mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg
     (χ.nonneg T) (χ.nonneg _)) (χ.nonneg _)) (χ.nonneg _)) (χ.nonneg _)) (χ.nonneg _)
 
 /-- Every nonzero tensor has symmetrized character product at least one. -/
-theorem one_le_sixfoldProduct {T : Tensor ℂ X Y Z} (hT : T ≠ 0) :
+theorem one_le_sixfoldProduct {T : Tensor K X Y Z} (hT : T ≠ 0) :
     1 ≤ χ.sixfoldProduct T := by
   classical
   obtain ⟨x, hx⟩ := Function.ne_iff.mp hT
@@ -69,7 +71,7 @@ theorem one_le_sixfoldProduct {T : Tensor ℂ X Y Z} (hT : T ≠ 0) :
       (one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le h0 h1) h2) h3) h4) h5
 
 /-- In particular, the sixfold product of a nonzero tensor is positive. -/
-theorem sixfoldProduct_pos {T : Tensor ℂ X Y Z} (hT : T ≠ 0) :
+theorem sixfoldProduct_pos {T : Tensor K X Y Z} (hT : T ≠ 0) :
     0 < χ.sixfoldProduct T :=
   zero_lt_one.trans_le (χ.one_le_sixfoldProduct hT)
 
@@ -85,7 +87,7 @@ private theorem rankAtMost_swap12 {K X Y Z : Type*} [CommSemiring K]
   ring
 
 /-- A rank decomposition bounds each of the six character factors. -/
-theorem sixfoldProduct_le_rank {T : Tensor ℂ X Y Z} {r : ℕ}
+theorem sixfoldProduct_le_rank {T : Tensor K X Y Z} {r : ℕ}
     (h : Tensor.RankAtMost T r) : χ.sixfoldProduct T ≤ (r : ℝ) ^ 6 := by
   have h0 := χ.value_le_rank h
   have h1 := χ.value_le_rank h.cyclic

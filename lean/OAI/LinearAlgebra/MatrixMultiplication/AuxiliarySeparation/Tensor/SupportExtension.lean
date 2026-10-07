@@ -12,6 +12,8 @@ therefore have the same value on the ambient tensor and this smaller tensor.
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 open MatrixMultiplication.Foundation
 open scoped Classical
 
@@ -21,7 +23,7 @@ variable [Fintype X'] [Fintype Y'] [Fintype Z']
 
 omit [Fintype X'] [Fintype Y'] [Fintype Z'] in
 /-- Support in embedded coordinate sets reconstructs the tensor by zero extension. -/
-theorem tensor_eq_extendByZero_pullback (T : Tensor ℂ X' Y' Z')
+theorem tensor_eq_extendByZero_pullback (T : Tensor K X' Y' Z')
     (fx : X → X') (fy : Y → Y') (fz : Z → Z')
     (hx : Function.Injective fx) (hy : Function.Injective fy)
     (hz : Function.Injective fz)
@@ -61,7 +63,7 @@ theorem tensor_eq_extendByZero_pullback (T : Tensor ℂ X' Y' Z')
 namespace Character
 
 /-- A character ignores ambient coordinates outside a tensor's support. -/
-theorem value_eq_pullback_of_support (χ : Character) (T : Tensor ℂ X' Y' Z')
+theorem value_eq_pullback_of_support (χ : (Character K)) (T : Tensor K X' Y' Z')
     (fx : X → X') (fy : Y → Y') (fz : Z → Z')
     (hx : Function.Injective fx) (hy : Function.Injective fy)
     (hz : Function.Injective fz)

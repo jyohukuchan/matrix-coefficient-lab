@@ -23,7 +23,9 @@ open MatrixMultiplication.Foundation
 
 namespace MatrixMultiplication.AuxiliarySeparation.Character
 
-variable (χ : Character)
+variable {K : Type*} [Field K]
+
+variable (χ : (Character K))
 
 /-- All six permuted characters have the same mean singleton-leg exponent. -/
 theorem permutedCharacter_meanExponent (i : Fin 6) :
@@ -39,14 +41,14 @@ theorem sum_permutedCharacter_pX_mean :
 
 /-- All six factors associated to a positive-size polynomial tensor are positive. -/
 theorem permutedCharacter_convolution_pos {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
-    (i : Fin 6) : 0 < (χ.permutedCharacter i).value (convolution a b) :=
+    (i : Fin 6) : 0 < (χ.permutedCharacter i).value ((convolution (K := K)) a b) :=
   (χ.permutedCharacter i).value_convolution_pos ha hb
 
 /-- Exchanging the two output-side positions reorders the six convolution factors. -/
 theorem prod_permutedCharacter_swapped_convolution (a b : ℕ) :
     (∏ i : Fin 6, (χ.permutedCharacter i).value
-      (fun x z y => convolution a b x y z)) =
-    ∏ i : Fin 6, (χ.permutedCharacter i).value (convolution a b) := by
+      (fun x z y => (convolution (K := K)) a b x y z)) =
+    ∏ i : Fin 6, (χ.permutedCharacter i).value ((convolution (K := K)) a b) := by
   rw [χ.prod_permutedCharacter_value, χ.prod_permutedCharacter_value]
   exact χ.sixfoldProduct_swap23 _
 
@@ -56,9 +58,9 @@ theorem convolutionProfile_concave {a b : ℕ} (ht : 0 < χ.meanExponent)
     χ.convolutionProfile a (b - 1) + χ.convolutionProfile a (b + 1) ≤
       2 * χ.convolutionProfile a b := by
   have h := finite_product_concavity
-    (fun i : Fin 6 => (χ.permutedCharacter i).value (convolution a b))
-    (fun i : Fin 6 => (χ.permutedCharacter i).value (convolution a (b + 1)))
-    (fun i : Fin 6 => (χ.permutedCharacter i).value (convolution a (b - 1)))
+    (fun i : Fin 6 => (χ.permutedCharacter i).value ((convolution (K := K)) a b))
+    (fun i : Fin 6 => (χ.permutedCharacter i).value ((convolution (K := K)) a (b + 1)))
+    (fun i : Fin 6 => (χ.permutedCharacter i).value ((convolution (K := K)) a (b - 1)))
     (fun i : Fin 6 => (χ.permutedCharacter i).pX)
     (mul_pos (by norm_num : (0 : ℝ) < 6) ht) χ.sum_permutedCharacter_pX_mean
     (fun i => χ.permutedCharacter_convolution_pos ha (by omega) i)
@@ -75,15 +77,15 @@ theorem convolutionProfile_concave {a b : ℕ} (ht : 0 < χ.meanExponent)
 theorem convolutionProfile_tripling {a h : ℕ} (ht : 0 < χ.meanExponent)
     (ha : 0 < a) (hh : 0 < h) :
     3 * χ.convolutionProfile a h ≤ χ.convolutionProfile a (3 * h + a - 1) := by
-  have hsw : (fun i s r => convolution a h i r s) ≠ 0 := by
+  have hsw : (fun i s r => (convolution (K := K)) a h i r s) ≠ 0 := by
     intro hz
     apply convolution_nonzero ha hh
     exact congrArg
-      (fun T : Tensor ℂ (Fin a) (Fin (a + h - 1)) (Fin h) => fun i j k => T i k j) hz
+      (fun T : Tensor K (Fin a) (Fin (a + h - 1)) (Fin h) => fun i j k => T i k j) hz
   have h := finite_product_tripling
-    (fun i : Fin 6 => (χ.permutedCharacter i).value (convolution a (3 * h + a - 1)))
-    (fun i : Fin 6 => (χ.permutedCharacter i).value (convolution a h))
-    (fun i : Fin 6 => (χ.permutedCharacter i).value (fun x z y => convolution a h x y z))
+    (fun i : Fin 6 => (χ.permutedCharacter i).value ((convolution (K := K)) a (3 * h + a - 1)))
+    (fun i : Fin 6 => (χ.permutedCharacter i).value ((convolution (K := K)) a h))
+    (fun i : Fin 6 => (χ.permutedCharacter i).value (fun x z y => (convolution (K := K)) a h x y z))
     (fun i : Fin 6 => (χ.permutedCharacter i).pX)
     (mul_pos (by norm_num : (0 : ℝ) < 6) ht) χ.sum_permutedCharacter_pX_mean
     (fun i => χ.permutedCharacter_convolution_pos ha (by omega) i)

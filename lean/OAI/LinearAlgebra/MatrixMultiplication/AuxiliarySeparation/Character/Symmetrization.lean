@@ -17,17 +17,19 @@ noncomputable section
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 namespace Character
 
 open MatrixMultiplication.Foundation
 
-variable (χ : Character)
+variable (χ : (Character K))
 variable {X Y Z X' Y' Z' : Type}
 variable [Fintype X] [Fintype Y] [Fintype Z]
 variable [Fintype X'] [Fintype Y'] [Fintype Z']
 
 /-- The product of character values in the six orders of possibly different legs. -/
-def sixfoldProduct (T : Tensor ℂ X Y Z) : ℝ :=
+def sixfoldProduct (T : Tensor K X Y Z) : ℝ :=
   χ.value T *
     χ.value (fun y z x => T x y z) *
     χ.value (fun z x y => T x y z) *
@@ -36,25 +38,25 @@ def sixfoldProduct (T : Tensor ℂ X Y Z) : ℝ :=
     χ.value (fun y x z => T x y z)
 
 /-- Cycling the legs permutes the six factors. -/
-theorem sixfoldProduct_cyclic (T : Tensor ℂ X Y Z) :
+theorem sixfoldProduct_cyclic (T : Tensor K X Y Z) :
     χ.sixfoldProduct (fun y z x => T x y z) = χ.sixfoldProduct T := by
   dsimp [sixfoldProduct]
   ring
 
 /-- Exchanging the first two legs permutes the six factors. -/
-theorem sixfoldProduct_swap12 (T : Tensor ℂ X Y Z) :
+theorem sixfoldProduct_swap12 (T : Tensor K X Y Z) :
     χ.sixfoldProduct (fun y x z => T x y z) = χ.sixfoldProduct T := by
   dsimp [sixfoldProduct]
   ring
 
 /-- The leg exchange used by the middle convolution branch preserves the product. -/
-theorem sixfoldProduct_swap23 (T : Tensor ℂ X Y Z) :
+theorem sixfoldProduct_swap23 (T : Tensor K X Y Z) :
     χ.sixfoldProduct (fun x z y => T x y z) = χ.sixfoldProduct T := by
   dsimp [sixfoldProduct]
   ring
 
 /-- Changing coordinates separately on the legs preserves the sixfold product. -/
-theorem sixfoldProduct_reindex (T : Tensor ℂ X Y Z)
+theorem sixfoldProduct_reindex (T : Tensor K X Y Z)
     (ex : X' ≃ X) (ey : Y' ≃ Y) (ez : Z' ≃ Z) :
     χ.sixfoldProduct (Tensor.pullback ex ey ez T) = χ.sixfoldProduct T := by
   unfold sixfoldProduct
@@ -79,34 +81,34 @@ theorem sixfoldProduct_reindex (T : Tensor ℂ X Y Z)
 
 /-- Commuting convolution inputs preserves the sixfold character product. -/
 theorem sixfoldProduct_convolution_comm (a b : ℕ) :
-    χ.sixfoldProduct (convolution a b) = χ.sixfoldProduct (convolution b a) := by
+    χ.sixfoldProduct ((convolution (K := K)) a b) = χ.sixfoldProduct ((convolution (K := K)) b a) := by
   let e : Fin (a + b - 1) ≃ Fin (b + a - 1) := finCongr (by omega)
   have heq : Tensor.pullback (Equiv.refl (Fin b)) (Equiv.refl (Fin a)) e
-      (convolution b a) = fun j i k => convolution a b i j k := by
+      ((convolution (K := K)) b a) = fun j i k => (convolution (K := K)) a b i j k := by
     funext j i k
     exact (convolution_comm a b i j k).symm
-  have h := χ.sixfoldProduct_reindex (convolution b a)
+  have h := χ.sixfoldProduct_reindex ((convolution (K := K)) b a)
     (Equiv.refl (Fin b)) (Equiv.refl (Fin a)) e
   rw [heq, χ.sixfoldProduct_swap12] at h
   exact h
 
 /-- The Section 5 symmetrized value with mean singleton-leg exponent `t`. -/
-def symmetrizedProfile (t : ℝ) (T : Tensor ℂ X Y Z) : ℝ :=
+def symmetrizedProfile (t : ℝ) (T : Tensor K X Y Z) : ℝ :=
   χ.sixfoldProduct T ^ (1 / (6 * t))
 
-theorem symmetrizedProfile_cyclic (t : ℝ) (T : Tensor ℂ X Y Z) :
+theorem symmetrizedProfile_cyclic (t : ℝ) (T : Tensor K X Y Z) :
     χ.symmetrizedProfile t (fun y z x => T x y z) = χ.symmetrizedProfile t T := by
   exact congrArg (fun s : ℝ => s ^ (1 / (6 * t))) (χ.sixfoldProduct_cyclic T)
 
-theorem symmetrizedProfile_swap12 (t : ℝ) (T : Tensor ℂ X Y Z) :
+theorem symmetrizedProfile_swap12 (t : ℝ) (T : Tensor K X Y Z) :
     χ.symmetrizedProfile t (fun y x z => T x y z) = χ.symmetrizedProfile t T := by
   exact congrArg (fun s : ℝ => s ^ (1 / (6 * t))) (χ.sixfoldProduct_swap12 T)
 
-theorem symmetrizedProfile_swap23 (t : ℝ) (T : Tensor ℂ X Y Z) :
+theorem symmetrizedProfile_swap23 (t : ℝ) (T : Tensor K X Y Z) :
     χ.symmetrizedProfile t (fun x z y => T x y z) = χ.symmetrizedProfile t T := by
   exact congrArg (fun s : ℝ => s ^ (1 / (6 * t))) (χ.sixfoldProduct_swap23 T)
 
-theorem symmetrizedProfile_reindex (t : ℝ) (T : Tensor ℂ X Y Z)
+theorem symmetrizedProfile_reindex (t : ℝ) (T : Tensor K X Y Z)
     (ex : X' ≃ X) (ey : Y' ≃ Y) (ez : Z' ≃ Z) :
     χ.symmetrizedProfile t (Tensor.pullback ex ey ez T) = χ.symmetrizedProfile t T := by
   exact congrArg (fun s : ℝ => s ^ (1 / (6 * t))) (χ.sixfoldProduct_reindex T ex ey ez)

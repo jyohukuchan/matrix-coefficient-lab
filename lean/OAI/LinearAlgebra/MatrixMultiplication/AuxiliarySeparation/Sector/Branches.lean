@@ -20,6 +20,8 @@ open scoped Classical
 
 namespace MatrixMultiplication.AuxiliarySeparation.Sector
 
+variable {K : Type*} [Field K]
+
 /-- Embed the left second-leg interval. -/
 def leftY (a h : ℕ) (r : Fin h) : YIndex a h :=
   ⟨r.val, by have hr := r.isLt; unfold sourceWidth; omega⟩
@@ -86,8 +88,8 @@ theorem rightZ_injective (a h : ℕ) : Function.Injective (rightZ a h) := by
 
 /-- Pulling back the left block gives ordinary convolution. -/
 theorem leftTensor_pullback (a h : ℕ) :
-    Tensor.pullback id (leftY a h) (leftZ a h) (leftTensor a h) =
-      convolution a h := by
+    Tensor.pullback id (leftY a h) (leftZ a h) (leftTensor (K := K) a h) =
+      convolution (K := K) a h := by
   funext i r s
   have hb : LeftBranch a h i.val r.val s.val ↔ i.val + r.val = s.val := by
     constructor
@@ -99,8 +101,8 @@ theorem leftTensor_pullback (a h : ℕ) :
 
 /-- Pulling back the translated right block also gives ordinary convolution. -/
 theorem rightTensor_pullback (a h : ℕ) :
-    Tensor.pullback id (rightY a h) (rightZ a h) (rightTensor a h) =
-      convolution a h := by
+    Tensor.pullback id (rightY a h) (rightZ a h) (rightTensor (K := K) a h) =
+      convolution (K := K) a h := by
   funext i r s
   have hb : RightBranch a h i.val (rightStart a h + r.val)
       (rightStart a h + s.val) ↔ i.val + r.val = s.val := by
@@ -115,14 +117,14 @@ theorem rightTensor_pullback (a h : ℕ) :
 /-- Exchange the two outer convolution legs while retaining the original input
 order in the displayed coefficient equation. -/
 def exchangedConvolution (a h : ℕ) :
-    Tensor ℂ (Fin a) (Fin (a + h - 1)) (Fin h) :=
-  fun i s r => convolution a h i r s
+    Tensor K (Fin a) (Fin (a + h - 1)) (Fin h) :=
+  fun i s r => convolution (K := K) a h i r s
 
 /-- The middle branch is exactly convolution with its last two legs exchanged;
 the first-leg reversal occurs solely in this individual branch identification. -/
 theorem middleTensor_pullback (a h : ℕ) :
-    Tensor.pullback Fin.rev (middleY a h) (middleZ a h) (middleTensor a h) =
-      exchangedConvolution a h := by
+    Tensor.pullback Fin.rev (middleY a h) (middleZ a h) (middleTensor (K := K) a h) =
+      exchangedConvolution (K := K) a h := by
   funext i s r
   have hi := i.isLt
   have hr := r.isLt
@@ -138,7 +140,7 @@ theorem middleTensor_pullback (a h : ℕ) :
 
 /-- All nonzero left-branch coordinates lie in the displayed embeddings. -/
 theorem leftTensor_support (a h : ℕ) (i : Fin a) (j : YIndex a h)
-    (k : ZIndex a h) (hn : leftTensor a h i j k ≠ 0) :
+    (k : ZIndex a h) (hn : leftTensor (K := K) a h i j k ≠ 0) :
     (∃ r, leftY a h r = j) ∧ (∃ s, leftZ a h s = k) := by
   have hb : LeftBranch a h i.val j.val k.val := by
     by_contra hn'
@@ -150,7 +152,7 @@ theorem leftTensor_support (a h : ℕ) (i : Fin a) (j : YIndex a h)
 
 /-- All nonzero right-branch coordinates lie in the translated embeddings. -/
 theorem rightTensor_support (a h : ℕ) (i : Fin a) (j : YIndex a h)
-    (k : ZIndex a h) (hn : rightTensor a h i j k ≠ 0) :
+    (k : ZIndex a h) (hn : rightTensor (K := K) a h i j k ≠ 0) :
     (∃ r, rightY a h r = j) ∧ (∃ s, rightZ a h s = k) := by
   have hb : RightBranch a h i.val j.val k.val := by
     by_contra hn'
@@ -164,7 +166,7 @@ theorem rightTensor_support (a h : ℕ) (i : Fin a) (j : YIndex a h)
 
 /-- All nonzero middle-branch coordinates lie in the exchanged embeddings. -/
 theorem middleTensor_support (a h : ℕ) (i : Fin a) (j : YIndex a h)
-    (k : ZIndex a h) (hn : middleTensor a h i j k ≠ 0) :
+    (k : ZIndex a h) (hn : middleTensor (K := K) a h i j k ≠ 0) :
     (∃ u, Fin.rev u = i) ∧ (∃ s, middleY a h s = j) ∧
       (∃ r, middleZ a h r = k) := by
   have hb : MiddleBranch a h i.val j.val k.val := by
@@ -181,17 +183,17 @@ theorem middleTensor_support (a h : ℕ) (i : Fin a) (j : YIndex a h)
 
 /-- The left block is the zero extension of the ordinary convolution tensor. -/
 theorem leftTensor_eq_extension (a h : ℕ) :
-    leftTensor a h = Tensor.restrict
+    leftTensor (K := K) a h = Tensor.restrict
       (fun x i => if i = x then 1 else 0)
       (fun y r => if leftY a h r = y then 1 else 0)
-      (fun z s => if leftZ a h s = z then 1 else 0) (convolution a h) := by
+      (fun z s => if leftZ a h s = z then 1 else 0) (convolution (K := K) a h) := by
   have hs (i : Fin a) (j : YIndex a h) (k : ZIndex a h)
-      (hn : leftTensor a h i j k ≠ 0) :
+      (hn : leftTensor (K := K) a h i j k ≠ 0) :
       i ∈ Set.range (id : Fin a → Fin a) ∧
         j ∈ Set.range (leftY a h) ∧ k ∈ Set.range (leftZ a h) := by
     exact ⟨⟨i, rfl⟩, leftTensor_support a h i j k hn⟩
   classical
-  have heq := tensor_eq_extendByZero_pullback (leftTensor a h) id (leftY a h) (leftZ a h)
+  have heq := tensor_eq_extendByZero_pullback (leftTensor (K := K) a h) id (leftY a h) (leftZ a h)
     Function.injective_id (leftY_injective a h) (leftZ_injective a h) hs
   rw [leftTensor_pullback] at heq
   convert heq using 1
@@ -199,17 +201,17 @@ theorem leftTensor_eq_extension (a h : ℕ) :
 
 /-- The right block is the zero extension along the translated coordinates. -/
 theorem rightTensor_eq_extension (a h : ℕ) :
-    rightTensor a h = Tensor.restrict
+    rightTensor (K := K) a h = Tensor.restrict
       (fun x i => if i = x then 1 else 0)
       (fun y r => if rightY a h r = y then 1 else 0)
-      (fun z s => if rightZ a h s = z then 1 else 0) (convolution a h) := by
+      (fun z s => if rightZ a h s = z then 1 else 0) (convolution (K := K) a h) := by
   have hs (i : Fin a) (j : YIndex a h) (k : ZIndex a h)
-      (hn : rightTensor a h i j k ≠ 0) :
+      (hn : rightTensor (K := K) a h i j k ≠ 0) :
       i ∈ Set.range (id : Fin a → Fin a) ∧
         j ∈ Set.range (rightY a h) ∧ k ∈ Set.range (rightZ a h) := by
     exact ⟨⟨i, rfl⟩, rightTensor_support a h i j k hn⟩
   classical
-  have heq := tensor_eq_extendByZero_pullback (rightTensor a h) id (rightY a h) (rightZ a h)
+  have heq := tensor_eq_extendByZero_pullback (rightTensor (K := K) a h) id (rightY a h) (rightZ a h)
     Function.injective_id (rightY_injective a h) (rightZ_injective a h) hs
   rw [rightTensor_pullback] at heq
   convert heq using 1
@@ -218,12 +220,12 @@ theorem rightTensor_eq_extension (a h : ℕ) :
 /-- The middle block is the zero extension of the exchanged convolution, with
 one reversible change of basis on its first leg. -/
 theorem middleTensor_eq_extension (a h : ℕ) :
-    middleTensor a h = Tensor.restrict
+    middleTensor (K := K) a h = Tensor.restrict
       (fun x i => if Fin.rev i = x then 1 else 0)
       (fun y s => if middleY a h s = y then 1 else 0)
-      (fun z r => if middleZ a h r = z then 1 else 0) (exchangedConvolution a h) := by
+      (fun z r => if middleZ a h r = z then 1 else 0) (exchangedConvolution (K := K) a h) := by
   classical
-  have heq := tensor_eq_extendByZero_pullback (middleTensor a h) Fin.rev (middleY a h)
+  have heq := tensor_eq_extendByZero_pullback (middleTensor (K := K) a h) Fin.rev (middleY a h)
     (middleZ a h) Fin.rev_injective (middleY_injective a h) (middleZ_injective a h)
     (middleTensor_support a h)
   rw [middleTensor_pullback] at heq
@@ -231,29 +233,29 @@ theorem middleTensor_eq_extension (a h : ℕ) :
   congr 1 <;> funext x i <;> split_ifs <;> rfl
 
 /-- Every character assigns the left branch the value of `C(a,h)`. -/
-theorem value_leftTensor (χ : Character) (a h : ℕ) :
-    χ.value (leftTensor a h) = χ.value (convolution a h) := by
+theorem value_leftTensor (χ : Character K) (a h : ℕ) :
+    χ.value (leftTensor (K := K) a h) = χ.value (convolution (K := K) a h) := by
   rw [leftTensor_eq_extension]
   exact χ.value_extendByZero _ id (leftY a h) (leftZ a h) Function.injective_id
     (leftY_injective a h) (leftZ_injective a h)
 
 /-- Translation of the outer coordinates preserves the right-branch value. -/
-theorem value_rightTensor (χ : Character) (a h : ℕ) :
-    χ.value (rightTensor a h) = χ.value (convolution a h) := by
+theorem value_rightTensor (χ : Character K) (a h : ℕ) :
+    χ.value (rightTensor (K := K) a h) = χ.value (convolution (K := K) a h) := by
   rw [rightTensor_eq_extension]
   exact χ.value_extendByZero _ id (rightY a h) (rightZ a h) Function.injective_id
     (rightY_injective a h) (rightZ_injective a h)
 
 /-- The middle-branch value is the value of the exchanged convolution tensor. -/
-theorem value_middleTensor (χ : Character) (a h : ℕ) :
-    χ.value (middleTensor a h) = χ.value (exchangedConvolution a h) := by
+theorem value_middleTensor (χ : Character K) (a h : ℕ) :
+    χ.value (middleTensor (K := K) a h) = χ.value (exchangedConvolution (K := K) a h) := by
   rw [middleTensor_eq_extension]
   exact χ.value_extendByZero _ Fin.rev (middleY a h) (middleZ a h)
     Fin.rev_injective (middleY_injective a h) (middleZ_injective a h)
 
 /-- Exchanging two tensor legs preserves nonzeroness. -/
 theorem exchangedConvolution_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
-    exchangedConvolution a h ≠ 0 := by
+    exchangedConvolution (K := K) a h ≠ 0 := by
   intro hz
   apply convolution_nonzero ha hh
   funext i r s
@@ -261,7 +263,7 @@ theorem exchangedConvolution_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
 
 /-- The left retained branch is nonzero in every positive size. -/
 theorem leftTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
-    leftTensor a h ≠ 0 := by
+    leftTensor (K := K) a h ≠ 0 := by
   intro hz
   have hp := leftTensor_pullback a h
   rw [hz] at hp
@@ -269,7 +271,7 @@ theorem leftTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
 
 /-- The translated right branch is nonzero in every positive size. -/
 theorem rightTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
-    rightTensor a h ≠ 0 := by
+    rightTensor (K := K) a h ≠ 0 := by
   intro hz
   have hp := rightTensor_pullback a h
   rw [hz] at hp
@@ -277,7 +279,7 @@ theorem rightTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
 
 /-- The exchanged middle branch is nonzero in every positive size. -/
 theorem middleTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
-    middleTensor a h ≠ 0 := by
+    middleTensor (K := K) a h ≠ 0 := by
   intro hz
   have hp := middleTensor_pullback a h
   rw [hz] at hp

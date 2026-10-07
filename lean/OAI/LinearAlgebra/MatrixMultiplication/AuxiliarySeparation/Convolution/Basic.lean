@@ -18,31 +18,33 @@ open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
+variable {K : Type*} [Field K]
+
 open MatrixMultiplication.Foundation
 
 /-- The tensor `C(a,b)` of Section 5, in monomial coefficient coordinates. -/
-def convolution (a b : ℕ) : Tensor ℂ (Fin a) (Fin b) (Fin (a + b - 1)) :=
+def convolution (a b : ℕ) : Tensor K (Fin a) (Fin b) (Fin (a + b - 1)) :=
   fun i j k => if i.val + j.val = k.val then 1 else 0
 
 @[simp] theorem convolution_apply (a b : ℕ)
     (i : Fin a) (j : Fin b) (k : Fin (a + b - 1)) :
-    convolution a b i j k = if i.val + j.val = k.val then 1 else 0 := rfl
+    convolution (K := K) a b i j k = if i.val + j.val = k.val then 1 else 0 := rfl
 
 @[simp] theorem convolution_ne_zero_iff {a b : ℕ}
     (i : Fin a) (j : Fin b) (k : Fin (a + b - 1)) :
-    convolution a b i j k ≠ 0 ↔ i.val + j.val = k.val := by
+    convolution (K := K) a b i j k ≠ 0 ↔ i.val + j.val = k.val := by
   simp only [convolution]
   split_ifs <;> simp_all
 
 @[simp] theorem convolution_eq_one_iff {a b : ℕ}
     (i : Fin a) (j : Fin b) (k : Fin (a + b - 1)) :
-    convolution a b i j k = 1 ↔ i.val + j.val = k.val := by
+    convolution (K := K) a b i j k = 1 ↔ i.val + j.val = k.val := by
   simp only [convolution]
   split_ifs <;> simp_all
 
 @[simp] theorem convolution_eq_zero_iff {a b : ℕ}
     (i : Fin a) (j : Fin b) (k : Fin (a + b - 1)) :
-    convolution a b i j k = 0 ↔ i.val + j.val ≠ k.val := by
+    convolution (K := K) a b i j k = 0 ↔ i.val + j.val ≠ k.val := by
   simp only [convolution]
   split_ifs <;> simp_all
 
@@ -51,13 +53,13 @@ def convolutionOutput {a b : ℕ} (i : Fin a) (j : Fin b) : Fin (a + b - 1) :=
   ⟨i.val + j.val, by have hi := i.isLt; have hj := j.isLt; omega⟩
 
 @[simp] theorem convolution_at_output {a b : ℕ} (i : Fin a) (j : Fin b) :
-    convolution a b i j (convolutionOutput i j) = 1 := by
+    convolution (K := K) a b i j (convolutionOutput i j) = 1 := by
   simp [convolutionOutput]
 
 /-- Every output monomial of the expected degree occurs in the product. -/
 theorem convolution_output_supported {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
     (k : Fin (a + b - 1)) :
-    ∃ (i : Fin a) (j : Fin b), convolution a b i j k = 1 := by
+    ∃ (i : Fin a) (j : Fin b), convolution (K := K) a b i j k = 1 := by
   by_cases hk : k.val < a
   · exact ⟨⟨k.val, hk⟩, ⟨0, hb⟩, by simp⟩
   · have hk' := k.isLt
@@ -67,17 +69,17 @@ theorem convolution_output_supported {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
     omega
 
 theorem convolution_nonzero {a b : ℕ} (ha : 0 < a) (hb : 0 < b) :
-    convolution a b ≠ 0 := by
+    convolution (K := K) a b ≠ 0 := by
   intro hz
   have hc := congrFun (congrFun (congrFun hz ⟨0, ha⟩) ⟨0, hb⟩)
     (convolutionOutput ⟨0, ha⟩ ⟨0, hb⟩)
-  change convolution a b ⟨0, ha⟩ ⟨0, hb⟩
+  change convolution (K := K) a b ⟨0, ha⟩ ⟨0, hb⟩
     (convolutionOutput ⟨0, ha⟩ ⟨0, hb⟩) = 0 at hc
   rw [convolution_at_output] at hc
   exact one_ne_zero hc
 
 theorem convolution_nonzero_iff (a b : ℕ) :
-    convolution a b ≠ 0 ↔ 0 < a ∧ 0 < b := by
+    convolution (K := K) a b ≠ 0 ↔ 0 < a ∧ 0 < b := by
   constructor
   · intro h
     constructor
@@ -99,20 +101,20 @@ theorem convolution_nonzero_iff (a b : ℕ) :
 /-- Commuting the two inputs only casts the equal output dimensions. -/
 theorem convolution_comm (a b : ℕ) (i : Fin a) (j : Fin b)
     (k : Fin (a + b - 1)) :
-    convolution a b i j k =
-      convolution b a j i (Fin.cast (by omega) k) := by
+    convolution (K := K) a b i j k =
+      convolution (K := K) b a j i (Fin.cast (by omega) k) := by
   simp only [convolution, Fin.val_cast, Nat.add_comm]
 
 /-- The boundary tensor `C(1,b)` has the coefficient matrix of a dot product. -/
 theorem convolution_one_left (b : ℕ) (i : Fin 1) (j : Fin b)
     (k : Fin (1 + b - 1)) :
-    convolution 1 b i j k = if j.val = k.val then 1 else 0 := by
+    convolution (K := K) 1 b i j k = if j.val = k.val then 1 else 0 := by
   simp [convolution]
 
 /-- The other boundary tensor has the same coordinate identity. -/
 theorem convolution_one_right (a : ℕ) (i : Fin a) (j : Fin 1)
     (k : Fin (a + 1 - 1)) :
-    convolution a 1 i j k = if i.val = k.val then 1 else 0 := by
+    convolution (K := K) a 1 i j k = if i.val = k.val then 1 else 0 := by
   simp [convolution]
 
 /-- Relabel the output of `C(1,b)` by its actual dimension `b`. -/
@@ -129,8 +131,8 @@ def convolutionOneInputEquiv : Unit ≃ Fin 1 where
 /-- `C(1,b)` is the dot-product tensor with the singleton on the first leg. -/
 theorem convolution_one_left_dotPairing (b : ℕ) :
     Tensor.pullback convolutionOneInputEquiv (Equiv.refl (Fin b))
-      (convolutionOneOutputEquiv b) (convolution 1 b) =
-      Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := ℂ) (Fin b))) := by
+      (convolutionOneOutputEquiv b) (convolution (K := K) 1 b) =
+      Tensor.cyclic (Tensor.cyclic (Tensor.dotPairing (K := K) (Fin b))) := by
   funext i j k
   simp [Tensor.pullback, convolutionOneInputEquiv, convolutionOneOutputEquiv,
     Tensor.cyclic, Tensor.dotPairing, convolution, Fin.ext_iff]
@@ -142,16 +144,16 @@ def convolutionRightOneOutputEquiv (a : ℕ) : Fin a ≃ Fin (a + 1 - 1) :=
 /-- `C(a,1)` is the dot-product tensor with the singleton on the second leg. -/
 theorem convolution_one_right_dotPairing (a : ℕ) :
     Tensor.pullback (Equiv.refl (Fin a)) convolutionOneInputEquiv
-      (convolutionRightOneOutputEquiv a) (convolution a 1) =
-      Tensor.cyclic (Tensor.dotPairing (K := ℂ) (Fin a)) := by
+      (convolutionRightOneOutputEquiv a) (convolution (K := K) a 1) =
+      Tensor.cyclic (Tensor.dotPairing (K := K) (Fin a)) := by
   funext i j k
   simp [Tensor.pullback, convolutionOneInputEquiv, convolutionRightOneOutputEquiv,
     Tensor.cyclic, Tensor.dotPairing, convolution, Fin.ext_iff, eq_comm]
 
 /-- Contracting the coefficient tensor computes ordinary finite convolution. -/
-theorem contract_convolution {a b : ℕ} (x : Fin a → ℂ) (y : Fin b → ℂ)
+theorem contract_convolution {a b : ℕ} (x : Fin a → K) (y : Fin b → K)
     (k : Fin (a + b - 1)) :
-    Tensor.contract (convolution a b) x y k =
+    Tensor.contract (convolution (K := K) a b) x y k =
       ∑ i : Fin a, ∑ j : Fin b,
         if i.val + j.val = k.val then x i * y j else 0 := by
   simp [Tensor.contract, convolution, ite_mul]
