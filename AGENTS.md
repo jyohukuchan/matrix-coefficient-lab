@@ -80,9 +80,18 @@ recursion level. Descend all powers with one fixed coefficient algebra.
 - Prefer focused `lake build <module>` checks; once dependencies compile,
   build the final theorem and inspect `#print axioms` for its declaration.
 - Run `bash scripts/check-proof.sh` for the complete public theorem and
-  specification/axiom audit. Only the root coordinator starts Lake builds;
+  specification/dependency/axiom audit. `bash scripts/check-kernel.sh` adds
+  fresh-environment replay using Lean's own kernel. Only the root coordinator
+  starts Lake builds or kernel replay;
   concurrent builds against shared artifacts previously caused contention
   and transient missing-olean errors. Source editing can remain parallel.
+- An isolated audit checkout may reuse verified pinned dependency caches, but
+  must start with no OAI build outputs. Record the exact source commit, compare
+  it before and after compilation, and distinguish this from rebuilding Lean
+  and all dependencies from source. Only the coordinator may run such a build.
+- For finite fields, do not conflate `MatrixAlgorithm.Correct` (equality on
+  field-valued inputs) with formal polynomial equality. Use the separate exact
+  coefficient-rank theorem when explaining the stronger algebraic guarantee.
 
 The user authorizes installing tools needed for this proof. Lean 4.34.1 is
 installed. Use the exact dependency pins recorded in the project manifest;

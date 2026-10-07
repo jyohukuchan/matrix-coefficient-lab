@@ -7,6 +7,9 @@ The user requested three fresh adversarial reviewers. Agents `adversarial_spec`,
 `9bd2a64fa47efe678664b5401b6a8ea6d93238ad` read-only. Their owned reports are
 outside Git at `../adversarial-{spec,proof,repro}-report.md`. The active branch
 is `codex/adversarial-audit`; preserve the completed proof while investigating.
+Private draft PR2: https://github.com/selanavot/matrix-multiplication-all-fields/pull/2.
+All three source reviews are complete and copied to `../adversarial/`.
+See `../ADVERSARIAL.md` for findings and pending mechanical checks.
 
 Root started a clean OAI build in `../adversarial-clean/lean`, a local clone
 detached at that exact commit, with an initially empty project build directory.
@@ -22,7 +25,10 @@ field-valued correctness and differs from formal polynomial equality over
 finite fields. The actual proof uses exact coefficient tensor rank, which
 appears to supply the stronger guarantee. Investigate and document precisely.
 The original build used shared OAI artifacts, so the isolated build is needed.
-No final audit verdict or PR has been issued yet.
+No final mechanical-audit verdict has been issued yet. Expanded audit examples
+and ten axiom guards are drafted but not yet compiled; do not call them passed.
+All ten dependency source revisions and the exact compatibility delta pass
+the new `scripts/verify-dependencies.py` in both canonical and isolated trees.
 
 ## Completed proof checkpoint (before this audit)
 

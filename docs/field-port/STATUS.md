@@ -1,7 +1,9 @@
 # Field-generalization status
 
-Last updated: 2026-10-06. **The requested all-fields proof and verification
-are complete.** There are no remaining Lean proof or audit failures.
+Last updated: 2026-10-06. **The all-fields proof is merged; an additional
+adversarial audit is in progress.** Three fresh source reviews found no proof
+counterexample. Isolated rebuilding and stronger mechanical checks are still
+running; see [ADVERSARIAL.md](ADVERSARIAL.md) and the root handoff note.
 
 ## Result
 

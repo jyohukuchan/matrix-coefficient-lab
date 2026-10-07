@@ -21,6 +21,14 @@ subtraction, and multiplication each cost one; input and constant loads cost
 zero. The admissibility quantifiers remain
 `∀ ε > 0, ∃ C > 0, ∀ n ≥ 1, ∃ P`, with one cost constant for all sizes.
 
+For finite fields this is functional correctness, not formal polynomial
+correctness: `x²=x` over F₂ is the simplest distinction. The separate
+`exactRankExponent_le_nine_quarters_allFields` theorem concerns equality of
+every coefficient of the matrix multiplication tensor. `RankAtMost.map`
+preserves it under arbitrary commutative-semiring homomorphisms. This stronger
+certificate supplies the algebraic bound; do not attribute symbolic semantics
+to the unchanged `Correct` predicate itself.
+
 The primary arithmetic files `Complexity`, `Programs`, `RecursiveBlockPrograms`,
 `Padding`, `LowerBound`, and `Exponent` also remain unchanged. The new
 `SquareAlgorithm F n` is only an abbreviation for the original
@@ -57,9 +65,12 @@ attained. Source review found no specification weakening in either bridge.
 ## Reproduce the final checks
 
 Run `bash scripts/check-proof.sh` from the repository root after bootstrapping
-dependencies. It verifies the unchanged original model and builds
+dependencies. It verifies eleven original files against an immutable baseline,
+checks all ten dependency revisions and the exact compatibility patch, and builds
 `AllFieldsAudit.lean`, which imports the public theorem, checks an arbitrary
-universe and characteristic-2/3/5 examples, retains the complex specialization,
-and checks the original correctness/cost statement. Six guarded axiom checks
+universe and characteristic-2/3/5 examples, an infinite characteristic-two
+rational-function field, the original correctness/cost statement, and an
+expanded exact coefficient-rank witness. Ten guarded axiom checks
 accept exactly `propext`, `Classical.choice`, and `Quot.sound`; any added axiom
-or `sorryAx` causes a build failure. These checks all passed.
+or `sorryAx` causes a build failure. The expanded audit's execution status and
+three fresh adversarial reports are recorded in [ADVERSARIAL.md](ADVERSARIAL.md).

@@ -15,11 +15,11 @@ The field universe is arbitrary. There is no characteristic, finiteness,
 algebraic-closedness, or separability premise on `F`. The original
 `complex_omega_le_nine_quarters` theorem remains as a specialization.
 
-The full public entry point and permanent audit passed on 2026-10-06 with
-Lean 4.34.1. The final audit reports 9437 successful build jobs and checks
-six declarations against exactly `propext`, `Classical.choice`, and
-`Quot.sound`; no `sorryAx` or extra mathematical axiom occurs. See the
-[verification record](docs/field-port/VERIFICATION.md).
+The full public entry point and initial permanent audit passed on 2026-10-06
+with Lean 4.34.1. The initial incremental run reported a successful dependency
+graph of 9437 jobs, including six axiom guards; this did not mean 9437 fresh
+source compilations. See the [verification record](docs/field-port/VERIFICATION.md)
+and the subsequent [adversarial audit](docs/field-port/ADVERSARIAL.md).
 
 ## Review
 
@@ -43,6 +43,8 @@ Install [elan](https://github.com/leanprover/elan), then run from this repositor
 ```sh
 bash scripts/bootstrap.sh
 bash scripts/check-proof.sh
+# Additional replay of all declarations imported by the auxiliary conclusion:
+bash scripts/check-kernel.sh
 ```
 
 The bootstrap script resolves the pinned dependencies and downloads the
@@ -52,17 +54,28 @@ matching Mathlib cache. Mathlib is pinned to
 the included upstream Lean 4.34.1 compatibility patch. Its subsequent
 dirty-dependency warning is expected.
 
-The audit first checks that `Model.lean` is unchanged from the baseline,
-then builds the public theorem, examples over arbitrary universes and
-representative fields, the explicit program-cost statement, and guarded
-axiom checks. Run only one Lake build process at a time. Build caches and
-local dependencies are ignored by Git.
+The audit protects eleven original specification and builder files against
+the immutable baseline commit, verifies dependency revisions and the exact
+allowed patch, then builds the public theorem, arbitrary-universe examples,
+explicit program-cost and coefficient-rank statements, and guarded axiom
+checks. Python 3's standard library and Git are used for dependency validation.
+The kernel script uses Lean's own kernel in a fresh environment; it is not an
+independent kernel implementation. Run only one build or replay process at a
+time. Build caches and local dependencies are ignored by Git.
 
 ## Scope and privacy
 
 This is an asymptotic upper bound in the upstream arithmetic-operation model.
 The project does not establish historical novelty or practical algorithm
 constants, and it does not determine the exact value of the exponent.
+
+Over finite fields, the upstream `Correct` predicate means equality of
+functions on field-valued inputs, which is weaker than formal polynomial
+equality. The proof separately establishes the stronger exact coefficient-
+tensor rank exponent bound. That identity supports the algebraic upper bound
+without exploiting finite-field identities such as `x²=x` over F₂. We have
+not added a symbolic-evaluation correctness predicate to the exported program
+witness. Constants may depend on the field and positive exponent slack.
 
 Work is authorized only in the private
 `selanavot/matrix-multiplication-all-fields` repository. Publication or an
