@@ -2,6 +2,8 @@
 
 This is a focused source fork of [OpenAI's mathematics repository](https://github.com/openai/math), extending its Lean proof of the matrix multiplication exponent bound **ω ≤ 9/4** from the complex numbers to **every field**. The original 9/4 construction and proof are OpenAI's work. This project generalizes the scalar field, supplies the necessary algebraic descent, and keeps the original arithmetic complexity specification.
 
+The extension of OpenAI's proof to arbitrary fields was found and formalized by **consumer-grade GPT-6 Astra and GPT-6.1 Sol**, working under Sela Navot's direction. Lean checked the resulting formal proof; the verification scope is documented below.
+
 The sources are extracted from the `MatrixMultiplication` subtree at OpenAI commit [`adc7f1241b42e322a6451854ab7e4b4c146bf78a`](https://github.com/openai/math/tree/adc7f1241b42e322a6451854ab7e4b4c146bf78a/lean/OAI/LinearAlgebra/MatrixMultiplication), packaged as a standalone Lake project. The preserved tag `openai-baseline-adc7f12` records that subtree before the extension. The accompanying OpenAI preprint is [*An Upper Bound of 9/4 for the Matrix Multiplication Exponent*](https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/preprints/Matrix-Multiplication-Nine-Fourths-October-2-2026/build/paper.tex). See [UPSTREAM.md](UPSTREAM.md) for provenance.
 
 ## Premise and theorem-statement diff
