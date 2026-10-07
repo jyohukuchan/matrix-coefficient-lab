@@ -1,5 +1,31 @@
 # Root coordinator handoff
 
+## Active adversarial audit (2026-10-06)
+
+The user requested three fresh adversarial reviewers. Agents `adversarial_spec`,
+`adversarial_proof`, and `adversarial_repro` are auditing merged proof commit
+`9bd2a64fa47efe678664b5401b6a8ea6d93238ad` read-only. Their owned reports are
+outside Git at `../adversarial-{spec,proof,repro}-report.md`. The active branch
+is `codex/adversarial-audit`; preserve the completed proof while investigating.
+
+Root started a clean OAI build in `../adversarial-clean/lean`, a local clone
+detached at that exact commit, with an initially empty project build directory.
+Only the exact-pinned dependency checkouts/caches are shared. Its log is
+`../adversarial-clean-build.log`. This is a deliberate isolated verification
+exception to the normal canonical-directory rule. Only root starts builds.
+After that build, run bundled `leanchecker --fresh` on AuxiliarySeparation.Main
+to replay all imported declarations in a fresh Lean kernel environment.
+It is not an independent kernel implementation.
+
+Preliminary findings: no proof counterexample; Model.Correct is extensional
+field-valued correctness and differs from formal polynomial equality over
+finite fields. The actual proof uses exact coefficient tensor rank, which
+appears to supply the stronger guarantee. Investigate and document precisely.
+The original build used shared OAI artifacts, so the isolated build is needed.
+No final audit verdict or PR has been issued yet.
+
+## Completed proof checkpoint (before this audit)
+
 The requested proof is complete. Read `../STATUS.md`, `../VERIFICATION.md`,
 `../REVIEW.md`, and repository `AGENTS.md` for the final result and workflow.
 No Lean processes or mathematical proof obligations remain active.
