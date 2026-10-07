@@ -1,0 +1,6 @@
+lean/.lake/
+lean/.olean
+lean/lakefile.olean
+lean/lakefile.olean.trace
+lean/lakefile.ilean
+.DS_Store
