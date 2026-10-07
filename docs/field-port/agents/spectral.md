@@ -7,15 +7,19 @@ not yet verified.
 
 - `lean/OAI/LinearAlgebra/MatrixMultiplication/Arithmetic/FieldDescent.lean`
 - `lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Arithmetic/FieldExtension.lean`
+- `lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Spectrum/Obstruction.lean`
+- `lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Character/Existence.lean`
+- `lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Arithmetic/CharacterRounding.lean`
 - This note. Do not edit other agents' files without coordination.
 
 ## Environment and commands
 
-The initial checkout is `work/openai-math`, branch
-`codex/matrix-multiplication-all-fields`. Temporary focused compilation runs
-from the sibling `work/lean-focus`, with `OAI` symlinked into that checkout.
-The setup agent is preparing a canonical private checkout; await its migration
-notice and update these paths before continuing there.
+Canonical private checkout is
+`/Users/selanavot/Documents/Codex/2026-10-06/ope/work/matrix-multiplication-all-fields`,
+branch `codex/matrix-multiplication-all-fields`. Run all lake commands from
+its `lean/` directory. The old public clone and `work/lean-focus` are now
+read-only references; the old shared-cache symlink invalidated build traces
+when different package paths were used concurrently.
 
 Lean is `leanprover/lean4:v4.34.1`, Mathlib is
 `d13f23b723b8a846827a245b89c10fc7d3f11612`. The fixed-point dependency has the
@@ -61,10 +65,10 @@ polymorphic `F` with only `[Field F]` and finite coordinate-type assumptions;
 no hidden characteristic, closure, or finite-dimension assumptions remain.
 The scratch check is `work/lean-focus/CheckDescent.lean`.
 
-## Drafted next result and latest blocker
+## Verified field-extension exponent comparison
 
-`AuxiliarySeparation.Arithmetic.FieldExtension` is drafted but has not yet
-compiled. It contains:
+`AuxiliarySeparation.Arithmetic.FieldExtension` compiled successfully after
+migration (3103 jobs, no source warnings). It contains:
 
 - `rankAtMost_matrixMultiplication_of_power`: relabel tensor-power coordinates
   to one matrix dimension.
@@ -73,19 +77,70 @@ compiled. It contains:
   prove `ν(F) ≤ log_u(rank_E(T_u))`.
 - `exactRankExponent_le_algebraic_extension`: take the infimum of these block
   bounds to prove `ν(F) ≤ ν(E)` for algebraic `E/F`.
-- `exactRankExponent_le_algebraicClosure`: specialize to arbitrary `F`.
+- `exactRankExponent_le_algebraicClosure`: specialize to arbitrary `F`, giving
+  `exactRankExponent F ≤ exactRankExponent (AlgebraicClosure F)`.
 
-The latest build stopped in the root-owned dependency
-`AuxiliarySeparation/Arithmetic/RankExponent.lean`, before compiling the new
-file. The coordinator has accepted responsibility to fix it immediately:
+The root-owned RankExponent elaboration errors were repaired and compiled.
+Both owned descent files were rebuilt successfully from the canonical
+`lean/` directory after migration (3103 jobs, exit 0). The scratch axioms
+check for FieldExtension has not yet completed: attempts in the retired
+`lean-focus` harness encountered missing dependency object files due to trace
+invalidation. This was not a source/proof failure.
 
-- Lines 106 and 124 use instantiated `(matrixMultiplicationTensor (K := K))`
-  as simp lemmas; the bare definition name is required for unfolding.
-- Line 221 needs explicit `(K := K)` on `exists_exactMatrixRank_lt_rpow`.
+## Verified generic spectral existence
 
-After those fixes, rerun the FieldExtension build and repair its own
-elaboration errors. Inspect `#print axioms` for the closure-exponent theorem,
-then report the exact successful target to the coordinator.
+Root's coordinated canonical build confirmed successful compilation of
+`Spectrum.Obstruction` and `Character.Existence`, after repairing their
+root-owned Scalar dependency. `Arithmetic.CharacterRounding` also compiled
+successfully. `exists_detecting_character` now concludes existence of a
+`Character K` detecting each integer below `d ^ exactRankExponent K`, with
+only `[Field K]`; no infinitude, closedness, or characteristic assumption.
+
+Spectrum/Obstruction has explicit `(K := K)` at rank-lemma applications to
+resolve otherwise-stuck scalar metavariables. The local natural-number rank
+budget is named `budget`, avoiding collision with scalar field `K`.
+
+Build coordination is now centralized at root: **do not start a new lake build
+or lake env lean without coordination**. Multiple early Lake processes raced
+over shared artifacts and oversubscribed resources. All of this agent's
+sessions have finished. Final signature/axioms checks will be run centrally.
+
+## Independent implementation audit
+
+Read the entire two new descent modules and the spectral/Character/rank
+foundations diff against private baseline `d2336fc` (which preserves upstream
+`adc7f1241b42e322a6451854ab7e4b4c146bf78a`). No specification weakness or hidden
+field hypothesis was found:
+
+- `RankAtMost`, `Tensor.power`, and the existing arithmetic specification are
+  unchanged. Generic matrix coefficients retain the identical 0/1 equality
+  predicate; the complex tensor is the original specialization.
+- Projecting two factors in a rank-one decomposition gives exactly dimension
+  squared overhead; `π(e_i*e_j*c(z))` is one base-field third-factor function.
+  The proof does not expand all three factors or require trace/separability.
+- Every coefficient of the one chosen extension-field scheme lies in one
+  finite integral coefficient algebra. This algebra and its basis are fixed
+  before the tensor-power parameter, giving `r^j*d*d`, not `(r*d*d)^j`.
+- The exponent comparison first bounds the actual base-field rank at `u^j`,
+  removes the fixed constant as `j` varies, and only then takes the infimum
+  over `u≥2`. Both the logarithm positivity and inequality direction are valid.
+- `Character K` retains every original normalization, additivity,
+  multiplicativity and actual K-linear restriction-monotonicity axiom.
+  `TensorClass K` still quotients mutual actual restriction; no relation has
+  been weakened or replaced.
+- `rank_natCast` identifies m copies with an m-dimensional diagonal tensor,
+  so integer copies do not collapse in characteristic p. Catalyst bounds
+  retain the same finite tensor throughout and never assume rank additivity
+  or cancellation.
+- Real compactness/fixed-point machinery is unchanged and already generic in
+  its ordered semiring. It uses numerical real states, not scalar-field
+  topology. Finite coordinate presentations use `Fin` while scalar universes
+  remain arbitrary.
+
+No `sorry`, `admit`, or axiom declaration occurs in the new descent files.
+The final closure comparison and detecting-character axioms check is pending
+root's single-process validation; the earlier descent-power check reported
+only `propext`, `Classical.choice`, and `Quot.sound`.
 
 ## Mathematical audit already completed
 

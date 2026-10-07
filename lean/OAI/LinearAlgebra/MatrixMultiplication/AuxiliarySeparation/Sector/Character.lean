@@ -28,16 +28,18 @@ variable {K : Type*} [Field K]
 /-- The actual three retained tensors in their original ambient spaces. -/
 def branchFamily (a h : ℕ) (b : Fin 3) :
     Tensor K (Fin a) (YIndex a h) (ZIndex a h) :=
-  if b = 0 then leftTensor a h else if b = 1 then middleTensor a h else rightTensor a h
+  if b = 0 then leftTensor (K := K) a h
+  else if b = 1 then middleTensor (K := K) a h
+  else rightTensor (K := K) a h
 
 @[simp] theorem branchFamily_zero (a h : ℕ) :
-    branchFamily a h 0 = leftTensor a h := by simp [branchFamily]
+    branchFamily (K := K) a h 0 = leftTensor (K := K) a h := by simp [branchFamily]
 
 @[simp] theorem branchFamily_one (a h : ℕ) :
-    branchFamily a h 1 = middleTensor a h := by simp [branchFamily]
+    branchFamily (K := K) a h 1 = middleTensor (K := K) a h := by simp [branchFamily]
 
 @[simp] theorem branchFamily_two (a h : ℕ) :
-    branchFamily a h 2 = rightTensor a h := by simp [branchFamily]
+    branchFamily (K := K) a h 2 = rightTensor (K := K) a h := by simp [branchFamily]
 
 /-- Label a second-leg coordinate by its interval. -/
 def yLabel (a h : ℕ) (j : YIndex a h) : Fin 3 :=
@@ -49,7 +51,7 @@ def zLabel (a h : ℕ) (k : ZIndex a h) : Fin 3 :=
 
 /-- Every nonzero branch coefficient lies in the two matching labelled sectors. -/
 theorem branchFamily_labels (a h : ℕ) (b : Fin 3) (i : Fin a)
-    (j : YIndex a h) (k : ZIndex a h) (hn : branchFamily a h b i j k ≠ 0) :
+    (j : YIndex a h) (k : ZIndex a h) (hn : branchFamily (K := K) a h b i j k ≠ 0) :
     yLabel a h j = b ∧ zLabel a h k = b := by
   fin_cases b
   · have hb : LeftBranch a h i.val j.val k.val := by
@@ -74,47 +76,47 @@ theorem branchFamily_labels (a h : ℕ) (b : Fin 3) (i : Fin a)
 
 /-- The branch family sums to exactly the retained tensor. -/
 theorem sum_branchFamily (a h : ℕ) :
-    (∑ b : Fin 3, branchFamily a h b) = retained a h := by
+    (∑ b : Fin 3, branchFamily (K := K) a h b) = retained (K := K) a h := by
   simp only [Fin.sum_univ_three, branchFamily_zero, branchFamily_one, branchFamily_two]
-  exact (retained_eq_three_branches a h).symm
+  exact (retained_eq_three_branches (K := K) a h).symm
 
 /-- The character comparison uses the actual polynomial degeneration. -/
-theorem value_retained_le_source (χ : (Character K)) (a h : ℕ) :
-    χ.value (retained a h) ≤ χ.value (source a h) :=
-  χ.value_polynomialRestrictionDegeneration_le (restriction a h)
+theorem value_retained_le_source [Infinite K] (χ : (Character K)) (a h : ℕ) :
+    χ.value (retained (K := K) a h) ≤ χ.value (source (K := K) a h) :=
+  χ.value_polynomialRestrictionDegeneration_le (restriction (K := K) a h)
 
 /-- Both interval labels can be recovered without changing the common first
 input, so the tagged branch tensor has precisely the retained tensor's value. -/
 theorem value_sharedFirst_branchFamily (χ : (Character K)) (a h : ℕ) :
-    χ.value (sharedFirstTensor (branchFamily a h)) = χ.value (retained a h) := by
-  rw [χ.value_sharedFirstTensor_eq_sum (branchFamily a h)
-    (yLabel a h) (zLabel a h) (branchFamily_labels a h), sum_branchFamily]
+    χ.value (sharedFirstTensor (branchFamily (K := K) a h)) = χ.value (retained (K := K) a h) := by
+  rw [χ.value_sharedFirstTensor_eq_sum (branchFamily (K := K) a h)
+    (yLabel a h) (zLabel a h) (branchFamily_labels (K := K) a h), sum_branchFamily]
 
 theorem branchFamily_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h)
-    (b : Fin 3) : branchFamily a h b ≠ 0 := by
+    (b : Fin 3) : branchFamily (K := K) a h b ≠ 0 := by
   fin_cases b
-  · simpa [branchFamily] using leftTensor_nonzero ha hh
-  · simpa [branchFamily] using middleTensor_nonzero ha hh
-  · simpa [branchFamily] using rightTensor_nonzero ha hh
+  · simpa [branchFamily] using leftTensor_nonzero (K := K) ha hh
+  · simpa [branchFamily] using middleTensor_nonzero (K := K) ha hh
+  · simpa [branchFamily] using rightTensor_nonzero (K := K) ha hh
 
 /-- The uniform branch product combines the two outer convolution values. -/
 theorem uniform_branchFamily_product (χ : (Character K)) (a h : ℕ)
     (ha : 0 < a) (hh : 0 < h) :
-    (∏ b, χ.value (branchFamily a h b) ^ (FiniteLaw.uniform (Fin 3)).mass b) =
+    (∏ b, χ.value (branchFamily (K := K) a h b) ^ (FiniteLaw.uniform (Fin 3)).mass b) =
       χ.value ((convolution (K := K)) a h) ^ (2 / 3 : ℝ) *
-        χ.value (exchangedConvolution a h) ^ (1 / 3 : ℝ) := by
+        χ.value (exchangedConvolution (K := K) a h) ^ (1 / 3 : ℝ) := by
   rw [uniformThree_product]
   simp only [branchFamily_zero, branchFamily_one, branchFamily_two,
     value_leftTensor, value_middleTensor, value_rightTensor]
   have hc : 0 < χ.value ((convolution (K := K)) a h) :=
-    lt_of_lt_of_le zero_lt_one (χ.one_le_value (convolution_nonzero ha hh))
+    lt_of_lt_of_le zero_lt_one (χ.one_le_value (convolution_nonzero (K := K) ha hh))
   calc
     χ.value ((convolution (K := K)) a h) ^ (1 / 3 : ℝ) *
-        χ.value (exchangedConvolution a h) ^ (1 / 3 : ℝ) *
+        χ.value (exchangedConvolution (K := K) a h) ^ (1 / 3 : ℝ) *
         χ.value ((convolution (K := K)) a h) ^ (1 / 3 : ℝ) =
       (χ.value ((convolution (K := K)) a h) ^ (1 / 3 : ℝ) *
         χ.value ((convolution (K := K)) a h) ^ (1 / 3 : ℝ)) *
-          χ.value (exchangedConvolution a h) ^ (1 / 3 : ℝ) := by ring
+          χ.value (exchangedConvolution (K := K) a h) ^ (1 / 3 : ℝ) := by ring
     _ = _ := by
       rw [← Real.rpow_add hc]
       norm_num
@@ -122,13 +124,13 @@ theorem uniform_branchFamily_product (χ : (Character K)) (a h : ℕ)
 /-- The per-character three-sector inequality, before multiplication over
 the six tensor-leg permutations. All tensor values are actual convolution
 values, with only the middle branch exchanging its last two legs. -/
-theorem convolution_tripling_tag (χ : (Character K)) (a h : ℕ)
+theorem convolution_tripling_tag [IsAlgClosed K] (χ : (Character K)) (a h : ℕ)
     (ha : 0 < a) (hh : 0 < h) :
     (3 : ℝ) ^ χ.pX * χ.value ((convolution (K := K)) a h) ^ (2 / 3 : ℝ) *
       χ.value (fun i s r => (convolution (K := K)) a h i r s) ^ (1 / 3 : ℝ) ≤
         χ.value ((convolution (K := K)) a (3 * h + a - 1)) := by
   have htag := χ.sharedFirst_tag (FiniteLaw.uniform (Fin 3))
-    (branchFamily a h) (branchFamily_nonzero ha hh)
+    (branchFamily (K := K) a h) (branchFamily_nonzero (K := K) ha hh)
   rw [uniformThree_entropy_factor, uniform_branchFamily_product χ a h ha hh,
     value_sharedFirst_branchFamily] at htag
   have hresult := htag.trans (value_retained_le_source χ a h)

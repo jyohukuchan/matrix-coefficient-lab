@@ -6,7 +6,7 @@ import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Tensor.Charact
 namespace OAI
 
 /-!
-# Detecting characters for complex matrix multiplication
+# Detecting characters for matrix multiplication over any field
 
 This proves Lemma 3.1, including Appendix A. Finite inconsistency would
 produce a positive scalar-gain catalyst, ruled out by the exact-rank exponent.

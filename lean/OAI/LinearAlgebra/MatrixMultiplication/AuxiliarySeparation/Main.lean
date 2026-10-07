@@ -1,5 +1,6 @@
 import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Arithmetic.Exponent
 import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Arithmetic.RankBound
+import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Arithmetic.FieldExtension
 import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Convolution.RankLowerBound
 import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Determinant.Bounds
 import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Growth.Floor
@@ -9,24 +10,35 @@ namespace OAI
 /-!
 # Matrix multiplication via auxiliary separation and polynomial multiplication
 
-Theorem 1.1 gives a uniform arithmetic-operation bound for complex square
+Theorem 1.1 gives a uniform arithmetic-operation bound for square
 matrix multiplication, and consequently an upper bound of `9/4` on its exponent.
-The two conclusions are stated separately in the existing arithmetic model.
+The separation argument is applied over the algebraic closure of the scalar
+field; algebraic-extension rank descent then gives the result over every field.
+The two conclusions use the repository's existing arithmetic model.
 -/
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
-/-- Theorem 1.1: for every positive exponent slack, one constant bounds the cost
-of correct complex matrix multiplication programs at every positive size. -/
-theorem matrix_multiplication_cost_le (ε : ℝ) (hε : 0 < ε) :
-    ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ, 1 ≤ n →
-      ∃ P : Arithmetic.MatrixAlgorithm ℂ n n n,
-        P.Correct ∧ (P.cost : ℝ) ≤ C * (n : ℝ) ^ ((9 : ℝ) / 4 + ε) :=
-  arithmeticComplexity_of_exactRankExponent_le exactRankExponent_le_nine_quarters ε hε
+/-- Algebraic closure and fixed-overhead descent remove the scalar-field
+restriction from the exact-rank exponent bound. -/
+theorem exactRankExponent_le_nine_quarters_allFields (F : Type*) [Field F] :
+    exactRankExponent F ≤ (9 : ℝ) / 4 :=
+  (exactRankExponent_le_algebraicClosure F).trans
+    (exactRankExponent_le_nine_quarters (K := AlgebraicClosure F))
 
-/-- The complex arithmetic matrix multiplication exponent is at most `9/4`. -/
-theorem omega_le_nine_quarters : Arithmetic.omega ℂ ≤ (9 : ℝ) / 4 :=
-  omega_le_exactRankExponent.trans exactRankExponent_le_nine_quarters
+/-- For every positive exponent slack, one constant bounds the cost of correct
+matrix multiplication programs over `F` at every positive size. -/
+theorem matrix_multiplication_cost_le (F : Type*) [Field F] (ε : ℝ) (hε : 0 < ε) :
+    ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ, 1 ≤ n →
+      ∃ P : Arithmetic.MatrixAlgorithm F n n n,
+        P.Correct ∧ (P.cost : ℝ) ≤ C * (n : ℝ) ^ ((9 : ℝ) / 4 + ε) :=
+  arithmeticComplexity_of_exactRankExponent_le
+    (exactRankExponent_le_nine_quarters_allFields F) ε hε
+
+/-- The arithmetic matrix multiplication exponent over every field is at most `9/4`. -/
+theorem omega_le_nine_quarters (F : Type*) [Field F] :
+    Arithmetic.omega F ≤ (9 : ℝ) / 4 :=
+  omega_le_exactRankExponent.trans (exactRankExponent_le_nine_quarters_allFields F)
 
 end MatrixMultiplication.AuxiliarySeparation
 

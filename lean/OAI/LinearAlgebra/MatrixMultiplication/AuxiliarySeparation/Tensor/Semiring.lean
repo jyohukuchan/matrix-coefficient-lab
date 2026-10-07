@@ -466,7 +466,7 @@ private theorem classOf_matrixCoefficients_equiv {A B : Type*}
 
 theorem matrixClass_mul (m n : ℕ) : (matrixClass (K := K)) (m * n) = (matrixClass (K := K)) m * (matrixClass (K := K)) n := by
   let e : Fin (m * n) ≃ Fin m × Fin n := Fintype.equivOfCardEq (by simp)
-  have h := classOf_matrixCoefficients_equiv e
+  have h := classOf_matrixCoefficients_equiv (K := K) e
   change (matrixClass (K := K)) (m * n) = classOf (Tensor.matrixCoefficients (K := K)
     (Fin m × Fin n) (Fin m × Fin n) (Fin m × Fin n)) at h
   rw [h]

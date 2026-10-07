@@ -14,15 +14,26 @@ Read `../STATUS.md` and repository `AGENTS.md` first.
 
 ## Validation and remaining work
 
-Root-owned foundations have not yet compiled. Agent spectral is trying
-`Arithmetic/FieldExtension.lean`, which first builds generic RankExponent.
-Expect missing explicit `(K := K)` arguments in closed theorem applications.
-Repair the first failing foundation before dependent files.
+The complete `AuxiliarySeparation.Main` build succeeded (9053 jobs), including
+all-fields exact-rank, arithmetic cost and `Arithmetic.omega` conclusions.
+All generic algebra, spectral and arithmetic bridge components are checked.
+Independent agent source reviews found no hidden assumptions or weakened
+specification. The public `Main` regression is running (session 10954).
 
-`Entropy/Tag.lean` still has two wrappers specialized to constant5; update
-to6. Then add appropriate infinite/algebraically-closed assumptions to the
-character/profile chain. Final `AuxiliarySeparation/Main.lean` is still the
-old complex theorem and must be updated after components compile.
+`AllFieldsAudit.lean` is drafted with an arbitrary-universe `[Field F]`
+example, fields of characteristics 2/3/5, rational/real/complex examples,
+the original correctness/cost statement, and six `#print axioms` checks.
+It must be built after public Main; convert printed axiom checks to guarded
+checks once output is confirmed. No final axiom claims yet.
+
+The user now explicitly authorizes private PR merges. Agent setup is saving
+the pristine baseline as tag `openai-baseline-adc7f12`. Once all verification
+passes, update documentation and PR1, commit/push, and merge privately.
+
+Only root may start aggregate Lake builds. Multiple concurrent Lake processes
+caused excessive memory use and transient missing-olean errors. All agents
+now use the private canonical checkout's `lean/` directory. Source repair
+remains parallel across owned files.
 
 External one-off scripts `work/port_core.py` and `work/port_remaining.py`
 performed the initial replacements. **Do not rerun them** on modified files;

@@ -1,7 +1,8 @@
 # Field-generalization status
 
-Last updated: 2026-10-06. This is an active implementation, not a completed
-all-fields Lean theorem.
+Last updated: 2026-10-06. The complete all-fields theorem in
+`AuxiliarySeparation.Main` has compiled. Public-entry-point regression and
+final axiom checks are still pending; do not mark the project complete yet.
 
 ## Current specification
 
@@ -51,11 +52,18 @@ compatibility patch. Detailed environment and privacy evidence is in
 
 The following generic targets have compiled with the pinned toolchain:
 
+- `AuxiliarySeparation.Main`: the full chain, including
+  `omega_le_nine_quarters (F : Type*) [Field F]` and the explicit uniform
+  arithmetic-program cost bound. Canonical build succeeded with 9053 jobs.
+- Generic detecting-character existence, determinant and sector character
+  inequalities, and the polynomial-profile/exact-rank conclusion.
 - `Arithmetic.FieldDescent`: finite-algebra rank projection and fixed-overhead
   descent of all tensor powers from every algebraic extension, including
   `AlgebraicClosure F`. No separability or characteristic restriction.
 - `Arithmetic.Growth`: generic exact-rank recursion, padding, and scalar
   arithmetic complexity bounds using the existing program specification.
+- `AuxiliarySeparation.Arithmetic.Exponent`: for every field `K`,
+  `omega K ≤ exactRankExponent K` and the explicit epsilon-complexity bridge.
 - `AuxiliarySeparation.Arithmetic.FieldExtension`: fixed coefficient-algebra
   overhead disappears from tensor-power rank exponents; in particular,
   `exactRankExponent F ≤ exactRankExponent (AlgebraicClosure F)`.
@@ -66,8 +74,19 @@ The following generic targets have compiled with the pinned toolchain:
 - `AuxiliarySeparation.Convolution.Basic`.
 - `AuxiliarySeparation.Determinant.Filtration`, including its basis/kernel.
 - `AuxiliarySeparation.Sector.Degeneration`.
+- `AuxiliarySeparation.Arithmetic.Exponent`: the generic rank-to-arithmetic
+  exponent bridge, using the unchanged arithmetic model.
+- The generic tensor semiring and `Tensor.Characters`, including
+  `Character.Basic`, `Character.Dot`, and character permutation/symmetrization.
+- `Character.FiniteSeparation`, `Entropy.Tag`, and `Tensor.TagInequality`
+  with the constant-six finite bound.
+- All algebra-agent owned convolution, determinant-filtration, and sector
+  algebra targets; see its note for the complete target list.
 
-These are component checks. The final all-fields theorem has not yet compiled.
+The full auxiliary theorem is checked. The public `Main` wrapper and retained
+complex/rectangular results are currently building. `AllFieldsAudit.lean`
+has been drafted for generic-universe, small-characteristic and axiom checks,
+but has not run yet.
 
 ## Source interfaces
 
@@ -85,35 +104,31 @@ These are component checks. The final all-fields theorem has not yet compiled.
 ## Ownership
 
 - Root coordinator: tensor semiring, Character.Basic/Dot/Permutation/
-  Symmetrization/Existence, character-to-semiring infrastructure, spectral
-  obstruction specialization, entropy wrappers, determinant/sector character
-  inequalities, profile and rank-bound conclusion, final theorem and review.
+  Symmetrization, character-to-semiring infrastructure, entropy wrappers,
+  profile and rank-bound conclusion, final theorem and review.
 - `audit_algebra`: Fourier, FiniteProjection, Separation.Basic,
   Polynomial.Interpolation, Character.Degeneration/FiniteSeparation,
   Tensor.TagInequality, Convolution subtree, Determinant algebra files,
-  Sector.Branches/Degeneration.
+  Sector.Branches/Degeneration, and the determinant/sector character
+  inequalities.
 - `audit_spectral`: new `Arithmetic.FieldDescent` and new
-  `AuxiliarySeparation.Arithmetic.FieldExtension`.
+  `AuxiliarySeparation.Arithmetic.FieldExtension`, plus spectral Obstruction,
+  Character.Existence, and Arithmetic.CharacterRounding integration.
 - `audit_extension`: environment/private-repository setup, new primary
   `Arithmetic.Growth`, `AuxiliarySeparation.Arithmetic.Exponent`.
 
 ## Immediate next steps
 
-1. Preserve meaningful progress in the private work branch and update its
-   draft PR as verification advances. The canonical-checkout migration is done.
-2. Compile the generic rank and character foundations; repair elaboration
-   errors before compiling their dependents.
-3. Change the two character entropy wrappers in `Entropy/Tag.lean` from
-   fixed constant 5 to 6 (their underlying real limit lemmas already allow
-   arbitrary positive constants).
-4. Propagate `[Infinite K]` and `[IsAlgClosed K]` only to results that need
-   interpolation and roots of unity.
-5. Compile spectral existence and the profile chain; derive the closed-field
-   rank theorem.
-6. Compile algebraic-extension rank descent and combine with arithmetic
-   conversion for arbitrary fields.
-7. Build the original complex theorem, inspect final theorem axioms, document
-   exact validation commands, commit/push, and create a private PR.
+1. Root alone coordinates Lake. Public `Main` is building in session 10954.
+   Auxiliary Main has succeeded (9053 jobs).
+2. Build `AllFieldsAudit`, inspect final theorem axioms and exact generic type,
+   and make axiom checks into guarded regression checks.
+3. Independent algebra and descent/spectral reviews found no specification
+   weakening or hidden field assumptions; arithmetic model review also passed.
+4. Agent setup is preserving the baseline with tag `openai-baseline-adc7f12`
+   before any private PR merge. The user explicitly authorizes private merges.
+5. Save checked proof, final validation and review guide, update/merge private
+   PR1 after verification. Preserve both baseline and proof checkpoints.
 
 ## Known implementation cautions
 
@@ -123,6 +138,9 @@ These are component checks. The final all-fields theorem has not yet compiled.
   `budget` to avoid shadowing the scalar field.
 - Complex topological degeneration lemmas remain specialized to `ℂ`. The
   generic proof uses polynomial interpolation and does not depend on them.
+- Do not run concurrent Lake build processes against shared artifacts. This
+  caused resource contention and transient missing-olean errors even after
+  the canonical build root was standardized. Root coordinates aggregate builds.
 - Existing upstream comparator files contain intentional `sorry` placeholders;
   they are not proof implementations. The new final theorem must not depend
   on them or introduce new `sorry`/axiom declarations.

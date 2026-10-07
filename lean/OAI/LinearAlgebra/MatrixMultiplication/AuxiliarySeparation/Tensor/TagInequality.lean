@@ -23,7 +23,7 @@ open scoped BigOperators Classical
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
-variable {K : Type*} [Field K] [IsAlgClosed K]
+variable {K : Type*} [Field K]
 
 variable {s : ℕ} {X Y Z : Type}
   [Fintype X] [Fintype Y] [Fintype Z]
@@ -108,6 +108,8 @@ theorem Character.exactType_value_le_power (χ : (Character K))
   rw [← exactType_power_pullback B counts e, ← χ.value_power]
   exact χ.value_pullback_le _ _ _ _
 
+variable [IsAlgClosed K]
+
 /-- The finite separation construction and exact-type restriction give the
 integral inequality, with no assumed character comparison. -/
 theorem Character.integral_type_comparison (χ : (Character K))
@@ -142,7 +144,7 @@ theorem Character.integral_type_comparison (χ : (Character K))
   have hbound := (mul_le_mul_iff_right₀ (Nat.cast_pos.mpr hM : (0 : ℝ) < M)).mp hcancel
   simpa only [M, Fintype.card_eq_nat_card] using hbound
 
-omit [Fintype X] [Fintype Y] [Fintype Z] in
+omit [IsAlgClosed K] [Fintype X] [Fintype Y] [Fintype Z] in
 /-- A nonzero branch remains visible in the tensor with a shared first leg. -/
 theorem sharedFirstTensor_ne_zero_of_branch (B : Fin s → Tensor K X Y Z)
     (a : Fin s) (ha : B a ≠ 0) : sharedFirstTensor B ≠ 0 := by

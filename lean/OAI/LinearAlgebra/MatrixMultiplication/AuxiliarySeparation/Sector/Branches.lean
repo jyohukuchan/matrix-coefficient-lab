@@ -257,7 +257,7 @@ theorem value_middleTensor (χ : Character K) (a h : ℕ) :
 theorem exchangedConvolution_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
     exchangedConvolution (K := K) a h ≠ 0 := by
   intro hz
-  apply convolution_nonzero ha hh
+  apply convolution_nonzero (K := K) ha hh
   funext i r s
   exact congrFun (congrFun (congrFun hz i) s) r
 
@@ -265,7 +265,7 @@ theorem exchangedConvolution_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
 theorem leftTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
     leftTensor (K := K) a h ≠ 0 := by
   intro hz
-  have hp := leftTensor_pullback a h
+  have hp := leftTensor_pullback (K := K) a h
   rw [hz] at hp
   exact convolution_nonzero ha hh hp.symm
 
@@ -273,7 +273,7 @@ theorem leftTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
 theorem rightTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
     rightTensor (K := K) a h ≠ 0 := by
   intro hz
-  have hp := rightTensor_pullback a h
+  have hp := rightTensor_pullback (K := K) a h
   rw [hz] at hp
   exact convolution_nonzero ha hh hp.symm
 
@@ -281,7 +281,7 @@ theorem rightTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
 theorem middleTensor_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h) :
     middleTensor (K := K) a h ≠ 0 := by
   intro hz
-  have hp := middleTensor_pullback a h
+  have hp := middleTensor_pullback (K := K) a h
   rw [hz] at hp
   exact exchangedConvolution_nonzero ha hh hp.symm
 

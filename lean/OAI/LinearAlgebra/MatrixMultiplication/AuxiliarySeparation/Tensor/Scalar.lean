@@ -52,7 +52,7 @@ namespace TensorSemiring
 theorem classOf_scalarTensor_add (m n : ℕ) :
     classOf ((scalarTensor (K := K)) (m + n)) =
       classOf ((scalarTensor (K := K)) m) + classOf ((scalarTensor (K := K)) n) := by
-  have h := classOf_eq_of_reindex _ _ _ (scalarTensor_add_reindex m n)
+  have h := classOf_eq_of_reindex _ _ _ (scalarTensor_add_reindex (K := K) m n)
   exact h.symm.trans (classOf_sum _ _)
 
 @[simp] theorem classOf_scalarTensor_zero :
@@ -78,7 +78,7 @@ theorem classOf_scalarTensor_add (m n : ℕ) :
   | succ r ih =>
       simpa only [Nat.cast_add, Nat.cast_one, Nat.cast_succ,
         classOf_scalarTensor_one, ih] using
-        classOf_scalarTensor_add r 1
+        classOf_scalarTensor_add (K := K) r 1
 
 /-- Exact rank decompositions are precisely restrictions of diagonal tensors. -/
 theorem rankAtMost_iff_isRestriction_scalarTensor

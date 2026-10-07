@@ -31,7 +31,7 @@ theorem exactMatrixRank_pow_le (u j : ℕ) :
   let e : Fin (u ^ j) ≃ (Fin j → Fin u) := Fintype.equivOfCardEq (by simp)
   let f : Fin (u ^ j) × Fin (u ^ j) → Fin j → Fin u × Fin u :=
     fun x i => (e x.1 i, e x.2 i)
-  have h := ((exactMatrixRank_spec u).power j).pullback f f f
+  have h := ((exactMatrixRank_spec (K := K) u).power j).pullback f f f
   have heq : Tensor.pullback f f f (Tensor.power ((matrixMultiplicationTensor (K := K)) u u u) j) =
       (matrixMultiplicationTensor (K := K)) (u ^ j) (u ^ j) (u ^ j) := by
     funext x y z
@@ -96,9 +96,9 @@ theorem catalytic_rank_bound_at_slack {d n budget R : ℕ}
       (n : ℝ) ^ ((exactRankExponent K) / ((exactRankExponent K) + δ)) ≤ budget := by
   let ν := (exactRankExponent K)
   let τ := ν + δ
-  have hν : 0 ≤ ν := (by norm_num : (0 : ℝ) ≤ 2).trans exactRankExponent_lower
+  have hν : 0 ≤ ν := (by norm_num : (0 : ℝ) ≤ 2).trans (exactRankExponent_lower (K := K))
   have hτ : 0 < τ := add_pos_of_nonneg_of_pos hν hδ
-  obtain ⟨u, hu, huR⟩ := exists_exactMatrixRank_lt_rpow
+  obtain ⟨u, hu, huR⟩ := exists_exactMatrixRank_lt_rpow (K := K)
     (show (exactRankExponent K) < τ from lt_add_of_pos_right _ hδ)
   apply le_of_eventually_pow_le_const_mul_pow (C := (u : ℝ) ^ ν * R)
     (Nat.cast_nonneg budget)
@@ -111,13 +111,13 @@ theorem catalytic_rank_bound_at_slack {d n budget R : ℕ}
     (n : ℝ) ^ ((j : ℝ) / τ) ≤ (u : ℝ) * (u : ℝ) ^ l at hf
   have hbudget : (exactMatrixRank K) g ≤ n ^ j := by
     have hpow : ((exactMatrixRank K) g : ℝ) ≤ ((exactMatrixRank K) u : ℝ) ^ l := by
-      exact_mod_cast exactMatrixRank_pow_le u l
+      exact_mod_cast exactMatrixRank_pow_le (K := K) u l
     have hb := hpow.trans hf.1
     exact_mod_cast hb
   have hrank := hbound j hj g hbudget
   have hsize : (n : ℝ) ^ ((j : ℝ) / τ) ≤ (u : ℝ) * g := by
     simpa only [g, Nat.cast_pow] using hf.2
-  have hlow := exactMatrixRank_rpow_lower_of_pos (mul_pos (pow_pos hd j) hg)
+  have hlow := exactMatrixRank_rpow_lower_of_pos (K := K) (mul_pos (pow_pos hd j) hg)
   have hpow_n : ((n : ℝ) ^ (ν / τ)) ^ j =
       ((n : ℝ) ^ ((j : ℝ) / τ)) ^ ν := by
     rw [← Real.rpow_natCast, ← Real.rpow_mul (Nat.cast_nonneg n),
@@ -153,7 +153,7 @@ theorem catalytic_rank_obstruction {d k D R : ℕ} (hd : 0 < d)
       (exactMatrixRank K) (d ^ j * g) ≤ R * (n * k + D) ^ j) :
     (d : ℝ) ^ (exactRankExponent K) ≤ k := by
   apply spectral_coefficient_le_of_all_nat
-    (hν := lt_of_lt_of_le (by norm_num : (0 : ℝ) < 2) exactRankExponent_lower)
+    (hν := lt_of_lt_of_le (by norm_num : (0 : ℝ) < 2) (exactRankExponent_lower (K := K)))
     (D := (D : ℝ))
   intro n hn δ hδ
   have h := catalytic_rank_bound_at_slack hd hn (hbound n hn) hδ
@@ -248,7 +248,7 @@ theorem catalytic_semiring_obstruction {S : Type*} [CommSemiring S] [Preorder S]
     _ ≤ (n * k + C) ^ j * ρ s := hρcopies _ s
     _ = ρ s * (n * k + C) ^ j := Nat.mul_comm _ _
 
-/-- In the semiring of actual finite complex tensors modulo mutual
+/-- In the semiring of actual finite tensors modulo mutual
 restriction, a fixed catalyst cannot make `k` copies dominate multiplication
 by `T_d` unless `k ≥ d^ν`.  The nonzero hypothesis is exactly what supplies
 the scalar restriction `s ≥ 1`; the catalyst remains fixed throughout. -/

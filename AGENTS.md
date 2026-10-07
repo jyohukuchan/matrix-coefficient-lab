@@ -29,7 +29,8 @@ The user wants a comprehensible diff against that baseline.
 - Save meaningful work in commits. Label incomplete checkpoints honestly;
   a source checkpoint is not a verified theorem.
 - Open/update a PR inside the private repository before calling the work
-  complete. Do not merge automatically.
+  complete. The user explicitly authorizes merging private development PRs;
+  merge verified checkpoints when useful, retaining the upstream baseline.
 - Do not commit downloaded toolchains, dependency checkouts, build caches,
   credentials, or large generated logs.
 
