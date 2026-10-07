@@ -1,13 +1,19 @@
+module
+
 /-
 Upstream source and modification notice
 Modified from OpenAI's matrix-multiplication sources to support arbitrary fields.
 See UPSTREAM.md for provenance and changes; Apache-2.0 license retained in LICENSE.
 -/
 
-import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Separation.Basic
-import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Character.Degeneration
-import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Character.Dot
-import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Tensor.CharacterBounds
+public import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Separation.Basic
+public import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Character.Degeneration
+public import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Character.Dot
+public import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Tensor.CharacterBounds
+
+public section
+
+@[expose] section
 
 namespace OAI
 
@@ -33,7 +39,7 @@ variable {M : ℕ} {X Y Z : Type}
 variable [Fintype X] [Fintype Y] [Fintype Z]
 
 omit [Fintype Z] in
-private theorem polynomial_rank_bound
+theorem polynomial_rank_bound
     (P : Tensor (Polynomial K) X Y Z) :
     Tensor.RankAtMost P (Fintype.card (X × Y)) := by
   classical

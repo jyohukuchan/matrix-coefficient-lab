@@ -1,13 +1,19 @@
+module
+
 /-
 Upstream source and modification notice
 Modified from OpenAI's matrix-multiplication sources to support arbitrary fields.
 See UPSTREAM.md for provenance and changes; Apache-2.0 license retained in LICENSE.
 -/
 
-import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Convolution.Basic
-import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Determinant.Kernel
-import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Determinant.Basis
-import OAI.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialDegenerationComposition
+public import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Convolution.Basic
+public import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Determinant.Kernel
+public import OAI.LinearAlgebra.MatrixMultiplication.AuxiliarySeparation.Determinant.Basis
+public import OAI.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialDegenerationComposition
+
+public section
+
+@[expose] section
 
 namespace OAI
 
@@ -198,7 +204,7 @@ def originalBasis (e : ℕ) :
     Module.Basis (OriginalIndex e) K (DeterminantBasis.BoundedPair K e) :=
   (Polynomial.degreeLT.basis K (e + 1)).prod (Polynomial.degreeLT.basis K (e + 1))
 
-private theorem degree_shift_lt (d e : ℕ) (i : Fin (d + 1))
+theorem degree_shift_lt (d e : ℕ) (i : Fin (d + 1))
     (p : Polynomial.degreeLT K (e + 1)) :
     ((X : K[X]) ^ i.val * (p : K[X])).degree < (d + e + 1 : ℕ) := by
   rw [Polynomial.degree_lt_iff_coeff_zero]

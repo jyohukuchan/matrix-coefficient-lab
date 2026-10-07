@@ -21,7 +21,7 @@ In namespace `OAI.MatrixMultiplication.AuxiliarySeparation`, the statement chang
 
 The entry point [`AllFields.lean`](lean/OAI/LinearAlgebra/MatrixMultiplication/AllFields.lean) exports the new `OAI.MatrixMultiplication.omega_le_nine_quarters` theorem. OpenAI's original `complex_omega_le_nine_quarters` statement is kept there as a specialization. The field may be finite or infinite, of any characteristic, and in any universe; no algebraic-closedness, perfectness, or separability assumption is imposed on it.
 
-[`Model.lean`](lean/OAI/LinearAlgebra/MatrixMultiplication/Model.lean) is unchanged from the OpenAI baseline. Its `Arithmetic.omega` is the infimum of admissible exponents for division-free arithmetic programs: scalar addition, subtraction, and multiplication each cost one; input and constant loads are free. Correctness requires the program to multiply every pair of input matrices over the chosen field.
+[`Model.lean`](lean/OAI/LinearAlgebra/MatrixMultiplication/Model.lean) retains the OpenAI baseline definitions, with only the deterministic module-system port required by Palomar. Its `Arithmetic.omega` is the infimum of admissible exponents for division-free arithmetic programs: scalar addition, subtraction, and multiplication each cost one; input and constant loads are free. Correctness requires the program to multiply every pair of input matrices over the chosen field.
 
 ## Proof of the field extension
 
@@ -99,24 +99,24 @@ The toolchain and direct dependency pins are:
 
 | Component | Pinned version |
 | --- | --- |
-| Lean | `leanprover/lean4:v4.34.1` |
-| Mathlib | `d13f23b723b8a846827a245b89c10fc7d3f11612` |
-| fixed-point-theorems | `770940ddf9878cf61952ed53d910b92bca841838` |
+| Lean | `leanprover/lean4:v4.35.0-rc2` |
+| Mathlib | `065356127b1dc0016f66b7283ce0ce2c4055aa55` |
+| fixed-point-theorems | Vendored from `770940ddf9878cf61952ed53d910b92bca841838` with the preserved upstream patch |
 
-All transitive revisions are recorded in [`lake-manifest.json`](lake-manifest.json). Bootstrap obtains the matching Mathlib cache and applies the included [upstream Lean 4.34.1 compatibility patch](lean/patches/fixed-point-theorems-lean4341.patch) to fixed-point-theorems. Dependency validation checks the pinned revisions and that exact patch.
+All transitive revisions are recorded in [`lake-manifest.json`](lake-manifest.json). Bootstrap obtains the matching Mathlib cache. The five required MIT-licensed fixed-point modules are vendored with the historical [upstream compatibility patch](lean/patches/fixed-point-theorems-lean4341.patch) already incorporated. Dependency validation checks the nine Git revisions; the patch is retained for provenance.
 
-`check-proof.sh` compares eleven original specification and builder files with the immutable baseline, validates dependencies, and builds [`AllFields.lean`](lean/OAI/LinearAlgebra/MatrixMultiplication/AllFields.lean) and [`AllFieldsAudit.lean`](lean/OAI/LinearAlgebra/MatrixMultiplication/AllFieldsAudit.lean). The audit covers an arbitrary field universe, representative finite and infinite fields, the explicit cost statement, an exact coefficient-rank witness, and guarded axiom checks. Those guards require exactly `propext`, `Classical.choice`, and `Quot.sound` for the audited declarations; an additional axiom, including `sorryAx`, makes the check fail.
+`check-proof.sh` compares eleven protected specification and builder files with the exact module-only port of the immutable baseline, validates dependencies, and builds [`AllFields.lean`](lean/OAI/LinearAlgebra/MatrixMultiplication/AllFields.lean) and [`AllFieldsAudit.lean`](lean/OAI/LinearAlgebra/MatrixMultiplication/AllFieldsAudit.lean). The audit covers an arbitrary field universe, representative finite and infinite fields, the explicit cost statement, an exact coefficient-rank witness, and guarded axiom checks. Those guards require exactly `propext`, `Classical.choice`, and `Quot.sound` for the audited declarations; an additional axiom, including `sorryAx`, makes the check fail.
 
 `check-kernel.sh` first runs the proof checks, then uses `leanchecker --fresh` to replay the audit target, including the exported all-fields theorems and all their imported declarations, in a fresh environment. This uses Lean's own kernel. It is not an independent kernel implementation or a rebuild of every dependency from source. The scripts default to one worker because the large imports require substantial memory. Run only one build or replay process at a time.
 
-The [Comparator harness](verification/comparator/README.md) additionally compares five theorem statements and their dependent definitions against a separately frozen copy of the original model. It includes the infimum side conditions and the explicit ε-cost theorem, with controls for a changed operation cost and an unfinished proof. Its documented macOS command uses trusted local sources without Linux build sandbox isolation; see the harness record for the outcome and exact scope.
+The [Comparator harness](verification/comparator/README.md) additionally compares six theorem statements and their dependent definitions against a separately frozen copy of the original model. It includes the infimum side conditions, the explicit ε-cost theorem, and exact coefficient identities, with controls for a changed operation cost and an unfinished proof. Its documented macOS command uses trusted local sources without Linux build sandbox isolation; see the harness record for the outcome and exact scope.
 
 > **Verified on 2026-10-06.** The isolated core source rebuild and fresh kernel replay passed at proof commit `9bd2a64`. The expanded public audit passed at `704431e`, including ten axiom guards; separate controls confirmed that added axioms and `sorry` are rejected. Three adversarial source reviews, each run by a fresh AI-agent session that did not write the proof, found no fatal defect; they are not human peer review. Pinned third-party caches were reused. The verification record gives the exact scope and documents subsequent comment-only attribution changes.
 
 **Verification by OpenAI and Anthropic models.** Both checked that the theorem statement means what it claims and that the Lean verification works end to end. The OpenAI models credited above did so while developing the proof, with the results summarized in the box above. Anthropic's Claude (Opus 5.5), which took no part in the development, then repeated both checks independently on 2026-10-06:
 
 - **The statement makes sense.**
-  - `Model.lean` is byte-identical to OpenAI's upstream file, and the exported theorems depend only on Lean core, Mathlib and that file.
+  - At the historical checked commit, `Model.lean` was byte-identical to OpenAI's upstream file, and the exported theorems depend only on Lean core, Mathlib and that file.
   - Its program model, correctness predicate and exponent match the textbook definition of ω exactly for infinite fields. For finite fields, the separate exact-rank theorem gives the textbook-strength statement.
   - The bound is not vacuous, since 2 ≤ ω(F) is proved.
 - **The Lean verification works end to end.** From a fresh clone at commit `620b5ed`, the last commit to change the core Lean sources or verification scripts before that review, with no OAI build outputs, `bash scripts/check-kernel.sh` exited 0:
@@ -149,3 +149,11 @@ that a Reservoir build has passed.
 OpenAI's repository supplies the original 9/4 construction, the complex-scalar proof, and the arithmetic-program specification. This fork's contribution is the extension of that proof to arbitrary fields and the associated descent and verification work. It makes no claim of historical priority for the numerical bound or for field-independence arguments, and does not determine the exact matrix multiplication exponent.
 
 The upstream [Apache License 2.0](LICENSE) is retained. See [UPSTREAM.md](UPSTREAM.md) for the exact source revision and the scope of the extraction.
+
+## Palomar preparation
+
+The [submission guide](docs/palomar/README.md) records the exact claims, metadata,
+paths and full mechanical preflight. The compatibility port uses Lean
+4.35.0-rc2, matching Mathlib, and Lean modules throughout. The earlier verification
+records below describe their named historical commits; the new snapshot requires
+its own passing Palomar report. Registration has not been requested.

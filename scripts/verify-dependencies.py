@@ -17,7 +17,6 @@ import sys
 
 PATCH_PATH = 'lean/patches/fixed-point-theorems-lean4341.patch'
 PATCH_SHA256 = 'd70872e41e80b25191538d1659c4aa3a001349b5bd16f806c9e3833a502516e5'
-FIXED_POINT = 'fixed-point-theorems'
 
 
 def git(path: Path, *args: str) -> bytes:
@@ -54,8 +53,8 @@ def main() -> int:
         raise RuntimeError('Working compatibility patch differs from HEAD.')
     packages_dir = (root / manifest['packagesDir']).resolve()
     packages = manifest['packages']
-    if len(packages) != 10:
-        raise RuntimeError(f'Expected ten pinned packages; found {len(packages)}.')
+    if len(packages) != 9:
+        raise RuntimeError(f'Expected nine pinned packages; found {len(packages)}.')
     seen = set()
     errors = []
     for package in packages:
@@ -83,8 +82,7 @@ def main() -> int:
                               if entry and (entry[:1].islower() or entry[:1] == b'S')]
             if hidden_entries:
                 raise RuntimeError(f'{name}: assume-unchanged or skip-worktree index entries: {hidden_entries!r}')
-            # Reject staged changes, including an intentionally staged patch: the
-            # post-update hook applies its allowed patch only to the working tree.
+            # All Git dependencies must be clean; patched Brouwer sources are vendored.
             staged = git(path, 'diff', '--cached', '--name-only', '--no-ext-diff', '--no-textconv', '-z')
             if staged:
                 raise RuntimeError(f'{name}: unexpected staged changes: {staged!r}')
@@ -107,12 +105,12 @@ def main() -> int:
                         '--no-renames', '--no-color', '--no-relative', '--src-prefix=a/',
                         '--dst-prefix=b/', '--unified=3', '--abbrev=7',
                         '--diff-algorithm=myers', '--indent-heuristic', '--')
-            expected = patch if name == FIXED_POINT else b''
+            expected = b''
             if delta != expected:
                 raise RuntimeError(f'{name}: working delta is not the exact allowed delta '
                                    f'(actual SHA-256 {hashlib.sha256(delta).hexdigest()}, '
                                    f'expected {hashlib.sha256(expected).hexdigest()})')
-            label = 'exact compatibility patch' if name == FIXED_POINT else 'clean'
+            label = 'clean'
             print(f'PASS {name}: {head} ({label})')
         except (RuntimeError, OSError) as exc:
             errors.append(str(exc))
@@ -120,7 +118,7 @@ def main() -> int:
         print(f'FAIL {error}', file=sys.stderr)
     if errors:
         return 1
-    print('PASS all ten source dependencies match committed pins and allowed changes.')
+    print('PASS all nine source dependencies match committed pins and allowed changes.')
     print('Scope: generated ignored .lake build artifacts are reused and not source-verified here.')
     return 0
 
