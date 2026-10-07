@@ -85,6 +85,10 @@ recursion level. Descend all powers with one fixed coefficient algebra.
   starts Lake builds or kernel replay;
   concurrent builds against shared artifacts previously caused contention
   and transient missing-olean errors. Source editing can remain parallel.
+- The scripts default `LEAN_NUM_THREADS=2`, honoring explicit overrides. Use
+  the same setting for direct builds on this 24 GB host: unrestricted builds
+  spawned nine whole-Mathlib import workers and exhausted available memory
+  during the adversarial audit. Completed modules survive an interrupted build.
 - An isolated audit checkout may reuse verified pinned dependency caches, but
   must start with no OAI build outputs. Record the exact source commit, compare
   it before and after compilation, and distinguish this from rebuilding Lean

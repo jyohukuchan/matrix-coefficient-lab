@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Whole-Mathlib imports make each worker memory-heavy. Allow explicit overrides.
+export LEAN_NUM_THREADS="${LEAN_NUM_THREADS:-2}"
+
 project_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd -- "$project_root"
 

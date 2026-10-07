@@ -14,7 +14,10 @@ See `../ADVERSARIAL.md` for findings and pending mechanical checks.
 Root started a clean OAI build in `../adversarial-clean/lean`, a local clone
 detached at that exact commit, with an initially empty project build directory.
 Only the exact-pinned dependency checkouts/caches are shared. Its log is
-`../adversarial-clean-build.log`. This is a deliberate isolated verification
+`../adversarial-clean-build.log`. At 9377/9437 jobs, memory pressure from nine
+concurrent Lean workers required stopping that process (exit 143) and resuming
+with `LEAN_NUM_THREADS=2`; continuation log `../adversarial-clean-resume.log`.
+This is a deliberate isolated verification
 exception to the normal canonical-directory rule. Only root starts builds.
 After that build, run bundled `leanchecker --fresh` on AuxiliarySeparation.Main
 to replay all imported declarations in a fresh Lean kernel environment.
