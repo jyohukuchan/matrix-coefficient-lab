@@ -1,9 +1,10 @@
 # Reviewer guide
 
-**The full theorem and final audit passed.** The public `Main` build completed
-with 9436 jobs, and `scripts/check-proof.sh` passed with 9437 jobs, including
-all arbitrary-field examples and guarded axiom checks. See
-[VERIFICATION.md](VERIFICATION.md) for exact statements and evidence.
+**The initial public theorem and six-guard audit passed.** The additional
+adversarial audit is in progress; its expanded checks must not be treated as
+already passed. See [ADVERSARIAL.md](ADVERSARIAL.md) for current status and
+[VERIFICATION.md](VERIFICATION.md) for the initial evidence. Lake graph job
+totals are not counts of freshly compiled modules.
 
 The source baseline is preserved by tag `openai-baseline-adc7f12`, at private
 commit `d2336fc`. It contains OpenAI's

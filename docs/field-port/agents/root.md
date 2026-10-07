@@ -30,9 +30,13 @@ LEAN_NUM_THREADS=1 lake env leanchecker --fresh --verbose \
 ```
 
 It runs in `../adversarial-clean/lean`, logging to `../adversarial-kernel.log`.
-Do not start another Lean compiler or replay until it finishes. After replay,
-resume the public AllFieldsAudit build with one worker in the isolated tree.
-The focused auxiliary all-fields Main has already compiled successfully there.
+Do not start another Lean compiler or replay until it finishes. The focused
+auxiliary all-fields Main and its entire OAI import dependency chain have
+already compiled successfully there. Root confirmed that the remaining fresh
+public-build modules concern other retained bounds, outside that dependency
+chain. The audit will finish with the kernel replay plus a normal canonical
+public build/expanded AllFieldsAudit and direct scratch controls. Do not claim
+a complete fresh public-entry-point build: that broader rebuild was stopped.
 This is a deliberate isolated verification
 exception to the normal canonical-directory rule. Only root starts builds.
 After that build, run bundled `leanchecker --fresh` on AuxiliarySeparation.Main
@@ -48,6 +52,17 @@ No final mechanical-audit verdict has been issued yet. Expanded audit examples
 and ten axiom guards are drafted but not yet compiled; do not call them passed.
 All ten dependency source revisions and the exact compatibility delta pass
 the new `scripts/verify-dependencies.py` in both canonical and isolated trees.
+
+Latest user instruction: after verification, rewrite the README for public
+readers with OpenAI provenance, premise, the small theorem-statement diff,
+technique, and precise statements. The reviewed draft is outside the repository
+at `../README-public-draft.md`; do not apply its verification placeholder.
+The draft's diff uses the same-name AuxiliarySeparation theorem, and explicitly
+retains the public complex specialization. Publication is future intent, not
+permission to change repository visibility. The repository stays private.
+The reproducibility reviewer is preparing (outside Git, not yet applied)
+comment-only modification notices for changed upstream files; preserve their
+proof bodies and original license headers when adding attribution.
 
 ## Completed proof checkpoint (before this audit)
 

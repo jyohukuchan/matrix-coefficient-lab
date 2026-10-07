@@ -48,7 +48,10 @@ that original review; this coordinator record tracks subsequent resolutions.
 
 ## Pending verification
 
-- Isolated original-commit build of public Main and AllFieldsAudit.
+- Fresh kernel replay of the successfully rebuilt auxiliary all-fields Main.
+  Its complete OAI dependency chain rebuilt from the original committed source.
+  The broader isolated public-entry-point build was stopped before completion;
+  the canonical public build will be checked separately.
 - Expanded audit: exact coefficient-rank witnesses, rational-function field
   over F₂, finite-field semantic counterexamples, and ten axiom guards.
 - Fresh-environment replay with Lean's bundled `leanchecker --fresh`.
