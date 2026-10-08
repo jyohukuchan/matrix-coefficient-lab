@@ -38,6 +38,7 @@ from .rectangular_restrictions import share_first_axis, share_matrix_left_operan
 from .finite_type_constraints import (ExactTypeExport, export_exact_type_order,
                                      export_finite_separation_order)
 from .determinant_filtration import DeterminantFiltration
+from .geometric_catalyst import GeometricCatalystConstruction, build_geometric_catalyst
 
 __all__ = ["FiniteField", "Polynomial", "PolynomialDegeneration", "BilinearScheme",
            "FiniteTensor", "TensorScheme", "TensorDegeneration", "matrix_multiplication_tensor",
@@ -58,5 +59,6 @@ __all__ = ["FiniteField", "Polynomial", "PolynomialDegeneration", "BilinearSchem
            "GainCompilationResult", "GainCostPlan", "compile_gain_target", "plan_gain_catalytic_parameters",
            "ExactTypeExport", "export_exact_type_order", "export_finite_separation_order",
            "DeterminantFiltration",
+           "GeometricCatalystConstruction", "build_geometric_catalyst",
            "share_matrix_left_operand",
            "descend", "naive_scheme", "strassen_scheme"]
