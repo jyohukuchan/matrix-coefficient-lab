@@ -76,7 +76,10 @@ recursive block multiplication, characteristic-aware Fourier filtering,
 nonzero-node interpolation, exact scheme generation from certified polynomial
 degenerations, and fixed-extension rank descent after tensor powering. Explicit
 finite three-leg targets also support non-matrix bilinear maps. It uses only
-the Python standard library. From the repository root:
+the Python standard library. The proof's concrete three-sector convolution
+weights and diagonal maps generate a polynomial degeneration whose full
+coefficient identity and shared input coordinates are checked. From the
+repository root:
 
 ```sh
 python3 -m reference.demo

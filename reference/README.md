@@ -24,6 +24,7 @@ python3 -m unittest discover -s reference -t . -v
 | `PolynomialDegeneration.verify()` and `tensor_power()` | Formal polynomial coefficients, low-degree vanishing, the matrix-tensor leading coefficient, and powers of [PolynomialApproximation](../lean/OAI/LinearAlgebra/MatrixMultiplication/Polynomial/ComplexPolynomialApproximation.lean). |
 | `PolynomialDegeneration.recover_scheme()` | Generate an exact `BilinearScheme` by the normalized nonzero-node recovery identity in [Interpolation.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Polynomial/Interpolation.lean). |
 | `TensorDegeneration` | The same formal certificate and recovery operations for any supplied finite tensor target, via `PolynomialApproximation`. The matrix API delegates certificate/recovery to it. |
+| `ThreeSectorConstruction` | The concrete source `C(a,3*h+a-1)`, interval weights, three ambient branches, and diagonal polynomial restriction from [Sector/Weights.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Sector/Weights.lean) and [Sector/Degeneration.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Sector/Degeneration.lean). |
 | `descend()` | The explicit basis/projection formula in [FieldDescent.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/Arithmetic/FieldDescent.lean). |
 
 This correspondence is an implementation guide, not a formal proof that the
@@ -35,6 +36,8 @@ The polynomial tests also check cancellation between terms, tensor-valued
 higher-order noise, and false certificates whose evaluations agree over F_2.
 Generic tensor tests cover arbitrary coefficients, non-matrix bilinear maps,
 empty axes, tensor products, projection, and round trips to the matrix API.
+Sector tests check the formal identity on every coordinate, independently
+contract the full local map matrices, and reject missing shifts/reversals.
 
 ## Coefficients and usage
 
@@ -127,8 +130,9 @@ assert recovered.apply((1, 2), (3, 4, 1)) == (3, 0, 4, 2)
 families as the matrix-specific API but compares the leading coefficient to
 the supplied target. Low coefficients must still vanish formally. Recovery
 returns a `TensorScheme`; tensor products and powers preserve explicit targets.
-No polynomial local restriction maps or three-sector construction are generated
-in this stage; supplied coefficient families remain the input.
+Arbitrary polynomial coefficient families remain valid inputs. The proof's
+specific three-sector diagonal maps can now generate such families directly,
+as described below; general polynomial local restrictions are still absent.
 
 For generic tensor products, each axis is paired independently: `(i1,i2)` is
 encoded as `i1*dim2+i2`. The zeroth power is the scalar unit of shape `(1,1,1)`.
@@ -146,6 +150,93 @@ call `scheme.project_to_prime_field()` to get a decomposition of **pi(target)**.
 This changes the target by applying the constant-coordinate linear functional;
 pi is not a field homomorphism and does not generally commute with tensor
 products. Both operations use the same dimension-squared basis formula.
+
+## Proof-derived three-sector construction
+
+`ThreeSectorConstruction(field, a, h)` implements the finite formulas in
+`Sector/Weights.lean` and `Sector/Degeneration.lean`. Its source tensor is the
+actual convolution `C(a,B)`, with `B=3*h+a-1`, in the ambient spaces of shape
+`(a,B,a+B-1)`. `convolution_tensor(field,a,b)` has coefficient one exactly
+when `i+j=k`. Natural-number subtraction is truncated at zero as in Lean.
+Zero parameters are supported; three nonempty branches require positive a,h.
+
+Write `s=2*h+a-1` and `m=h+a-1`. The signed weights and shifted polynomial
+maps are:
+
+| Leg | Unshifted integer weight | Diagonal polynomial map |
+| --- | --- | --- |
+| X, coordinate i | 0 | 1 |
+| Y, coordinate j | 1 on `h <= j < s`, otherwise 0 | t on that interval, otherwise 1 |
+| Z, coordinate k | -1 on `m <= k < s`, otherwise 0 | 1 on that interval, otherwise t |
+
+The third weight is shifted by **+1** before forming the polynomial maps.
+`local_maps` exposes the full matrices in `[output][input]` order, with zero
+off-diagonal entries and degree bounds `(0,1,1)`. The first map is the identity
+on the original a-dimensional input space.
+
+On source support, the unshifted total weight is always zero or one.
+`retained` (R) keeps weight-zero terms and `erased` (E) keeps weight-one terms.
+`polynomial_coefficient(i,j,k)` applies the diagonal maps to the source, without
+using R or E to construct that polynomial. `verify()` checks, at every ambient
+coordinate, the formal identity
+
+```text
+P(t) = t*R + t^2*E
+source = R + E
+R = left + middle + right
+```
+
+The branches have disjoint support, checked as an integer count before field
+addition so that overlaps cannot be hidden by characteristic two. Their
+coordinate embeddings from `C(a,h)` are:
+
+| Branch | Ambient coordinates of a local `(u,r,v)` |
+| --- | --- |
+| left | `(u, r, v)` |
+| middle | `(a-1-u, h+v, m+r)` |
+| right | `(u, s+r, s+v)` |
+
+Nonzero local coefficients satisfy `v=u+r`. `branch_embedding()` also accepts
+off-support local coordinates, permitting checks of the whole local tensor.
+The middle embedding reverses X and exchanges the last two legs; it is not
+an ordinary translated copy with the same leg order. All three branch tensors
+are stored in the **same** ambient spaces, retaining a first input of dimension
+a, not 3*a. In particular the bilinear middle branch acts as a reversed-input
+correlation when contracted in the original leg order.
+
+```python
+from reference import FiniteField, ThreeSectorConstruction
+
+construction = ThreeSectorConstruction(FiniteField(2), a=2, h=2)
+assert construction.shape == (2, 7, 8)
+assert construction.verify()
+assert sum(construction.source.coefficients) == 14
+assert sum(construction.retained.coefficients) == 12
+assert sum(construction.erased.coefficients) == 2
+assert [len(construction.branch_support(name))
+        for name in ('left', 'middle', 'right')] == [4, 4, 4]
+
+degeneration = construction.generate_degeneration()
+assert degeneration.verify()
+assert degeneration.target == construction.retained
+assert (degeneration.leading, degeneration.degree_bound) == (1, 2)
+assert degeneration.terms == 14
+```
+
+`generate_degeneration(source_scheme=None)` applies those same diagonal maps
+to an exact source decomposition and returns a certified `TensorDegeneration`
+of R with leading order one. By default it uses the trivial coordinate-pair
+decomposition, with a*B terms for positive source dimensions. A different exact
+source decomposition can be supplied; its full target and coefficients are
+checked, and its number of terms is preserved. This stage does not implement
+an optimal-rank convolution scheme or a 9/4 matrix scheme.
+
+This construction is checked by formal polynomial coefficients even over F_2,
+where parameter evaluations alone cannot distinguish t from t^2. Connecting **this particular
+proof-derived family** to tensor powers and interpolated recovery is the next
+stage; enough distinct nonzero nodes will require a suitable supplied field.
+The current sector demo and tests stop at construction and coefficient
+certification, including the shared input and actual local-map identity.
 
 ## Polynomial degeneration to generated coefficients
 
@@ -267,10 +358,12 @@ algebra is found automatically. Scalar-operation counts are not instrumented.
   root or reusing colliding nodes. The demo uses F_16 for period 5 and F_25 for
   the adjusted period 6 in characteristic 5.
 - Arbitrary finite three-leg targets and their supplied scalar/polynomial
-  decompositions are supported. Higher-order tensors and polynomial local
-  restriction maps from source tensors are not implemented.
-- The full auxiliary-separation construction, determinant/sector argument,
-  entropy limits, and spectral existence argument are not translated.
+  decompositions are supported. The proof's three-sector diagonal restriction
+  is generated; higher-order tensors and general polynomial local restriction
+  maps are not implemented.
+- The three-sector finite coefficient construction is implemented, but the full
+  auxiliary-separation, determinant/character inequalities, entropy limits,
+  and spectral existence argument are not translated.
 - Strassen and naive decompositions are input fixtures. Neither is a 9/4
   decomposition extracted from this proof. The example scaling is deliberately
   artificial; descent is demonstrated, not proposed as an improvement to them.
@@ -278,7 +371,7 @@ algebra is found automatically. Scalar-operation counts are not instrumented.
   bound is claimed. Dense tensor powers and exhaustive coefficient checking
   become large quickly. Use small dimensions and powers.
 
-Proof-specific degeneration generators can supply polynomial families to the
-verification/recovery interface. Translating the finite determinant/sector
-constructions and turning the current spectral existence proof into a generator
-for the 9/4 schemes remain separate mathematical and implementation tasks.
+The three-sector generator now supplies proof-derived polynomial families to
+the verification interface. Further finite constructions and turning the
+current spectral existence proof into a generator for the 9/4 schemes remain
+separate mathematical and implementation tasks.

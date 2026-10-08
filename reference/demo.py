@@ -8,6 +8,7 @@ from .schemes import descend, naive_multiply, strassen_scheme
 from .tensors import FiniteTensor
 from .tensor_schemes import TensorScheme
 from .tensor_degenerations import TensorDegeneration
+from .sectors import ThreeSectorConstruction
 
 
 def main():
@@ -21,6 +22,16 @@ def main():
         raise RuntimeError("generic non-matrix tensor check failed")
     print(f"Generic tensor {tensor.shape}: polynomial product over F_5 = {product};"
           " direct contraction, decomposition, and polynomial recovery agree.")
+    sectors = ThreeSectorConstruction(FiniteField(2), 2, 2)
+    sectors.require_valid()
+    proof_degeneration = sectors.generate_degeneration()
+    print(f"Proof three-sector construction {sectors.shape}:"
+          f" {sum(sectors.source.coefficients)} source support entries ="
+          f" {sum(sectors.retained.coefficients)} retained + {sum(sectors.erased.coefficients)} erased;")
+    print(f"  branches {[len(sectors.branch_support(name)) for name in ('left', 'middle', 'right')]}"
+          f" share the same first axis of size {sectors.a}; formal P(t)=t*R+t^2*E verified.")
+    print(f"  proof diagonal maps generated {proof_degeneration.terms} polynomial terms"
+          f" with certified leading target R and degree bound {proof_degeneration.degree_bound}.")
     field = FiniteField(2, (1, 1, 1))  # F_4 = F_2[X]/(X^2+X+1)
     # 2 encodes X, so rescaling introduces genuine extension coefficients.
     seed = strassen_scheme(field).rescale_terms(2, 1)
