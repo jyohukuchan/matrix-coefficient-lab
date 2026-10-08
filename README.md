@@ -68,6 +68,24 @@ For each F and positive ε, one positive constant C works for **all** positive s
 
 Over finite fields, the original `P.Correct` predicate expresses equality of functions on field-valued inputs, which is weaker than formal polynomial equality—for example, `x²=x` on F₂. The separate exact coefficient-rank theorem supplies the stronger algebraic certificate: its identities are preserved under homomorphisms into arbitrary commutative semirings, including polynomial rings. The proof therefore does not obtain its bound from finite-field function identities. The exported program predicate itself remains the original functional one.
 
+## Executable finite-field examples
+
+The optional [Python reference implementation](reference/README.md) executes
+selected finite steps: exact tensor-coefficient verification, bilinear and
+recursive block multiplication, characteristic-aware Fourier filtering,
+nonzero-node interpolation, and fixed-extension rank descent after tensor
+powering. It uses only the Python standard library. From the repository root:
+
+```sh
+python3 -m reference.demo
+python3 -m unittest reference.test_reference -v
+```
+
+The examples use naive and Strassen decompositions as supplied test inputs;
+they do not extract a `9/4` scheme from the existence proof, claim a speedup,
+or formally verify the Python code in Lean. See the reference documentation
+for the supported fields and remaining construction steps.
+
 ## Reproduction and verification
 
 Install [elan](https://github.com/leanprover/elan), and have Git and Python 3 available. From the repository root, run these commands sequentially:
