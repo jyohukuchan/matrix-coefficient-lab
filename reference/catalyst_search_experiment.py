@@ -460,7 +460,15 @@ def unseeded_convolution_sat(field, a, b, rank, *, timeout_ms=10000, solver_path
 
 
 def bounded_s233_catalyst_experiment(*, pencil_kind="regular", timeout_ms=60000, solver_path=None):
-    """One fixed D=0, d=2, k=5 candidate; no claim about arbitrary catalysts."""
+    """Historical fixed D=0, d=2, k=5 searches, now separately excluded.
+
+    Their original F2 solver runs timed out; those caps were not proofs.
+    Regular pencils have the separate commuting-compression obstruction.
+    For the singular star, research/star-zero-catalyst.md independently
+    excludes D=0 over every field and every positive scalar gain. That
+    first-map argument does not exclude nonempty D, which was not searched.
+    The generic SAT function remains available for other fixed tensors.
+    """
     from .catalysts import CatalyticCertificate
 
     f = FiniteField(2)

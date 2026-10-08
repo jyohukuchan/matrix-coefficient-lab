@@ -10,6 +10,8 @@ Python 3.10 or newer is required. Run from the repository root:
 python3 -m reference.demo
 python3 -m reference.proof_demo  # just the proof-derived construction pipeline
 python3 -m reference.extraction_demo  # branch extraction to a small matrix scheme
+python3 -m reference.catalyst_demo  # actual maps from a supplied catalyst
+python3 -m reference.witnessed_demo  # finite dual -> catalyst -> matrix coefficients
 python3 -m unittest discover -s reference -t . -v
 ```
 
@@ -32,7 +34,15 @@ python3 -m unittest discover -s reference -t . -v
 | `shared_first_tensor()` and `tag_shared_scheme()` | Shared X with matching Y/Z branch labels from [Separation/BranchTagging.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Separation/BranchTagging.lean). |
 | `FiniteSeparation` | The three explicit Fourier maps, integer square weights, formal leading coefficient, and full branch/dot-product direct sum from [Separation/Basic.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Separation/Basic.lean) and [SquareWeights.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Separation/SquareWeights.lean). |
 | `extract_branch()`, `factor_singleton_leg()`, `square_from_boundary()` | Exact branch selections, boundary coefficient-matrix factorization, and cyclic tensor products reindexed as a matrix multiplication tensor. The small example yields eight terms, not a 9/4 witness. |
-| `CatalyticCertificate` and conditional planners | Supplied local maps for a finite positive-gain catalytic restriction, full coefficient verification, gain removal, and integer cost planning. The powered-catalyst derivation is recorded in the research notes; the iterated coefficient compiler is not implemented. |
+| `CatalyticCertificate` and conditional planners | Supplied local maps for a finite positive-gain catalytic restriction, full coefficient verification, gain removal, and integer cost planning. Planning returns numerical conditions; a separate compiler generates the arrays. |
+| `compile_powered_catalyst()` and `compile_absorption()` | Explicit powered local maps with one fixed auxiliary, repeated use of one catalyst, and independently verified matrix coefficient arrays. |
+| `compile_gain_powered_catalyst()`, `compile_gain_absorption()`, and `compile_gain_target()` | Retain independent scalar gains, remove them by exact substitution, select integer parameters, generate matrix coefficients, and descend once. Array limits report incomplete construction. |
+| `WitnessedStateSystem`, `find_nonnegative_dual()`, `assemble_catalyst()` | Exact finite-cone search, integer dual checking, and constructive assembly from retained restriction witnesses and tensor-block provenance. This is a derived finite construction, not a new Lean theorem. |
+| `export_sector_order()` and `lift_witnessed_order()` | Actual finite interpolation restrictions and tensor-context local maps usable as witnessed LP rows. |
+| `export_exact_type_order()` and `export_finite_separation_order()` | Coordinate pulls selecting exact branch-count words, and finite Fourier/square restrictions with all source copies retained. These yield ordinary witnessed rows without assuming state multiplicativity. |
+| `DeterminantFiltration` | Explicit quotient/kernel bases and their output duals, the formal determinant degeneration, generated coefficient families, and an ordinary finite interpolation row. |
+| `build_geometric_catalyst()` | Convert a supplied exact M_(d^b) scheme with r<k^b into a D=0 certificate over the same field, using a specified direct sum of matrix powers. It does not discover the required input scheme. |
+| `projective_convolution_scheme()` | Finite-node interpolation plus a leading-coefficient/infinity term, verified as an exact convolution scheme. |
 | `descend()` | The explicit basis/projection formula in [FieldDescent.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/Arithmetic/FieldDescent.lean). |
 
 This correspondence is an implementation guide, not a formal proof that the
@@ -571,8 +581,11 @@ The [research checkpoint](research/README.md) records the source audit,
 complete finite-search route, and a conditional powered-catalyst route.
 An explicit useful catalyst would supply enough data for a convergent
 coefficient procedure. Finding that catalyst remains a research problem.
-Current code checks supplied catalysts and plans integer costs; it does not
-generate the decompositions predicted by that recurrence.
+Current code checks supplied catalysts, compiles their powered maps, and
+generates exact decompositions. The conditional cost planner itself does not
+construct or certify those arrays. A finite dual with actual row witnesses
+can also be assembled into an explicit catalyst. Dense caps stop incomplete
+constructions before large powers or coefficient families are allocated.
 
 `proof_matrix_pipeline()` executes the finite separation-to-matrix connection
 over F_16. It extracts each branch from the generated 750-term scheme,
@@ -581,6 +594,52 @@ terms. Three cyclic factors give an exact eight-term 2-by-2 matrix scheme.
 The demo checks the full tensor, a matrix product, and powers followed by
 one final descent. These are classical coefficients obtained through the
 pipeline and carry no improved exponent claim.
+
+The catalyst demo uses d=2,k=9, initially generating nine-term M_2 and
+81-term M_4 schemes through the original absorption route. Retaining the
+positive scalar gain reduces finite supplied term bounds by exact scalar
+elimination. The actual powered b=2 construction retains eleven independent
+units and yields a verified 70-term M_4 scheme, compared with 81 terms when
+those gains are discarded. None of
+these conservative control witnesses supplies the desired 9/4 gap.
+
+The bounded automatic interface accepts exact supplied tensors and schemes:
+
+```python
+from fractions import Fraction
+from reference import (TensorScheme, compile_gain_target, coordinate_catalyst)
+
+certificate = coordinate_catalyst()  # conservative d=2,k=9 control
+S = TensorScheme.from_tensor(certificate.S)
+D = TensorScheme.from_tensor(certificate.D)
+result = compile_gain_target(certificate, S, D, Fraction(31, 10))
+assert result.status == "verified"
+assert result.prime_scheme.verify()  # eight-term M_2 over F_2
+```
+
+`plan_gain_catalytic_parameters()` returns numerical costs only.
+`compile_gain_target()` checks the final strict inequality against actual
+arrays after one descent to the prime field. A `resource_cap` result carries
+no final scheme; neither a finite parameter cap nor a dense allocation cap
+means the requested witness is impossible.
+
+`build_geometric_catalyst()` provides another explicit input interface. For
+example a supplied seven-term M_2 scheme gives a d=2,k=8 certificate with
+one scalar gain and no catalyst D. The geometric construction matches actual
+matrix-power blocks and retains unused scalar terms. Its useful k=5 variant
+still needs an unknown good matrix-power decomposition; see the
+[same-field search reduction](research/geometric-catalyst.md).
+
+The optional search experiment finds an unseeded seven-term F_2 matrix scheme;
+its small JSON artifact can be verified without the solver. The witnessed demo
+then builds a finite dual, assembles its maps, and generates seven- and
+49-term matrix schemes after exact simplification. These are known algorithms
+reconstructed through the new interfaces.
+
+For projective convolution, C(a,b) needs a+b-2 finite distinct nodes and one
+infinity term. Zero is allowed as a finite node. C(3,3) therefore has an exact
+five-term scheme over F_4, while the ordinary finite-node interface requires
+five field elements. Projective interpolation never enlarges a supplied field.
 
 ## Scope and remaining work
 

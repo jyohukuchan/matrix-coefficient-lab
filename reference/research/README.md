@@ -68,8 +68,9 @@ a normalized state would yield a character with value at least k on M_d,
 contradicting the universal character bound. Over the algebraic closure of
 a finite field, all coefficients of a finite certificate lie in one finite
 extension. This supplies a search target, without a useful dimension or
-extension-degree bound. A fair search must vary both the extension and the
-tensor/map dimensions.
+extension-degree bound. Searching that particular existence route would
+vary both extensions and tensor/map dimensions. A stronger same-field
+reduction from the exact exponent theorem is recorded below.
 
 The main agent derived, and the research agents independently checked, the
 following way to turn such a certificate into a convergent coefficient
@@ -118,8 +119,9 @@ degree e; descend only the final scheme and test
 
 For any tau>9/4, sufficiently large d allows an integer k strictly between
 d**(9/4) and d**tau. The route therefore avoids assuming a near-optimal seed
-decomposition once an explicit catalyst is supplied. The open practical
-problem is finding a useful certificate and compiling these map compositions.
+decomposition once an explicit catalyst is supplied. The map compositions
+now have an executable coefficient compiler. The open practical problem is
+finding a useful certificate within feasible dimensions and resource costs.
 See the [constructive-route report](constructive-route.md) for the source
 connections and the [finite-search report](finite-search.md) for integer
 planning and search contracts.
@@ -142,6 +144,40 @@ planning and search contracts.
   plan**, not an iterated matrix decomposition. Resource limits report an
   incomplete search, and failure of the sufficient gap is not a no-solution
   result.
+- `reference.catalyst_compiler` materializes the powered restrictions and
+  absorption maps, then produces exact matrix coefficient families. It
+  verifies the maps and arrays independently, reuses one catalyst even when
+  its coordinates genuinely contribute to the matrix output, and retains
+  one field until final descent. Dense caps report incomplete construction.
+- `reference.witnessed_constraints` searches a small finite rational cone,
+  checks the dual exactly, clears denominators over the integers, and
+  assembles a catalyst from ordinary restriction witnesses. Positive blocks
+  supply D and detector inputs supply S; balanced tensor-ID occurrences
+  determine explicit permutations. No unspecified group-completion witness
+  needs to be searched for. See [witnessed-lp.md](witnessed-lp.md).
+- `reference.constraint_generators` exports actual interpolation restrictions
+  from sector tensor powers and lifts ordinary rows by a tensor context.
+  This keeps every source copy needed by the finite construction; it does
+  not turn an asymptotic character inequality into a finite order for free.
+- `reference.finite_type_constraints` exports exact-type coordinate pulls and
+  finite Fourier/square separation as ordinary witnessed rows. Tensor words
+  retain their literal coordinate order. Fourier periods and interpolation
+  copies remain in the positive block list; no entropy-limit overhead is
+  silently removed, and an additive state is not treated as multiplicative.
+- `reference.determinant_filtration` implements the determinant construction's
+  actual quotient/kernel bases, output-dual change, and formal identity
+  `P(t)=t*graded+t**2*cross`. It generates coefficient families from a supplied
+  source decomposition and exports a finite interpolation row. Characteristic
+  two retains the correct signs and independent branch blocks. This finite
+  implementation does not supply the determinant entropy limit.
+- `reference.geometric_catalyst` turns a supplied exact matrix-power rank gap
+  into an actual same-field positive-gain certificate with D=0 and a specified
+  direct sum of matrix powers. It checks all local coefficients and returns
+  an exact conservative auxiliary decomposition.
+- `projective_convolution_scheme` adds a leading-coefficient/infinity term,
+  allowing C(3,3) to have an actual five-term scheme over F_4. A finite search
+  finds C(2,3) and C(3,3) ranks five and six over F_2. These field differences
+  matter when selecting candidate auxiliaries.
 
 A synthetic arithmetic experiment in the finite-search report uses
 d=4,k=23,R_S=2,C_D=1,e=2, inner exponent 23/10 and outer exponent 231/100.
@@ -154,15 +190,115 @@ Run the implemented connection with:
 
 ```sh
 python3 -m reference.extraction_demo
+python3 -m reference.catalyst_demo
+python3 -m reference.witnessed_demo
 python3 -m unittest reference.test_extraction reference.test_catalysts -v
 ```
 
-Checkpoint validation (2026-10-08): the full reference suite passed all 112
-tests, the extraction demo passed, and the protected-specification comparison
-passed. Python compilation and whitespace checks passed. No Lean sources were
-changed or rebuilt for this Python/research checkpoint.
+The witnessed demo loads a supplied seven-term artifact originally found by
+an unseeded SAT search, checks it, derives a finite dual and catalyst, and
+generates matrix arrays. The 2-by-2 result compacts from 15 terms to seven;
+the next step compacts from 63 to 49. This is a reconstruction of known small
+matrix algorithms, not an extraction of the theorem's 9/4 decompositions.
+The optional solver is needed only to repeat the search, not to check the
+artifact or run the ordinary reference package.
+
+## Retaining the positive gain
+
+The original compiler first selected away all scalar gains. A stronger
+finite construction retains them. Its powered comparison has gain
+
+```text
+g_b = m * sum_(i=0)^(b-1) k**(b-1-i)*d**i,
+D_b ⊕ g_b*unit ⊕ (M_(d**b) tensor S) <= D_b ⊕ k**b*S.
+```
+
+Each matrix gain restricts to its independent diagonal scalar coordinates.
+Repeated absorption keeps r*g_b gain blocks, decomposes D_b directly, and
+eliminates these scalar summands by exact linear substitution. The improved
+cost recurrence is
+
+```text
+r_next = C_b + (k**b*R_S - g_b)*r.
+```
+
+Scalar elimination removes only independent units, not a general catalyst.
+For any exact scheme of T ⊕ unit, choose a nonzero final C coordinate and
+solve for its term; projecting away the last X/Y coordinates gives an exact
+scheme of T with one fewer term. This supplies actual arrays and proves
+scalar-summand additivity without assuming general tensor-rank additivity.
+See [gain-preserving-route.md](gain-preserving-route.md).
+
+The bounded `compile_gain_target()` interface now selects a sufficient block
+and iteration count using this exact recurrence, constructs the arrays, and
+descends only the final scheme. It accepts a fixed block when
+`(k**b*R_S-g_b)**B < d**(b*A)`, even if the original `k**B < d**A` sufficient
+condition fails. Such a plan remains numerical until all generated arrays
+and the final strict inequality have been checked. Dense caps return an
+incomplete result rather than an uncertified rank claim.
+
+## Narrowing the useful-catalyst search
+
+The concrete target d=2,k=5 lies above 2**(9/4), while log_2(5)<12/5.
+Its existence argument does not imply that a tiny auxiliary will work.
+We derived necessary flattening, commutator, algebra-restriction, and
+rectangular-sharing conditions. The [obstruction report](catalyst-obstructions.md)
+specifies which results use an inspected external rank theorem, including
+[Yang's arbitrary-field rectangular lower bound](https://arxiv.org/abs/2609.14393v2).
+The reports and Python checks do not add those theorems to Lean.
+
+In particular, candidates with a flattening rank one are excluded, and
+concise shapes (2,2,2), (2,2,3), and (2,2,4) cannot work with any finite D.
+The last case uses an actual restriction from repeated rectangular products
+to a shared-input rectangular product. Outer-product auxiliaries M(a,1,c)
+must satisfy ac >= 1+4*max(a,c), so min(a,c)<=4 is excluded.
+
+At the next shape (2,3,3), a new commuting-source compression argument
+excludes regular matrix pencils. It replaces D by a supplied diagonal
+decomposition, compresses each pulled-back source pencil into commuting
+square slices, and contradicts the target's nonzero matrix commutator as
+the number of copies grows. It uses one catalyst throughout, rational-function
+generic pivots, and no general rank-additivity assumption. The remaining
+singular pencil has varying kernels and falls outside this proof. See
+[pencil-frontier.md](pencil-frontier.md) and the independent
+[Koszul/audit report](pencil-koszul.md).
+
+Bounded full-map searches on specified F_2 auxiliaries have hit time caps.
+Those solver results alone are incomplete searches. A separate new argument
+now excludes the singular star **with D=0**, over every field and for every
+positive gain: two seven-dimensional first-leg subspaces would have to lie
+in the scalar-zero hyperplane, although they span all nine dimensions.
+The nonzero-scalar fibers instead have dimension six and cannot fit inside
+the union of the two dimension-five bad-matrix loci. See
+[star-zero-catalyst.md](star-zero-catalyst.md) for the independently reviewed
+proof and exact finite-count alternative. A nonzero arbitrary D remains
+unresolved. No useful d=2,k=5 witness has been obtained.
+
+An attempted shortcut from the singular product to `M(3,2,4)` is now excluded
+over every field. Saturating its maximum slice rank would force all target
+slice images to contain a fixed four-dimensional subspace, whereas three
+target coordinate planes have zero image intersection. The proof also handles
+equal scalar augmentations and arbitrary coordinate mixing. It closes that
+particular rectangular route, while leaving the original catalyst unresolved.
+
+Checkpoint validation on 2026-10-08: all **196 reference tests** passed in
+151.656 seconds. Both catalyst demos and the independent obstruction/Koszul
+experiments passed. The star-slice experiment checks every matrix pair over
+F_2, F_3, and F_4 and all 1,023 binary first-leg hyperplanes. The eleven
+protected source files and frozen Challenge model match the exact baseline.
+No Lean sources were changed or rebuilt for these Python/research checkpoints.
 
 ## Next research and implementation tasks
+
+The [geometric reduction](geometric-catalyst.md) shows that the all-fields
+exact-rank theorem already implies a complete-in-principle search class over
+F_2 with d=2,k=5,D=0: search matrix powers for r<5**b and convert the first
+successful scheme. No extension or arbitrary auxiliary support is necessary
+for this existential class. This does not provide a practical discovery
+method. The direct conversion requires b>=4 by a cited algebra-rank lower
+bound, and its first possible dense source already has 6,280,426,125 entries.
+The smaller geometric auxiliaries' arbitrary mixed maps are a separate
+question; the report distinguishes them from this supplied-scheme bound.
 
 The main research priority is to find a low-cost explicit catalytic
 restriction, or a finite rational LP whose order constraints carry actual
@@ -171,15 +307,13 @@ search with exact linear output recovery is a separate route for testing
 small direct decompositions. Neither route currently has a feasible cost
 bound for a 9/4-plus-slack witness.
 
-The implementation task is a coefficient compiler for the powered-catalyst
-and absorption recurrence, initially exercised on the existing d=2,k=9
-certificate at a looser exponent. It must produce the arrays, verify all
-coefficients independently, retain one coefficient field throughout, and
-distinguish tested finite examples from the convergence derivation. Dense
-allocation limits will matter well before the synthetic example's size.
-Formalizing the recurrence in Lean is a separate verification task.
+The supplied-certificate-to-coefficients path is implemented. The next
+implementation priorities are materializing promising witnessed LP families,
+checking any proposed useful certificate, and reducing dense allocation costs
+when a larger example becomes justified. Formalizing the new recurrence and
+obstruction arguments in Lean is a separate verification task.
 
 The research was divided into main-agent derivation, independent existence
 audit, constructive-route review, finite-search experiments, and peripheral
-implementation. The three detailed reports are durable research notes,
+implementation. The detailed reports are durable research notes,
 including limitations and failed shortcuts, rather than published proofs.
