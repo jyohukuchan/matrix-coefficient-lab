@@ -288,6 +288,29 @@ F_2, F_3, and F_4 and all 1,023 binary first-leg hyperplanes. The eleven
 protected source files and frozen Challenge model match the exact baseline.
 No Lean sources were changed or rebuilt for these Python/research checkpoints.
 
+## Revised stages 1–3 checkpoint
+
+The [cost/DAG/integration checkpoint](stages-1-3.md) implements the revised
+first three stages: integer allocation screening, checked structured
+construction graphs, and automatic finite proof-row integration with exact
+search and family-removal analysis. The standard-library-only control pipeline
+reconstructs the known seven- and 49-term schemes. Its four proof-derived row
+families are validated but unused by the found control dual; removing the
+known-rank control exhausts this selected finite problem. The same selected
+d=2,k=5 family also exhausts. Neither is a global impossibility result.
+
+The graph replays a known scheme's 25th tensor power in 18 nodes, queries
+specified coefficients, and counts support without dense expansion. General
+restriction identities still require small fully checked seeds; interpolation/
+Fourier formulas and scalar-gain elimination are not yet fully symbolic.
+Numerical forecasts remain separate from checked construction certificates.
+No new useful catalyst or exponent-2.4 decomposition is claimed.
+Checkpoint validation: all **219 reference tests passed** in 158.442 seconds;
+the eleven protected files and frozen Challenge model still match the baseline.
+The 23 new tests cover forecasts, construction replay/expansion, corruption
+rejection, resource caps and finite pipeline attribution. No Lean rebuild was
+performed for these Python changes.
+
 ## Next research and implementation tasks
 
 The [geometric reduction](geometric-catalyst.md) shows that the all-fields
@@ -307,11 +330,13 @@ search with exact linear output recovery is a separate route for testing
 small direct decompositions. Neither route currently has a feasible cost
 bound for a 9/4-plus-slack witness.
 
-The supplied-certificate-to-coefficients path is implemented. The next
-implementation priorities are materializing promising witnessed LP families,
-checking any proposed useful certificate, and reducing dense allocation costs
-when a larger example becomes justified. Formalizing the new recurrence and
-obstruction arguments in Lean is a separate verification task.
+The supplied-certificate-to-coefficients path and a bounded integrated control
+pipeline are implemented. The next discovery priority is richer connected
+witnessed row families, assessed against direct decomposition search with
+explicit budgets and switching criteria. Further construction work includes
+symbolic interpolation/Fourier rules and scalar elimination. Formalizing the
+central catalytic argument and obstruction arguments in Lean remains a
+separate verification task.
 
 The research was divided into main-agent derivation, independent existence
 audit, constructive-route review, finite-search experiments, and peripheral

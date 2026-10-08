@@ -93,6 +93,8 @@ python3 -m reference.proof_demo
 python3 -m reference.extraction_demo
 python3 -m reference.catalyst_demo
 python3 -m reference.witnessed_demo
+python3 -m reference.proof_pipeline
+python3 -m reference.structured_demo
 python3 -m unittest discover -s reference -t . -v
 ```
 
@@ -107,6 +109,14 @@ explicit catalytic restriction. The prototype verifies supplied catalyst
 maps, assembles witnessed finite duals, and compiles powered restrictions into
 exact coefficients. It has not found a useful 9/4 catalyst. Branch extraction is connected to a
 small exact eight-term 2-by-2 matrix scheme.
+
+The [revised stages 1–3 checkpoint](reference/research/stages-1-3.md) adds
+integer allocation forecasts, checked construction DAGs with coefficient
+queries, and automatic finite proof-row integration with attribution analysis.
+Its known-rank controls reconstruct seven- and 49-term schemes; the selected
+proof-derived rows have not produced a useful d=2,k=5 certificate. Small witness
+seeds are checked densely, and the full giant catalytic compilation is not yet
+symbolic.
 
 ## Reproduction and verification
 

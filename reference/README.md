@@ -12,6 +12,8 @@ python3 -m reference.proof_demo  # just the proof-derived construction pipeline
 python3 -m reference.extraction_demo  # branch extraction to a small matrix scheme
 python3 -m reference.catalyst_demo  # actual maps from a supplied catalyst
 python3 -m reference.witnessed_demo  # finite dual -> catalyst -> matrix coefficients
+python3 -m reference.proof_pipeline  # generated proof rows, exact search, attribution
+python3 -m reference.structured_demo  # checked large tensor power, without expansion
 python3 -m unittest discover -s reference -t . -v
 ```
 
@@ -44,6 +46,9 @@ python3 -m unittest discover -s reference -t . -v
 | `build_geometric_catalyst()` | Convert a supplied exact M_(d^b) scheme with r<k^b into a D=0 certificate over the same field, using a specified direct sum of matrix powers. It does not discover the required input scheme. |
 | `projective_convolution_scheme()` | Finite-node interpolation plus a leading-coefficient/infinity term, verified as an exact convolution scheme. |
 | `descend()` | The explicit basis/projection formula in [FieldDescent.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/Arithmetic/FieldDescent.lean). |
+| `forecast_candidate()` and `forecast_verified_inputs()` | Integer cost/size forecasts for capped catalytic blocks, one final descent, and dense expansion budgets. Numerical forecasts construct no output decomposition. |
+| `CertificateGraph` | Checked tensor/scheme leaves and finite restriction seeds, typed construction DAGs, individual coefficient queries, bounded expansion, serialization/replay and exact support counts where available. |
+| `reference.proof_pipeline` | Automatic sector/type/Fourier/determinant row generation, canonical tensor registry, exact dual/catalyst compilation and family-removal analysis with a separately identified known-rank control. |
 
 This correspondence is an implementation guide, not a formal proof that the
 Python code refines the Lean definitions. Tests independently check tensor
