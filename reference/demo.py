@@ -3,6 +3,7 @@
 from .constructions import (fourier_filter, nonzero_nodes, primitive_root,
                             recover_leading_coefficient, separation_period)
 from .fields import FiniteField
+from .degenerations import left_perturbation_fixture
 from .schemes import descend, naive_multiply, strassen_scheme
 
 
@@ -43,6 +44,27 @@ def main():
     if recovered != 2:
         raise RuntimeError("interpolation check failed")
     print(f"F_4 interpolation at nonzero nodes {nodes}: recovered encoded coefficient {recovered}.")
+
+    degeneration = left_perturbation_fixture(seed)
+    if not degeneration.verify():
+        raise RuntimeError("polynomial degeneration certificate failed")
+    print("Polynomial fixture: P(t)=t*T+t^2*S, with non-proportional tensor noise S.")
+    for exponent in (0, 1, 2):
+        powered = degeneration.tensor_power(exponent)
+        generated = powered.recover_scheme()
+        print(f"Polynomial power {exponent}: {powered.terms} terms,"
+              f" {powered.recovery_node_count} nodes -> {generated.terms} certified exact terms.")
+    generated = degeneration.tensor_power(2).recover_scheme()
+    repeated = degeneration.recover_scheme().tensor_power(2)
+    if repeated.multiply(left, right) != generated.multiply(left, right):
+        raise RuntimeError("recovery order check failed")
+    print(f"At power 2: recover after powering = {generated.terms} terms;"
+          f" power after recovering = {repeated.terms} terms.")
+    base_generated = descend(generated)
+    if base_generated.multiply(left, right) != expected:
+        raise RuntimeError("polynomial recovery / descent matrix check failed")
+    print(f"Polynomial power -> interpolation -> descent -> F_2 4x4 product:"
+          f" {base_generated.terms} terms, ordinary matrix multiplication agrees.")
 
     for roots_field in (FiniteField(2, (1, 1, 0, 0, 1)), FiniteField(5, (2, 0, 1))):
         period = separation_period(roots_field, 1)

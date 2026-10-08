@@ -73,12 +73,13 @@ Over finite fields, the original `P.Correct` predicate expresses equality of fun
 The optional [Python reference implementation](reference/README.md) executes
 selected finite steps: exact tensor-coefficient verification, bilinear and
 recursive block multiplication, characteristic-aware Fourier filtering,
-nonzero-node interpolation, and fixed-extension rank descent after tensor
-powering. It uses only the Python standard library. From the repository root:
+nonzero-node interpolation, exact scheme generation from certified polynomial
+degenerations, and fixed-extension rank descent after tensor powering. It uses
+only the Python standard library. From the repository root:
 
 ```sh
 python3 -m reference.demo
-python3 -m unittest reference.test_reference -v
+python3 -m unittest discover -s reference -t . -v
 ```
 
 The examples use naive and Strassen decompositions as supplied test inputs;
