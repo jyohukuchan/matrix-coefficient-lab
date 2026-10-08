@@ -90,6 +90,7 @@ repository root:
 ```sh
 python3 -m reference.demo
 python3 -m reference.proof_demo
+python3 -m reference.extraction_demo
 python3 -m unittest discover -s reference -t . -v
 ```
 
@@ -97,6 +98,13 @@ The examples use naive and Strassen decompositions as supplied test inputs;
 they do not extract a `9/4` scheme from the existence proof, claim a speedup,
 or formally verify the Python code in Lean. See the reference documentation
 for the supported fields and remaining construction steps.
+
+The [coefficient-extraction research checkpoint](reference/research/README.md)
+audits the existence argument and derives a conditional route through an
+explicit catalytic restriction. The prototype verifies supplied catalyst
+maps and numerical cost plans; it does not yet compile that recurrence into
+coefficients or find a useful catalyst. Branch extraction is connected to a
+small exact eight-term 2-by-2 matrix scheme.
 
 ## Reproduction and verification
 

@@ -9,6 +9,7 @@ Python 3.10 or newer is required. Run from the repository root:
 ```sh
 python3 -m reference.demo
 python3 -m reference.proof_demo  # just the proof-derived construction pipeline
+python3 -m reference.extraction_demo  # branch extraction to a small matrix scheme
 python3 -m unittest discover -s reference -t . -v
 ```
 
@@ -30,6 +31,8 @@ python3 -m unittest discover -s reference -t . -v
 | `LinearMap`, `restrict()`, `direct_sum()`, and `permute_axes()` | Independent local substitutions, complete independent blocks, and coordinate relabelings from the finite tensor operations. |
 | `shared_first_tensor()` and `tag_shared_scheme()` | Shared X with matching Y/Z branch labels from [Separation/BranchTagging.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Separation/BranchTagging.lean). |
 | `FiniteSeparation` | The three explicit Fourier maps, integer square weights, formal leading coefficient, and full branch/dot-product direct sum from [Separation/Basic.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Separation/Basic.lean) and [SquareWeights.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Separation/SquareWeights.lean). |
+| `extract_branch()`, `factor_singleton_leg()`, `square_from_boundary()` | Exact branch selections, boundary coefficient-matrix factorization, and cyclic tensor products reindexed as a matrix multiplication tensor. The small example yields eight terms, not a 9/4 witness. |
+| `CatalyticCertificate` and conditional planners | Supplied local maps for a finite positive-gain catalytic restriction, full coefficient verification, gain removal, and integer cost planning. The powered-catalyst derivation is recorded in the research notes; the iterated coefficient compiler is not implemented. |
 | `descend()` | The explicit basis/projection formula in [FieldDescent.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/Arithmetic/FieldDescent.lean). |
 
 This correspondence is an implementation guide, not a formal proof that the
@@ -561,6 +564,23 @@ and 2, and compares both construction orders at power 2: **196 vs 784 terms**.
 Terms with zero coefficients are retained, so these are rank upper bounds, not
 minimal ranks. The whole supplied extension is used; no minimal coefficient
 algebra is found automatically. Scalar-operation counts are not instrumented.
+
+## Coefficient extraction research
+
+The [research checkpoint](research/README.md) records the source audit,
+complete finite-search route, and a conditional powered-catalyst route.
+An explicit useful catalyst would supply enough data for a convergent
+coefficient procedure. Finding that catalyst remains a research problem.
+Current code checks supplied catalysts and plans integer costs; it does not
+generate the decompositions predicted by that recurrence.
+
+`proof_matrix_pipeline()` executes the finite separation-to-matrix connection
+over F_16. It extracts each branch from the generated 750-term scheme,
+restores the middle branch's order, and factors each C(2,1) boundary to two
+terms. Three cyclic factors give an exact eight-term 2-by-2 matrix scheme.
+The demo checks the full tensor, a matrix product, and powers followed by
+one final descent. These are classical coefficients obtained through the
+pipeline and carry no improved exponent claim.
 
 ## Scope and remaining work
 

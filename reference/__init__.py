@@ -15,9 +15,18 @@ from .convolution import convolution_scheme, lagrange_basis
 from .maps import LinearMap
 from .tagging import tag_shared_scheme
 from .separation import FiniteSeparation
+from .extraction import (ProofMatrixConstruction, branch_maps, extract_branch,
+                         factor_singleton_leg, proof_matrix_pipeline,
+                         simplify_scheme, square_from_boundary)
+from .catalysts import (CatalyticCertificate, ConditionalCostPlan,
+                       plan_catalytic_parameters, plan_conditional_costs)
 
 __all__ = ["FiniteField", "Polynomial", "PolynomialDegeneration", "BilinearScheme",
            "FiniteTensor", "TensorScheme", "TensorDegeneration", "matrix_multiplication_tensor",
            "ThreeSectorConstruction", "convolution_tensor", "convolution_scheme", "lagrange_basis",
            "LinearMap", "shared_first_tensor", "tag_shared_scheme", "FiniteSeparation",
+           "ProofMatrixConstruction", "branch_maps", "extract_branch", "factor_singleton_leg",
+           "proof_matrix_pipeline", "simplify_scheme", "square_from_boundary",
+           "CatalyticCertificate", "ConditionalCostPlan", "plan_catalytic_parameters",
+           "plan_conditional_costs",
            "descend", "naive_scheme", "strassen_scheme"]
