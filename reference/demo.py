@@ -33,6 +33,25 @@ def main():
     print(f"  proof diagonal maps generated {proof_degeneration.terms} polynomial terms"
           f" with certified leading target R and degree bound {proof_degeneration.degree_bound}.")
     field = FiniteField(2, (1, 1, 1))  # F_4 = F_2[X]/(X^2+X+1)
+    extended_sectors = ThreeSectorConstruction(field, 2, 2)
+    for exponent in (0, 1, 2):
+        recovered = extended_sectors.recover_power(exponent)
+        base = descend(recovered)
+        target = sectors.retained.tensor_power(exponent)
+        left_input = tuple(i % 2 for i in range(target.shape[0]))
+        right_input = tuple((j+1) % 2 for j in range(target.shape[1]))
+        if base.target != target or base.apply(left_input, right_input) != target.contract(left_input, right_input):
+            raise RuntimeError("proof three-sector power / interpolation / descent check failed")
+        print(f"  Proof power {exponent}: shape {base.shape}, {exponent+1} nodes ->"
+              f" {recovered.terms} exact F_4 terms -> {base.terms} F_2 terms;"
+              " all coefficients and direct contraction agree.")
+    recovered = extended_sectors.recover_power(2)
+    repeated = extended_sectors.recover_power(1).tensor_power(2)
+    repeated.require_exact()
+    if repeated.target != recovered.target:
+        raise RuntimeError("proof three-sector recovery order check failed")
+    print(f"  Proof power 2: recover after powering = {recovered.terms} terms;"
+          f" power after recovering = {repeated.terms} terms.")
     # 2 encodes X, so rescaling introduces genuine extension coefficients.
     seed = strassen_scheme(field).rescale_terms(2, 1)
     if not seed.verify():

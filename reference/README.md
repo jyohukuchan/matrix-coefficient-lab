@@ -232,11 +232,67 @@ checked, and its number of terms is preserved. This stage does not implement
 an optimal-rank convolution scheme or a 9/4 matrix scheme.
 
 This construction is checked by formal polynomial coefficients even over F_2,
-where parameter evaluations alone cannot distinguish t from t^2. Connecting **this particular
-proof-derived family** to tensor powers and interpolated recovery is the next
-stage; enough distinct nonzero nodes will require a suitable supplied field.
-The current sector demo and tests stop at construction and coefficient
-certification, including the shared input and actual local-map identity.
+where parameter evaluations alone cannot distinguish t from t^2.
+
+### Powers, recovery, and descent of the proof-derived family
+
+`construction.recover_power(exponent, nodes=None, source_scheme=None)` connects
+the generated family to the existing generic tensor-power and interpolation
+APIs. It validates the source decomposition, checks the available nodes before
+allocating the power, and returns a certified `TensorScheme` for
+`construction.retained.tensor_power(exponent)`. The order is:
+
+```text
+proof diagonal maps -> polynomial tensor power -> interpolation -> exact scheme
+                                                                -> descend once
+```
+
+All factors use the **same** polynomial parameter. For power q,
+`P(t)^tensor q = t^q * (R+t*E)^tensor q`; coefficient q is R^tensor q,
+and the mixed noise coefficients remain present above it. The polynomial
+degree bound is 2*q, so after dividing by t^q the normalized degree is at most
+q. Thus q+1 distinct nonzero nodes suffice. With r source terms, the default
+recovered family has `(q+1)*r^q` terms for positive a,h. This is a supplied
+decomposition length, not a minimal rank or a speed estimate. Empty source
+families can have a smaller bound. Power zero returns the scalar unit.
+
+```python
+from reference import FiniteField, ThreeSectorConstruction, descend
+
+extension = FiniteField(2, (1, 1, 1))  # F_4, fixed before powering
+construction = ThreeSectorConstruction(extension, a=2, h=2)
+exact = construction.recover_power(2)  # nodes 1, alpha, alpha+1
+assert exact.shape == (4, 49, 64)
+assert exact.terms == 3 * 14**2 == 588
+assert exact.verify()  # all 4*49*64 tensor coefficients
+
+base = descend(exact)  # degree squared overhead: 2^2, applied once
+assert base.terms == 2352
+assert base.verify()
+assert base.target == ThreeSectorConstruction(FiniteField(2), 2, 2).retained.tensor_power(2)
+left = (1, 0, 1, 1)
+right = tuple(j % 2 for j in range(49))
+assert base.apply(left, right) == base.target.contract(left, right)
+```
+
+The demo checks powers 0, 1, and 2 of this particular proof-derived family
+over the same F_4, then descends each recovered scheme to F_2. Its first input
+dimension is a^q, because the three branches share that input. It also checks
+that recovering before squaring would give 784 terms instead of 588. Smaller
+integration tests compare both full orders including descent: for a=2,h=1,
+power-two recovery then descent gives 768 terms, while recovering and
+descending the seed before squaring gives 4096. Both compute the same tensor;
+the latter repeats the interpolation and extension overheads.
+
+The caller must supply a field with enough distinct nonzero elements. F_4 has
+three, so the default degree bound supports powers through 2; power 3 raises
+an error before building its tensor. F_2 alone is too small for the default
+positive first-power example. Custom node order, extra nodes, and a supplied
+exact source decomposition are supported. No extension is chosen automatically,
+and a fixed finite field cannot provide an unbounded number of nodes for this
+family. These finite examples therefore do not establish an asymptotic bound.
+The result computes powers of the retained convolution tensor R; it is not yet
+an extracted 9/4 matrix multiplication scheme.
 
 ## Polynomial degeneration to generated coefficients
 
@@ -361,7 +417,8 @@ algebra is found automatically. Scalar-operation counts are not instrumented.
   decompositions are supported. The proof's three-sector diagonal restriction
   is generated; higher-order tensors and general polynomial local restriction
   maps are not implemented.
-- The three-sector finite coefficient construction is implemented, but the full
+- The three-sector finite coefficient construction, powering, interpolation,
+  and fixed-extension descent are connected, but the full
   auxiliary-separation, determinant/character inequalities, entropy limits,
   and spectral existence argument are not translated.
 - Strassen and naive decompositions are input fixtures. Neither is a 9/4
@@ -371,7 +428,7 @@ algebra is found automatically. Scalar-operation counts are not instrumented.
   bound is claimed. Dense tensor powers and exhaustive coefficient checking
   become large quickly. Use small dimensions and powers.
 
-The three-sector generator now supplies proof-derived polynomial families to
-the verification interface. Further finite constructions and turning the
+The three-sector generator supplies proof-derived polynomial families to
+the verified power/recovery/descent pipeline. Further finite constructions and turning the
 current spectral existence proof into a generator for the 9/4 schemes remain
 separate mathematical and implementation tasks.

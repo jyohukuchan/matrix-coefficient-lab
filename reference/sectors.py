@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from itertools import product
 
+from .constructions import constant_weights, nonzero_nodes
 from .fields import FiniteField
 from .polynomials import Polynomial
 from .tensor_degenerations import TensorDegeneration
@@ -190,7 +191,7 @@ class ThreeSectorConstruction:
         Defaults to a trivial coordinate-pair decomposition. This preserves its
         number of terms; it does not find the best convolution rank. The result
         is a certified TensorDegeneration with target R and leading order 1.
-        Tensor powering and interpolated recovery of R are subsequent steps.
+        Use recover_power() to power this family before interpolated recovery.
         """
         self.require_valid()
         if source_scheme is None:
@@ -205,3 +206,24 @@ class ThreeSectorConstruction:
         degeneration = TensorDegeneration(self.retained, 1, *families)
         degeneration.require_valid()
         return degeneration
+
+    def recover_power(self, exponent, nodes=None, source_scheme=None):
+        """Recover an exact decomposition of R^exponent over this fixed field.
+
+        Power the polynomial family first, then interpolate its normalized
+        leading coefficient. The proof maps give degree at most 2*exponent
+        and leading order exponent, so exponent+1 nonzero nodes suffice.
+        The actual source-family bound can be smaller in empty cases.
+
+        Nodes are checked before allocating the tensor power. No field is
+        automatically enlarged. To return to the prime field, descend the
+        returned exact scheme once, after powering and recovery.
+        """
+        _natural(exponent)
+        degeneration = self.generate_degeneration(source_scheme)
+        count = max(0, degeneration.degree_bound-degeneration.leading)*exponent+1
+        nodes = nonzero_nodes(self.field, count) if nodes is None else tuple(nodes)
+        constant_weights(self.field, nodes)  # validates distinct nonzero field elements
+        if len(nodes) < count:
+            raise ValueError("not enough nodes for the normalized powered tensor degree bound")
+        return degeneration.tensor_power(exponent).recover_scheme(nodes)
