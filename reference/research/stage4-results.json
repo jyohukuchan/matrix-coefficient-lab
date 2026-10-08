@@ -1,0 +1,2457 @@
+{
+  "checkpoint": "2026-10-08",
+  "new_useful_d2_k5_certificate": false,
+  "new_exponent_2_4_matrix_scheme": false,
+  "interpretation": "Finite feasible certificates exclude duals only for their selected witnessed row families. SAT timeouts and local-search caps are incomplete. Research obstructions are independently audited, not Lean-formalized.",
+  "connected_experiments": {
+    "connected-f11": {
+      "field": {
+        "p": 11,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "d": 2,
+      "k": 5,
+      "include_known_control": false,
+      "contexts": [
+        "M2",
+        "C22",
+        "star"
+      ],
+      "budget": {
+        "max_rows": 256,
+        "max_atoms": 128,
+        "max_upper_terms": 64,
+        "max_lift_entries": 100000
+      },
+      "direct_seeded": {
+        "matrix-control-seed0": {
+          "status": "resource_cap",
+          "reason": "time cap reached; search incomplete",
+          "initial_terms": 8,
+          "goal_terms": 7,
+          "best_terms": 8,
+          "steps": 3062,
+          "proposals": 24482,
+          "plus_moves": 2,
+          "seed": 0,
+          "elapsed_seconds": 5.001081717000488,
+          "improvements": [],
+          "exact_coefficients": true,
+          "supplied_seed": "coordinate-pair decomposition; no seven-term matrix scheme supplied"
+        },
+        "star-product-seed0": {
+          "status": "resource_cap",
+          "reason": "time cap reached; search incomplete",
+          "initial_terms": 32,
+          "goal_terms": 19,
+          "best_terms": 32,
+          "steps": 4110,
+          "proposals": 32873,
+          "plus_moves": 1,
+          "seed": 0,
+          "elapsed_seconds": 30.006748307001544,
+          "improvements": [],
+          "exact_coefficients": true,
+          "supplied_seed": "coordinate-pair decomposition; no seven-term matrix scheme supplied"
+        },
+        "matrix-control-seed1": {
+          "status": "resource_cap",
+          "reason": "time cap reached; search incomplete",
+          "initial_terms": 8,
+          "goal_terms": 7,
+          "best_terms": 8,
+          "steps": 3351,
+          "proposals": 26731,
+          "plus_moves": 11,
+          "seed": 1,
+          "elapsed_seconds": 5.001556133996928,
+          "improvements": [],
+          "exact_coefficients": true,
+          "supplied_seed": "coordinate-pair decomposition; no seven-term matrix scheme supplied"
+        },
+        "star-product-seed1": {
+          "status": "resource_cap",
+          "reason": "time cap reached; search incomplete",
+          "initial_terms": 32,
+          "goal_terms": 19,
+          "best_terms": 32,
+          "steps": 4155,
+          "proposals": 33226,
+          "plus_moves": 2,
+          "seed": 1,
+          "elapsed_seconds": 30.00177895700108,
+          "improvements": [],
+          "exact_coefficients": true,
+          "supplied_seed": "coordinate-pair decomposition; no seven-term matrix scheme supplied"
+        }
+      },
+      "elapsed_seconds": 263.8062639500022,
+      "finite": {
+        "status": "finite_feasible",
+        "reason": "exact rational normalized state satisfies every selected row",
+        "atoms": 46,
+        "rows": 135,
+        "construction_seconds": 192.50606043100197,
+        "proposal_and_verification_seconds": 1.2624699869993492,
+        "numeric_statuses": [
+          2,
+          0
+        ],
+        "skipped": [
+          {
+            "operation": "lift-2-M2",
+            "reason": "lift construction cap reached"
+          },
+          {
+            "operation": "lift-2-C22",
+            "reason": "lift construction cap reached"
+          },
+          {
+            "operation": "lift-2-star",
+            "reason": "lift construction cap reached"
+          }
+        ],
+        "family_counts": {
+          "sector": 1,
+          "exact_type": 1,
+          "fourier": 1,
+          "determinant": 1,
+          "detector": 12,
+          "additivity": 6,
+          "context:M2:sector": 1,
+          "context:C22:sector": 1,
+          "context:star:sector": 1,
+          "context:M2:exact_type": 1,
+          "context:C22:exact_type": 1,
+          "context:star:exact_type": 1,
+          "context:M2:determinant": 1,
+          "context:C22:determinant": 1,
+          "context:star:determinant": 1,
+          "factor_swap": 14,
+          "scalar_lower": 45,
+          "rank_upper": 45
+        },
+        "exact_state": {
+          "unit": "1",
+          "sector-source": "1",
+          "sector-retained": "1",
+          "type-power": "1",
+          "type-words": "1",
+          "Fourier-direct": "1",
+          "determinant-source": "1",
+          "determinant-graded": "1",
+          "M2*unit": "5",
+          "C22": "1",
+          "C23": "1",
+          "C33": "1",
+          "star": "1",
+          "sum-0-positive": "2",
+          "lift-0-M2-sector-source": "5",
+          "lift-0-M2-sector-retained": "5",
+          "lift-0-C22-sector-source": "1",
+          "lift-0-C22-sector-retained": "1",
+          "lift-0-star-sector-source": "1",
+          "lift-0-star-sector-retained": "1",
+          "lift-1-M2-type-power": "5",
+          "lift-1-M2-type-words": "5",
+          "lift-1-C22-type-power": "1",
+          "lift-1-C22-type-words": "1",
+          "lift-1-star-type-power": "1",
+          "lift-1-star-type-words": "1",
+          "sum-2-positive": "20",
+          "sum-3-positive": "2",
+          "lift-3-M2-determinant-source": "5",
+          "lift-3-M2-determinant-graded": "5",
+          "lift-3-C22-determinant-source": "1",
+          "lift-3-C22-determinant-graded": "1",
+          "lift-3-star-determinant-source": "1",
+          "lift-3-star-determinant-graded": "1",
+          "M2-context@sector-source": "5",
+          "M2-context@sector-retained": "5",
+          "M2-context@type-power": "5",
+          "M2-context@type-words": "5",
+          "Fourier-direct@M2-context": "5",
+          "M2-context@Fourier-direct": "5",
+          "M2-context@determinant-source": "5",
+          "M2-context@determinant-graded": "5",
+          "M2*C22": "24",
+          "M2*C23": "32",
+          "M2*C33": "40",
+          "M2*star": "32"
+        },
+        "interpretation": "No negative-unit dual for these selected rows; no global catalyst exclusion."
+      }
+    },
+    "connected-f4": {
+      "field": {
+        "p": 2,
+        "modulus": [
+          1,
+          1,
+          1
+        ]
+      },
+      "d": 2,
+      "k": 5,
+      "include_known_control": false,
+      "contexts": [
+        "M2",
+        "C22",
+        "star"
+      ],
+      "budget": {
+        "max_rows": 256,
+        "max_atoms": 128,
+        "max_upper_terms": 64,
+        "max_lift_entries": 100000
+      },
+      "direct_seeded": {
+        "matrix-control-seed0": {
+          "status": "found",
+          "reason": "requested term bound reached with exact coefficients",
+          "initial_terms": 8,
+          "goal_terms": 7,
+          "best_terms": 7,
+          "steps": 3590,
+          "proposals": 28248,
+          "plus_moves": 67,
+          "seed": 0,
+          "elapsed_seconds": 4.9119222089975665,
+          "improvements": [
+            [
+              3590,
+              7
+            ]
+          ],
+          "exact_coefficients": true,
+          "supplied_seed": "coordinate-pair decomposition; no seven-term matrix scheme supplied"
+        },
+        "star-product-seed0": {
+          "status": "resource_cap",
+          "reason": "time cap reached; search incomplete",
+          "initial_terms": 32,
+          "goal_terms": 19,
+          "best_terms": 32,
+          "steps": 2837,
+          "proposals": 22682,
+          "plus_moves": 2,
+          "seed": 0,
+          "elapsed_seconds": 20.009074765999685,
+          "improvements": [],
+          "exact_coefficients": true,
+          "supplied_seed": "coordinate-pair decomposition; no seven-term matrix scheme supplied"
+        }
+      },
+      "elapsed_seconds": 187.6039871949979,
+      "finite": {
+        "status": "finite_feasible",
+        "reason": "exact rational normalized state satisfies every selected row",
+        "atoms": 32,
+        "rows": 91,
+        "construction_seconds": 161.68977486999938,
+        "proposal_and_verification_seconds": 0.971423044000403,
+        "numeric_statuses": [
+          2,
+          0
+        ],
+        "skipped": [
+          {
+            "operation": "exact_type_fourier",
+            "reason": "this control is generated over F11; no field extension is implicit"
+          }
+        ],
+        "family_counts": {
+          "sector": 1,
+          "determinant": 1,
+          "detector": 9,
+          "additivity": 4,
+          "context:M2:sector": 1,
+          "context:C22:sector": 1,
+          "context:star:sector": 1,
+          "context:M2:determinant": 1,
+          "context:C22:determinant": 1,
+          "context:star:determinant": 1,
+          "factor_swap": 8,
+          "scalar_lower": 31,
+          "rank_upper": 31
+        },
+        "exact_state": {
+          "unit": "1",
+          "sector-source": "1",
+          "sector-retained": "1",
+          "determinant-source": "1",
+          "determinant-graded": "1",
+          "M2*unit": "5",
+          "C22": "1",
+          "C23": "1",
+          "C33": "1",
+          "star": "1",
+          "sum-0-positive": "2",
+          "lift-0-M2-sector-source": "5",
+          "lift-0-M2-sector-retained": "5",
+          "lift-0-C22-sector-source": "1",
+          "lift-0-C22-sector-retained": "1",
+          "lift-0-star-sector-source": "1",
+          "lift-0-star-sector-retained": "1",
+          "sum-1-positive": "2",
+          "lift-1-M2-determinant-source": "5",
+          "lift-1-M2-determinant-graded": "5",
+          "lift-1-C22-determinant-source": "1",
+          "lift-1-C22-determinant-graded": "1",
+          "lift-1-star-determinant-source": "1",
+          "lift-1-star-determinant-graded": "1",
+          "M2-context@sector-source": "5",
+          "M2-context@sector-retained": "5",
+          "M2-context@determinant-source": "5",
+          "M2-context@determinant-graded": "5",
+          "M2*C22": "24",
+          "M2*C23": "32",
+          "M2*C33": "40",
+          "M2*star": "32"
+        },
+        "interpretation": "No negative-unit dual for these selected rows; no global catalyst exclusion."
+      }
+    },
+    "control-f2": {
+      "field": {
+        "p": 2,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "d": 2,
+      "k": 8,
+      "include_known_control": true,
+      "contexts": [],
+      "budget": {
+        "max_rows": 256,
+        "max_atoms": 128,
+        "max_upper_terms": 64,
+        "max_lift_entries": 100000
+      },
+      "direct_seeded": {
+        "matrix-control-seed0": {
+          "status": "found",
+          "reason": "requested term bound reached with exact coefficients",
+          "initial_terms": 8,
+          "goal_terms": 7,
+          "best_terms": 7,
+          "steps": 175,
+          "proposals": 1337,
+          "plus_moves": 9,
+          "seed": 0,
+          "elapsed_seconds": 0.20353275100205792,
+          "improvements": [
+            [
+              175,
+              7
+            ]
+          ],
+          "exact_coefficients": true,
+          "supplied_seed": "coordinate-pair decomposition; no seven-term matrix scheme supplied"
+        },
+        "star-product-seed0": {
+          "status": "resource_cap",
+          "reason": "time cap reached; search incomplete",
+          "initial_terms": 32,
+          "goal_terms": 19,
+          "best_terms": 32,
+          "steps": 1523,
+          "proposals": 12058,
+          "plus_moves": 18,
+          "seed": 0,
+          "elapsed_seconds": 10.001723160999973,
+          "improvements": [],
+          "exact_coefficients": true,
+          "supplied_seed": "coordinate-pair decomposition; no seven-term matrix scheme supplied"
+        }
+      },
+      "elapsed_seconds": 39.84017468899765,
+      "finite": {
+        "status": "found",
+        "reason": "rationalized integer dual passes exact balance",
+        "atoms": 11,
+        "rows": 28,
+        "construction_seconds": 28.70665912899858,
+        "proposal_and_verification_seconds": 0.5233050140013802,
+        "numeric_statuses": [
+          0
+        ],
+        "skipped": [
+          {
+            "operation": "sector",
+            "reason": "need between 1 and field.order - 1 distinct nonzero nodes"
+          },
+          {
+            "operation": "exact_type_fourier",
+            "reason": "this control is generated over F11; no field extension is implicit"
+          },
+          {
+            "operation": "determinant",
+            "reason": "need between 1 and field.order - 1 distinct nonzero nodes"
+          },
+          {
+            "operation": "projective-C23",
+            "reason": "not enough finite field elements for projective convolution interpolation",
+            "fallback": "checked coordinate-pair scheme"
+          },
+          {
+            "operation": "projective-C33",
+            "reason": "not enough finite field elements for projective convolution interpolation",
+            "fallback": "checked coordinate-pair scheme"
+          }
+        ],
+        "family_counts": {
+          "detector": 5,
+          "known_control": 1,
+          "additivity": 2,
+          "scalar_lower": 10,
+          "rank_upper": 10
+        },
+        "gain": 1,
+        "used_rows": [
+          {
+            "index": 0,
+            "family": "detector",
+            "weight": 1
+          },
+          {
+            "index": 1,
+            "family": "known_control",
+            "weight": 1
+          }
+        ],
+        "actual_catalyst_verified": true
+      },
+      "direct_unseeded": {
+        "status": "found",
+        "reason": "actual SAT restriction independently verified; third leg re-solved",
+        "target": "M2",
+        "goal_terms": 7,
+        "elapsed_seconds": 0.24869181900066906,
+        "exact_coefficients": true
+      }
+    }
+  },
+  "sat_cases": [
+    {
+      "case": "finite-search-d346",
+      "independent_math_status": "excluded by h=3/generic rank four obstruction",
+      "record": {
+        "candidate": "d346",
+        "field": "F2",
+        "d": 2,
+        "k": 5,
+        "m": 1,
+        "D_shape": [
+          3,
+          4,
+          6
+        ],
+        "D_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "S_shape": [
+          2,
+          3,
+          3
+        ],
+        "S_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "D_flattening_ranks": [
+          3,
+          4,
+          6
+        ],
+        "D_slice_controls": {
+          "field": "F2",
+          "all_nonzero_first_vectors_checked": 7,
+          "exact_F2_slice_rank_counts": {
+            "4": 7
+          },
+          "exact_F2_maximum_slice_rank": 4,
+          "slices": [
+            {
+              "first_vector": [
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                0,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                0,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                1
+              ],
+              "rank": 4
+            }
+          ]
+        },
+        "D_generic_slice_rank_certificate": {
+          "proved_rank": 4,
+          "upper_bound": "the slice has only four second-leg input coordinates",
+          "nonzero_formal_minor": "first four output coordinates against all four second-leg inputs have determinant a0^4",
+          "minor_at_first_vector_100": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "not_inferred_from_F2_maximum_alone": true
+        },
+        "S_slice_controls": {
+          "field": "F2",
+          "all_nonzero_first_vectors_checked": 3,
+          "exact_F2_slice_rank_counts": {
+            "2": 3
+          },
+          "exact_F2_maximum_slice_rank": 2,
+          "slices": [
+            {
+              "first_vector": [
+                1,
+                0
+              ],
+              "rank": 2
+            },
+            {
+              "first_vector": [
+                0,
+                1
+              ],
+              "rank": 2
+            },
+            {
+              "first_vector": [
+                1,
+                1
+              ],
+              "rank": 2
+            }
+          ]
+        },
+        "source_shape": [
+          13,
+          19,
+          21
+        ],
+        "target_shape": [
+          12,
+          17,
+          19
+        ],
+        "source_flattening_ranks": [
+          13,
+          19,
+          21
+        ],
+        "target_flattening_ranks": [
+          12,
+          17,
+          19
+        ],
+        "map_coefficient_bits": 878,
+        "complete_coefficient_equations": 3876,
+        "source_nonzero_coefficients": 32,
+        "cubic_product_occurrences": 124032,
+        "solver": {
+          "timeout_ms": 120000,
+          "max_memory_mb": 512,
+          "max_products": 200000,
+          "max_map_bits": 4096,
+          "max_boolean_products": 250000,
+          "random_seed": 0
+        },
+        "actual_catalytic_certificate_verified": false,
+        "limitation": "A cap or timeout is not nonexistence. UNSAT excludes only this fixed D,S,d,k,m over F2.",
+        "status": "resource_cap",
+        "reason": "solver incomplete: timeout",
+        "checked": 1,
+        "wall_seconds_including_encoding_and_verification": 127.26835482599927
+      }
+    },
+    {
+      "case": "finite-search-d345",
+      "independent_math_status": "excluded by h=3/generic rank four obstruction",
+      "record": {
+        "candidate": "d345",
+        "field": "F2",
+        "d": 2,
+        "k": 5,
+        "m": 1,
+        "D_shape": [
+          3,
+          4,
+          5
+        ],
+        "D_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "S_shape": [
+          2,
+          3,
+          3
+        ],
+        "S_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "D_flattening_ranks": [
+          3,
+          4,
+          5
+        ],
+        "D_slice_controls": {
+          "field": "F2",
+          "all_nonzero_first_vectors_checked": 7,
+          "exact_F2_slice_rank_counts": {
+            "3": 1,
+            "4": 6
+          },
+          "exact_F2_maximum_slice_rank": 4,
+          "slices": [
+            {
+              "first_vector": [
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                0,
+                1
+              ],
+              "rank": 3
+            },
+            {
+              "first_vector": [
+                1,
+                0,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                1
+              ],
+              "rank": 4
+            }
+          ]
+        },
+        "D_generic_slice_rank_certificate": {
+          "proved_rank": 4,
+          "upper_bound": "the slice has only four second-leg input coordinates",
+          "nonzero_formal_minor": "first four output coordinates against all four second-leg inputs have determinant a0^4",
+          "minor_at_first_vector_100": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "not_inferred_from_F2_maximum_alone": true
+        },
+        "S_slice_controls": {
+          "field": "F2",
+          "all_nonzero_first_vectors_checked": 3,
+          "exact_F2_slice_rank_counts": {
+            "2": 3
+          },
+          "exact_F2_maximum_slice_rank": 2,
+          "slices": [
+            {
+              "first_vector": [
+                1,
+                0
+              ],
+              "rank": 2
+            },
+            {
+              "first_vector": [
+                0,
+                1
+              ],
+              "rank": 2
+            },
+            {
+              "first_vector": [
+                1,
+                1
+              ],
+              "rank": 2
+            }
+          ]
+        },
+        "source_shape": [
+          13,
+          19,
+          20
+        ],
+        "target_shape": [
+          12,
+          17,
+          18
+        ],
+        "source_flattening_ranks": [
+          13,
+          19,
+          20
+        ],
+        "target_flattening_ranks": [
+          12,
+          17,
+          18
+        ],
+        "map_coefficient_bits": 839,
+        "complete_coefficient_equations": 3672,
+        "source_nonzero_coefficients": 31,
+        "cubic_product_occurrences": 113832,
+        "solver": {
+          "timeout_ms": 120000,
+          "max_memory_mb": 512,
+          "max_products": 200000,
+          "max_map_bits": 4096,
+          "max_boolean_products": 250000,
+          "random_seed": 0
+        },
+        "actual_catalytic_certificate_verified": false,
+        "limitation": "A cap or timeout is not nonexistence. UNSAT excludes only this fixed D,S,d,k,m over F2.",
+        "status": "resource_cap",
+        "reason": "solver incomplete: timeout",
+        "checked": 1,
+        "wall_seconds_including_encoding_and_verification": 127.10835482000039
+      }
+    },
+    {
+      "case": "finite-search-pencil445",
+      "independent_math_status": "excluded by rank-drop hyperplane obstruction",
+      "record": {
+        "candidate": "pencil445",
+        "description": "4x5 pencil L4(a,b)+cE00+dE11; main diagonal a, superdiagonal b",
+        "field": "F2",
+        "d": 2,
+        "k": 5,
+        "m": 1,
+        "D_shape": [
+          4,
+          4,
+          5
+        ],
+        "D_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "S_shape": [
+          2,
+          3,
+          3
+        ],
+        "S_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "D_flattening_ranks": [
+          4,
+          4,
+          5
+        ],
+        "D_first_slice_inventory": {
+          "all_nonzero_F2_first_vectors_checked": 15,
+          "exact_F2_slice_rank_counts": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 9
+          },
+          "exact_F2_maximum_slice_rank": 4,
+          "slices": [
+            {
+              "first_vector": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "rank": 1
+            },
+            {
+              "first_vector": [
+                1,
+                0,
+                1,
+                0
+              ],
+              "rank": 3
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "rank": 1
+            },
+            {
+              "first_vector": [
+                1,
+                0,
+                0,
+                1
+              ],
+              "rank": 3
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                0,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                0,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                0,
+                1,
+                1
+              ],
+              "rank": 2
+            },
+            {
+              "first_vector": [
+                1,
+                0,
+                1,
+                1
+              ],
+              "rank": 2
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "rank": 4
+            }
+          ]
+        },
+        "D_generic_slice_rank_certificate": {
+          "proved_rank": 4,
+          "formal_nonzero_minor": "columns 1,2,3,4 have determinant b^4",
+          "upper_bound": "only four rows"
+        },
+        "D_two_plane_certificate": {
+          "basis": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ]
+          ],
+          "all_algebraic_closure_nonzero_vectors_rank_at_least": 4,
+          "proof": "on c=d=0, first four columns have determinant a^4 and last four columns b^4; at least one is nonzero for (a,b)!=0",
+          "all_three_nonzero_F2_plane_points": [
+            {
+              "first_vector": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            }
+          ]
+        },
+        "source_shape": [
+          14,
+          19,
+          20
+        ],
+        "target_shape": [
+          13,
+          17,
+          18
+        ],
+        "source_flattening_ranks": [
+          14,
+          19,
+          20
+        ],
+        "target_flattening_ranks": [
+          13,
+          17,
+          18
+        ],
+        "map_coefficient_bits": 865,
+        "complete_coefficient_equations": 3978,
+        "source_nonzero_coefficients": 30,
+        "cubic_product_occurrences": 119340,
+        "solver": {
+          "timeout_ms": 120000,
+          "max_memory_mb": 512,
+          "max_products": 200000,
+          "max_map_bits": 4096,
+          "max_boolean_products": 250000,
+          "random_seed": 0
+        },
+        "actual_catalytic_certificate_verified": false,
+        "limitations": "Passing necessary conditions is not a catalyst certificate. Timeout/cap means unknown. UNSAT excludes only this fixed problem over F2.",
+        "status": "resource_cap",
+        "reason": "solver incomplete: timeout",
+        "checked": 1,
+        "wall_seconds_including_encoding_and_verification": 127.21719478400337,
+        "earlier_necessary_conditions_passed": true,
+        "screen_scope": "Earlier two-plane/dimension tests only; final independently audited math status is recorded separately."
+      }
+    },
+    {
+      "case": "finite-search-diagonal366",
+      "independent_math_status": "excluded by first-concise dimension three diagonal obstruction",
+      "record": {
+        "candidate": "diagonal366",
+        "description": "diag(x,x+z,y,y+z,x+y,x+y+z)",
+        "field": "F2",
+        "d": 2,
+        "k": 5,
+        "m": 1,
+        "D_shape": [
+          3,
+          6,
+          6
+        ],
+        "D_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "S_shape": [
+          2,
+          3,
+          3
+        ],
+        "S_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "D_flattening_ranks": [
+          3,
+          6,
+          6
+        ],
+        "D_first_slice_inventory": {
+          "all_nonzero_F2_first_vectors_checked": 7,
+          "exact_F2_slice_rank_counts": {
+            "3": 4,
+            "4": 3
+          },
+          "exact_F2_maximum_slice_rank": 4,
+          "slices": [
+            {
+              "first_vector": [
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                0,
+                1
+              ],
+              "rank": 3
+            },
+            {
+              "first_vector": [
+                1,
+                0,
+                1
+              ],
+              "rank": 3
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                1
+              ],
+              "rank": 3
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                1
+              ],
+              "rank": 3
+            }
+          ]
+        },
+        "D_generic_slice_rank_certificate": {
+          "proved_rank": 6,
+          "formal_nonzero_minor": "determinant=x*(x+z)*y*(y+z)*(x+y)*(x+y+z), a nonzero formal polynomial",
+          "upper_bound": "six rows and columns; not inferred from F2 evaluations"
+        },
+        "D_two_plane_certificate": {
+          "basis": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "all_algebraic_closure_nonzero_vectors_rank_at_least": 4,
+          "proof": "on z=0, the diagonal is (x,x,y,y,x+y,x+y); for (x,y)!=0 at most one of x,y,x+y vanishes",
+          "all_three_nonzero_F2_plane_points": [
+            {
+              "first_vector": [
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                0,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_vector": [
+                1,
+                1,
+                0
+              ],
+              "rank": 4
+            }
+          ]
+        },
+        "source_shape": [
+          13,
+          21,
+          21
+        ],
+        "target_shape": [
+          12,
+          19,
+          19
+        ],
+        "source_flattening_ranks": [
+          13,
+          21,
+          21
+        ],
+        "target_flattening_ranks": [
+          12,
+          19,
+          19
+        ],
+        "map_coefficient_bits": 954,
+        "complete_coefficient_equations": 4332,
+        "source_nonzero_coefficients": 31,
+        "cubic_product_occurrences": 134292,
+        "solver": {
+          "timeout_ms": 120000,
+          "max_memory_mb": 512,
+          "max_products": 200000,
+          "max_map_bits": 4096,
+          "max_boolean_products": 250000,
+          "random_seed": 0
+        },
+        "actual_catalytic_certificate_verified": false,
+        "limitations": "Passing necessary conditions is not a catalyst certificate. Timeout/cap means unknown. UNSAT excludes only this fixed problem over F2.",
+        "status": "resource_cap",
+        "reason": "solver incomplete: timeout",
+        "checked": 1,
+        "wall_seconds_including_encoding_and_verification": 128.6357333320011,
+        "earlier_necessary_conditions_passed": true,
+        "screen_scope": "Earlier two-plane/dimension tests only; final independently audited math status is recorded separately."
+      }
+    },
+    {
+      "case": "finite-search-random445",
+      "independent_math_status": "not excluded by the recorded tests; existence unresolved",
+      "record": {
+        "field": "F2",
+        "d": 2,
+        "k": 5,
+        "m": 1,
+        "seed": 20261008,
+        "max_candidates": 32,
+        "candidates_checked": 1,
+        "candidate_logs": [
+          {
+            "candidate_index_zero_based": 0,
+            "C_mask": 306381,
+            "E_mask": 47558,
+            "flattening_ranks": [
+              4,
+              4,
+              5
+            ],
+            "slice_rank_counts": {
+              "2": 1,
+              "3": 4,
+              "4": 10
+            },
+            "rankdrop_first_span_dimension": 4,
+            "selection_conditions_met": true
+          }
+        ],
+        "actual_catalytic_certificate_verified": false,
+        "limitation": "Avoiding the linear-hyperplane exclusion and passing necessary conditions does not supply a catalyst. Timeout/cap means unknown; UNSAT excludes only this fixed problem.",
+        "status": "resource_cap",
+        "candidate_index_zero_based": 0,
+        "C_mask": 306381,
+        "E_mask": 47558,
+        "C_matrix": [
+          [
+            1,
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1,
+            0
+          ]
+        ],
+        "E_matrix": [
+          [
+            0,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "D_shape": [
+          4,
+          4,
+          5
+        ],
+        "D_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          1,
+          1,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          1,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "S_coefficients": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "D_flattening_ranks": [
+          4,
+          4,
+          5
+        ],
+        "D_first_slice_inventory": {
+          "all_nonzero_F2_first_slices_checked": 15,
+          "rank_counts": {
+            "2": 1,
+            "3": 4,
+            "4": 10
+          },
+          "slices": [
+            {
+              "first_mask": 1,
+              "first_vector": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 2,
+              "first_vector": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 3,
+              "first_vector": [
+                1,
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 4,
+              "first_vector": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "rank": 3
+            },
+            {
+              "first_mask": 5,
+              "first_vector": [
+                1,
+                0,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 6,
+              "first_vector": [
+                0,
+                1,
+                1,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 7,
+              "first_vector": [
+                1,
+                1,
+                1,
+                0
+              ],
+              "rank": 3
+            },
+            {
+              "first_mask": 8,
+              "first_vector": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "rank": 3
+            },
+            {
+              "first_mask": 9,
+              "first_vector": [
+                1,
+                0,
+                0,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 10,
+              "first_vector": [
+                0,
+                1,
+                0,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 11,
+              "first_vector": [
+                1,
+                1,
+                0,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 12,
+              "first_vector": [
+                0,
+                0,
+                1,
+                1
+              ],
+              "rank": 3
+            },
+            {
+              "first_mask": 13,
+              "first_vector": [
+                1,
+                0,
+                1,
+                1
+              ],
+              "rank": 2
+            },
+            {
+              "first_mask": 14,
+              "first_vector": [
+                0,
+                1,
+                1,
+                1
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 15,
+              "first_vector": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "rank": 4
+            }
+          ],
+          "rankdrop_first_masks": [
+            4,
+            7,
+            8,
+            12,
+            13
+          ],
+          "rankdrop_first_span_dimension": 4
+        },
+        "rankdrop_not_contained_in_any_linear_hyperplane_even_after_extension": true,
+        "rankdrop_evidence": "the saved F2 rankdrop input vectors span F2^4; their span remains full under scalar extension",
+        "D_generic_rank_certificate": {
+          "proved_rank": 4,
+          "formal_first_four_columns_minor": [
+            {
+              "exponents_a_b_c_d": [
+                0,
+                0,
+                1,
+                3
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                0,
+                2,
+                2
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                1,
+                0,
+                3
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                1,
+                2,
+                1
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                1,
+                3,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                2,
+                0,
+                2
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                2,
+                2,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                3,
+                0,
+                1
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                3,
+                1,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                1,
+                0,
+                3,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                1,
+                2,
+                1,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                2,
+                0,
+                1,
+                1
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                2,
+                1,
+                0,
+                1
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                2,
+                1,
+                1,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                3,
+                0,
+                1,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                4,
+                0,
+                0,
+                0
+              ],
+              "coefficient": 1
+            }
+          ],
+          "formal_last_four_columns_minor": [
+            {
+              "exponents_a_b_c_d": [
+                0,
+                1,
+                1,
+                2
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                2,
+                0,
+                2
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                2,
+                1,
+                1
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                2,
+                2,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                3,
+                0,
+                1
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                0,
+                4,
+                0,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                1,
+                2,
+                1,
+                0
+              ],
+              "coefficient": 1
+            },
+            {
+              "exponents_a_b_c_d": [
+                2,
+                1,
+                1,
+                0
+              ],
+              "coefficient": 1
+            }
+          ],
+          "a4_and_b4_coefficients": 1,
+          "upper_bound": "four rows"
+        },
+        "D_two_plane_certificate": {
+          "basis": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ]
+          ],
+          "all_nonzero_closure_points_rank": 4,
+          "proof": "c=d=0 gives L4(a,b); its first/last four-column determinants are a^4,b^4",
+          "all_nonzero_F2_plane_slices": [
+            {
+              "first_mask": 1,
+              "first_vector": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 2,
+              "first_vector": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            },
+            {
+              "first_mask": 3,
+              "first_vector": [
+                1,
+                1,
+                0,
+                0
+              ],
+              "rank": 4
+            }
+          ]
+        },
+        "source_shape": [
+          14,
+          19,
+          20
+        ],
+        "target_shape": [
+          13,
+          17,
+          18
+        ],
+        "source_flattening_ranks": [
+          14,
+          19,
+          20
+        ],
+        "target_flattening_ranks": [
+          13,
+          17,
+          18
+        ],
+        "map_coefficient_bits": 865,
+        "complete_coefficient_equations": 3978,
+        "source_nonzero_coefficients": 47,
+        "cubic_product_occurrences": 186966,
+        "solver": {
+          "timeout_ms": 120000,
+          "max_memory_mb": 512,
+          "max_products": 500000,
+          "max_boolean_products": 500000,
+          "max_map_bits": 4096,
+          "random_seed": 0
+        },
+        "reason": "solver incomplete: timeout",
+        "checked": 1,
+        "wall_seconds_including_encoding_and_verification": 133.1603027409983
+      }
+    }
+  ],
+  "earlier_seeded_star_product": [
+    {
+      "status": "resource_cap",
+      "reason": "time cap reached; search incomplete",
+      "initial_terms": 28,
+      "goal_terms": 19,
+      "best_terms": 28,
+      "steps": 10215,
+      "proposals": 81566,
+      "plus_moves": 22,
+      "seed": 0,
+      "elapsed_seconds": 60.00314744299976,
+      "improvements": []
+    },
+    {
+      "status": "resource_cap",
+      "reason": "time cap reached; search incomplete",
+      "initial_terms": 28,
+      "goal_terms": 19,
+      "best_terms": 28,
+      "steps": 10431,
+      "proposals": 83392,
+      "plus_moves": 8,
+      "seed": 1,
+      "elapsed_seconds": 60.00224226800128,
+      "improvements": []
+    },
+    {
+      "status": "resource_cap",
+      "reason": "time cap reached; search incomplete",
+      "initial_terms": 28,
+      "goal_terms": 19,
+      "best_terms": 28,
+      "steps": 10994,
+      "proposals": 87637,
+      "plus_moves": 45,
+      "seed": 2,
+      "elapsed_seconds": 60.00622255399867,
+      "improvements": []
+    },
+    {
+      "status": "resource_cap",
+      "reason": "time cap reached; search incomplete",
+      "initial_terms": 28,
+      "goal_terms": 19,
+      "best_terms": 28,
+      "steps": 10860,
+      "proposals": 86705,
+      "plus_moves": 25,
+      "seed": 3,
+      "elapsed_seconds": 60.00295286900291,
+      "improvements": []
+    }
+  ],
+  "verification": {
+    "reference_tests": 275,
+    "seconds": 175.65,
+    "new_tests": 56,
+    "protected_specification": "eleven files and frozen Challenge model match exact baseline",
+    "lean_sources_changed": false,
+    "new_lean_build": false,
+    "independent_artifact_replays": [
+      "connected-f11 finite_feasible",
+      "control-f2 negative_unit_dual"
+    ]
+  }
+}

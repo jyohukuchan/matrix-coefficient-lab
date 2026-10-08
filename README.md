@@ -118,6 +118,13 @@ proof-derived rows have not produced a useful d=2,k=5 certificate. Small witness
 seeds are checked densely, and the full giant catalytic compilation is not yet
 symbolic.
 
+The [stage 4 discovery checkpoint](reference/research/stage4.md) adds connected
+finite LP families, exact rational feasible-state certificates, budgeted direct
+search and new independently audited catalyst obstructions. A fixed singular
+star witness would imply an exponent about 2.222, stronger than the original
+9/4 guarantee, so discovery now prioritizes varying the auxiliary. No useful
+d=2,k=5 witness has been found; these new arguments are not Lean-formalized.
+
 ## Reproduction and verification
 
 Install [elan](https://github.com/leanprover/elan), and have Git and Python 3 available. From the repository root, run these commands sequentially:

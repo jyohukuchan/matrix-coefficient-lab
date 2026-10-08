@@ -675,3 +675,11 @@ the verified power/recovery/descent and finite separation pipelines.
 Further finite constructions and turning the
 current spectral existence proof into a generator for the 9/4 schemes remain
 separate mathematical and implementation tasks.
+
+The [stage 4 discovery report](research/stage4.md) adds optional exact-rational
+LP proposals and seeded decomposition experiments, with replayable witnesses
+and explicit construction/search caps. SciPy/NumPy and Z3 are optional search
+dependencies; the ordinary package and star polynomial controls remain standard
+library code. A fixed star catalyst would prove a stronger bound than 9/4,
+so discovery prioritizes varying proof-derived auxiliaries. No useful d=2,k=5
+certificate has been found, and these new obstructions are not Lean-formalized.

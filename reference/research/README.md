@@ -311,6 +311,19 @@ The 23 new tests cover forecasts, construction replay/expansion, corruption
 rejection, resource caps and finite pipeline attribution. No Lean rebuild was
 performed for these Python changes.
 
+## Stage 4 discovery checkpoint
+
+The [bounded discovery report](stage4.md) records connected finite LP experiments,
+exact feasible-state certificates, seeded direct coefficient search, and further
+independently audited [nonzero-star](star-nonzero-catalyst.md) and
+[rank-drop](star-convolution-catalysts.md) obstructions. No useful d=2,k=5 witness
+was found. The fixed star target would imply an exponent about 2.222, stronger
+than 9/4; the original theorem therefore does not guarantee this auxiliary.
+Varying proof-derived auxiliaries and their mixtures takes priority over
+increasing only the fixed-star catalyst dimensions. The new arguments and
+Python checker have not been formalized in Lean.
+Checkpoint validation: **275 tests passed**; protected sources remain unchanged.
+
 ## Next research and implementation tasks
 
 The [geometric reduction](geometric-catalyst.md) shows that the all-fields
