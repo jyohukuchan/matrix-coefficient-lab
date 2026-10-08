@@ -151,8 +151,8 @@ def plan_conditional_costs(d, k, s_rank, catalyst_rank, extension_degree, tau,
     """Plan a SYNTHETIC/CONDITIONAL cost recurrence using exact integer tests.
 
     Raw integer costs carry no scheme certificate. For bounds attached to
-    verified schemes use plan_catalytic_parameters. Both APIs still lack a
-    compiler that realizes the iterated recurrence as a decomposition.
+    verified schemes use plan_catalytic_parameters. Neither planner invokes
+    the separate coefficient compiler in reference.catalyst_compiler.
     """
     _positive_integer(d, "matrix size")
     if d < 2:

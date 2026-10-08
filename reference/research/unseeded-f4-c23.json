@@ -1,0 +1,24 @@
+{
+  "description": "Actual unseeded F4 C(2,3) coefficient-search result; not a near-9/4 catalyst",
+  "target": {
+    "field_characteristic": 2,
+    "field_modulus": [1, 1, 1],
+    "convolution_dimensions": [2, 3],
+    "coefficient_order": "lexicographic with output varying fastest"
+  },
+  "solver": {
+    "package": "z3-solver",
+    "version": "5.1.0.0",
+    "random_seed": 0,
+    "timeout_ms": 10000,
+    "method": "full F4 restriction coefficient equations; no planted maps; third leg independently re-solved"
+  },
+  "terms": 4,
+  "a": [[0, 3], [2, 0], [2, 3], [3, 3]],
+  "b": [[0, 0, 1], [3, 0, 0], [2, 3, 1], [1, 1, 1]],
+  "c": [[0, 3, 1, 2], [1, 2, 3, 0], [0, 2, 2, 0], [0, 1, 3, 0]],
+  "verification": {
+    "all_24_F4_coefficients": true,
+    "all_1024_F4_input_pairs": true
+  }
+}

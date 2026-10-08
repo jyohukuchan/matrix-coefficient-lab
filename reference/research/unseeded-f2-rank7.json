@@ -1,0 +1,157 @@
+{
+  "description": "Actual unseeded F2 square matrix coefficient-search result; not extracted from the 9/4 proof",
+  "target": {
+    "field_characteristic": 2,
+    "matrix_dimensions": [
+      2,
+      2,
+      2
+    ],
+    "coefficient_order": "row-major"
+  },
+  "solver": {
+    "package": "z3-solver",
+    "version": "5.1.0.0",
+    "random_seed": 0,
+    "timeout_ms": 30000,
+    "method": "formal coefficient XOR equations; no imported or planted scheme; C re-solved independently"
+  },
+  "terms": 7,
+  "a": [
+    [
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      1
+    ]
+  ],
+  "b": [
+    [
+      0,
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      0,
+      0
+    ]
+  ],
+  "c": [
+    [
+      1,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ]
+  ],
+  "verification": {
+    "all_64_F2_coefficients": true,
+    "all_256_F2_input_pairs": true,
+    "all_64_F4_coefficients": true
+  }
+}
