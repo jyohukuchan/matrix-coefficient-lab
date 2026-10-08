@@ -74,8 +74,9 @@ The optional [Python reference implementation](reference/README.md) executes
 selected finite steps: exact tensor-coefficient verification, bilinear and
 recursive block multiplication, characteristic-aware Fourier filtering,
 nonzero-node interpolation, exact scheme generation from certified polynomial
-degenerations, and fixed-extension rank descent after tensor powering. It uses
-only the Python standard library. From the repository root:
+degenerations, and fixed-extension rank descent after tensor powering. Explicit
+finite three-leg targets also support non-matrix bilinear maps. It uses only
+the Python standard library. From the repository root:
 
 ```sh
 python3 -m reference.demo

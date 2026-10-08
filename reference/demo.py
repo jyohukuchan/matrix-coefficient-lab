@@ -5,10 +5,22 @@ from .constructions import (fourier_filter, nonzero_nodes, primitive_root,
 from .fields import FiniteField
 from .degenerations import left_perturbation_fixture
 from .schemes import descend, naive_multiply, strassen_scheme
+from .tensors import FiniteTensor
+from .tensor_schemes import TensorScheme
+from .tensor_degenerations import TensorDegeneration
 
 
 def main():
     print("Exact finite-field reference demo; this does not generate a 9/4 scheme.")
+    prime = FiniteField(5)
+    tensor = FiniteTensor.from_function(prime, (2, 3, 4), lambda i, j, k: int(i+j == k))
+    generic = TensorScheme.from_tensor(tensor)
+    generated = TensorDegeneration.from_scheme(generic, leading=1).recover_scheme()
+    product = generated.apply((1, 2), (3, 4, 1))
+    if product != (3, 0, 4, 2) or product != tensor.contract((1, 2), (3, 4, 1)):
+        raise RuntimeError("generic non-matrix tensor check failed")
+    print(f"Generic tensor {tensor.shape}: polynomial product over F_5 = {product};"
+          " direct contraction, decomposition, and polynomial recovery agree.")
     field = FiniteField(2, (1, 1, 1))  # F_4 = F_2[X]/(X^2+X+1)
     # 2 encodes X, so rescaling introduces genuine extension coefficients.
     seed = strassen_scheme(field).rescale_terms(2, 1)

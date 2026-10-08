@@ -9,6 +9,8 @@ from functools import cached_property
 from itertools import product
 
 from .fields import FiniteField
+from .tensor_schemes import TensorScheme
+from .tensors import matrix_multiplication_tensor
 
 
 def _matrix(field, matrix, rows, columns):
@@ -47,17 +49,18 @@ class BilinearScheme:
     def __post_init__(self):
         if any(type(d) is not int or d < 1 for d in (self.n, self.m, self.k)):
             raise ValueError("matrix dimensions must be positive integers")
+        scheme = self.as_tensor_scheme()
         for name in ("a", "b", "c"):
-            object.__setattr__(self, name, tuple(tuple(row) for row in getattr(self, name)))
-        if not len(self.a) == len(self.b) == len(self.c):
-            raise ValueError("coefficient families must have equal term counts")
-        for family, size in ((self.a, self.n * self.m),
-                             (self.b, self.m * self.k), (self.c, self.n * self.k)):
-            if any(len(row) != size for row in family):
-                raise ValueError("coefficient vector has the wrong length")
-            for row in family:
-                for x in row:
-                    self.field.check(x)
+            object.__setattr__(self, name, getattr(scheme, name))
+
+    @cached_property
+    def _tensor_scheme(self):
+        return TensorScheme(matrix_multiplication_tensor(self.field, self.n, self.m, self.k),
+                            self.a, self.b, self.c)
+
+    def as_tensor_scheme(self):
+        """Expose this matrix scheme through the generic finite-tensor interface."""
+        return self._tensor_scheme
 
     @property
     def terms(self):
@@ -65,27 +68,7 @@ class BilinearScheme:
 
     @cached_property
     def _first_mismatch(self):
-        # Accumulate only nonzero contributions, then check EVERY tensor
-        # coordinate. This certifies a formal bilinear identity even over F_2.
-        f = self.field
-        coefficients = {}
-        for a, b, c in zip(self.a, self.b, self.c):
-            aa = [(i, x) for i, x in enumerate(a) if x]
-            bb = [(j, y) for j, y in enumerate(b) if y]
-            cc = [(h, z) for h, z in enumerate(c) if z]
-            for (i, x), (j, y), (h, z) in product(aa, bb, cc):
-                key = i, j, h
-                coefficients[key] = f.add(coefficients.get(key, 0), f.mul(f.mul(x, y), z))
-        for i, j, h in product(range(self.n * self.m), range(self.m * self.k),
-                               range(self.n * self.k)):
-            row, inner = divmod(i, self.m)
-            inner2, column = divmod(j, self.k)
-            outrow, outcolumn = divmod(h, self.k)
-            expected = int(row == outrow and inner == inner2 and column == outcolumn)
-            actual = coefficients.get((i, j, h), 0)
-            if actual != expected:
-                return ((i, j, h), expected, actual)
-        return None
+        return self.as_tensor_scheme()._first_mismatch
 
     def verify(self):
         return self._first_mismatch is None
@@ -101,10 +84,8 @@ class BilinearScheme:
         f = self.field
         left = _matrix(f, left, self.n, self.m)
         right = _matrix(f, right, self.m, self.k)
-        values = [f.mul(f.dot(a, left), f.dot(b, right)) for a, b in zip(self.a, self.b)]
-        return [[f.sum(f.mul(c[i * self.k + j], value)
-                       for c, value in zip(self.c, values))
-                 for j in range(self.k)] for i in range(self.n)]
+        output = self.as_tensor_scheme().apply(left, right)
+        return [list(output[i*self.k:(i+1)*self.k]) for i in range(self.n)]
 
     def multiply_recursive(self, left, right):
         """The square block identity of RecursiveBlockPrograms.lean.
@@ -213,16 +194,12 @@ def descend(scheme):
     To retain a FIXED overhead across powers, call descend(scheme.tensor_power(t)),
     rather than descend(scheme).tensor_power(t). The supplied extension stays fixed.
     No minimal coefficient algebra is computed; the whole supplied field is used.
+
+    Accepts a TensorScheme as well as the existing matrix-specific BilinearScheme.
+    Arbitrary targets must have base-field coefficients; explicit projection of
+    other tensors is available as TensorScheme.project_to_prime_field().
     """
-    scheme.require_exact()
-    extension = scheme.field
-    base = FiniteField(extension.p)
-    d = extension.degree
-    aa, bb, cc = [], [], []
-    for q, i, j in product(range(scheme.terms), range(d), range(d)):
-        aa.append(tuple(extension.coordinates(x)[i] for x in scheme.a[q]))
-        bb.append(tuple(extension.coordinates(x)[j] for x in scheme.b[q]))
-        basis_product = extension.mul(extension.p ** i, extension.p ** j)
-        cc.append(tuple(extension.coordinates(extension.mul(basis_product, x))[0]
-                        for x in scheme.c[q]))
-    return BilinearScheme(base, scheme.n, scheme.m, scheme.k, aa, bb, cc)
+    if isinstance(scheme, TensorScheme):
+        return scheme.descend()
+    projected = scheme.as_tensor_scheme().descend()
+    return projected.to_matrix_scheme(scheme.n, scheme.m, scheme.k)

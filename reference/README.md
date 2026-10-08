@@ -15,6 +15,7 @@ python3 -m unittest discover -s reference -t . -v
 
 | Executable component | Proof source / correspondence |
 | --- | --- |
+| `FiniteTensor` and `TensorScheme` | Finite three-leg coefficient tensors, exact `RankAtMost` decompositions, and bilinear contraction for arbitrary targets in [ComplexTensor.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/Tensor/ComplexTensor.lean). |
 | `BilinearScheme.verify()` | Exact coordinate identities in `Tensor.RankAtMost`; checks every coefficient rather than only input samples. |
 | `multiply()` and `multiply_recursive()` | The scalar bilinear identity and square recursive block construction in [RecursiveBlockPrograms.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/Arithmetic/RecursiveBlockPrograms.lean). |
 | `tensor_product()` and `tensor_power()` | Tensor powers with product coordinates reindexed as larger matrix coordinates. |
@@ -22,6 +23,7 @@ python3 -m unittest discover -s reference -t . -v
 | `recover_leading_coefficient()` | Nonzero-node Lagrange interpolation after removing a leading power, from [Interpolation.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Polynomial/Interpolation.lean). |
 | `PolynomialDegeneration.verify()` and `tensor_power()` | Formal polynomial coefficients, low-degree vanishing, the matrix-tensor leading coefficient, and powers of [PolynomialApproximation](../lean/OAI/LinearAlgebra/MatrixMultiplication/Polynomial/ComplexPolynomialApproximation.lean). |
 | `PolynomialDegeneration.recover_scheme()` | Generate an exact `BilinearScheme` by the normalized nonzero-node recovery identity in [Interpolation.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Polynomial/Interpolation.lean). |
+| `TensorDegeneration` | The same formal certificate and recovery operations for any supplied finite tensor target, via `PolynomialApproximation`. The matrix API delegates certificate/recovery to it. |
 | `descend()` | The explicit basis/projection formula in [FieldDescent.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/Arithmetic/FieldDescent.lean). |
 
 This correspondence is an implementation guide, not a formal proof that the
@@ -31,6 +33,8 @@ of 2x2 matrices over F_2, exercise several characteristics, and reject malformed
 certificates and invalid interpolation/Fourier hypotheses.
 The polynomial tests also check cancellation between terms, tensor-valued
 higher-order noise, and false certificates whose evaluations agree over F_2.
+Generic tensor tests cover arbitrary coefficients, non-matrix bilinear maps,
+empty axes, tensor products, projection, and round trips to the matrix API.
 
 ## Coefficients and usage
 
@@ -70,6 +74,78 @@ is cached on an immutable scheme.
 input sizes that are powers of that block size, including size one. Other sizes
 need explicit padding, which is not implemented. Direct evaluation can use a
 rectangular scheme of exactly the supplied dimensions.
+
+## Arbitrary finite tensor targets
+
+`FiniteTensor(field, shape, coefficients)` represents a three-leg tensor with
+independent axis sizes `(dim_X, dim_Y, dim_Z)`. Each axis enumerates a finite
+coordinate set as `0,...,dim-1`; a zero-length axis is allowed. These sizes are
+vector-space dimensions, not the `(n,m,k)` dimensions of matrix multiplication.
+Coefficients are a flat immutable tuple in `(x,y,z)` lexicographic order, with
+z varying fastest. `from_function()` can construct this representation from a
+coefficient function. Any canonical field coefficients are allowed, including
+extension elements; the target is not limited to zero-one support tensors.
+
+`contract(left, right)` directly computes the bilinear map
+
+```text
+output[z] = sum_{x,y} T[x,y,z] * left[x] * right[y]
+```
+
+`TensorScheme(target, a, b, c)` declares an explicit target and supplies rank-one
+coefficient families. `verify()` checks every tensor coordinate against this
+target, including its coefficient values, rather than merely checking matching
+dimensions. `apply(left, right)` requires that certificate and evaluates the
+same bilinear map through the decomposition. `from_tensor(target)` constructs
+a trivial exact decomposition with at most `dim_X*dim_Y` terms, omitting pairs
+whose entire output vector is zero. It does not search for low rank. The zero
+tensor has a valid zero-term decomposition.
+
+For example, ordinary multiplication of polynomials with two and three
+coefficients is a finite tensor of shape `(2,3,4)`:
+
+```python
+from reference import FiniteField, FiniteTensor, TensorScheme, TensorDegeneration
+
+field = FiniteField(5)
+target = FiniteTensor.from_function(field, (2, 3, 4),
+                                   lambda i, j, k: int(i + j == k))
+scheme = TensorScheme.from_tensor(target)
+assert scheme.verify()
+assert scheme.terms == 6
+assert scheme.apply((1, 2), (3, 4, 1)) == (3, 0, 4, 2)
+assert target.contract((1, 2), (3, 4, 1)) == (3, 0, 4, 2)
+
+# Monomial lift and recovery for a target that is NOT a matrix tensor.
+degeneration = TensorDegeneration.from_scheme(scheme, leading=1)
+recovered = degeneration.recover_scheme()
+assert recovered.target == target
+assert recovered.apply((1, 2), (3, 4, 1)) == (3, 0, 4, 2)
+```
+
+`TensorDegeneration(target, leading, a, b, c)` takes the same polynomial
+families as the matrix-specific API but compares the leading coefficient to
+the supplied target. Low coefficients must still vanish formally. Recovery
+returns a `TensorScheme`; tensor products and powers preserve explicit targets.
+No polynomial local restriction maps or three-sector construction are generated
+in this stage; supplied coefficient families remain the input.
+
+For generic tensor products, each axis is paired independently: `(i1,i2)` is
+encoded as `i1*dim2+i2`. The zeroth power is the scalar unit of shape `(1,1,1)`.
+This differs from the matrix-specific product API's row/column reindexing.
+The existing `BilinearScheme` and `PolynomialDegeneration` constructors and
+return types remain compatible. `as_tensor_scheme()` and
+`as_tensor_degeneration()` expose their generic forms. Conversion back with
+`to_matrix_scheme(n,m,k)` is allowed only when the target equals the exact
+requested matrix tensor; matching axis lengths alone are insufficient.
+
+`descend()` also accepts a `TensorScheme`. It requires all target coefficients
+to be base-field scalars before descending the unchanged tensor through the
+fixed extension. For a target with genuine extension coefficients, explicitly
+call `scheme.project_to_prime_field()` to get a decomposition of **pi(target)**.
+This changes the target by applying the constant-coordinate linear functional;
+pi is not a field homomorphism and does not generally commute with tensor
+products. Both operations use the same dimension-squared basis formula.
 
 ## Polynomial degeneration to generated coefficients
 
@@ -190,9 +266,9 @@ algebra is found automatically. Scalar-operation counts are not instrumented.
   nodes. Missing roots or too few nodes raise errors rather than inventing a
   root or reusing colliding nodes. The demo uses F_16 for period 5 and F_25 for
   the adjusted period 6 in characteristic 5.
-- Polynomial matrix-tensor degenerations supplied as coefficient families are
-  verified and recovered. General source tensors and polynomial local
-  restriction maps from those source tensors are not implemented.
+- Arbitrary finite three-leg targets and their supplied scalar/polynomial
+  decompositions are supported. Higher-order tensors and polynomial local
+  restriction maps from source tensors are not implemented.
 - The full auxiliary-separation construction, determinant/sector argument,
   entropy limits, and spectral existence argument are not translated.
 - Strassen and naive decompositions are input fixtures. Neither is a 9/4

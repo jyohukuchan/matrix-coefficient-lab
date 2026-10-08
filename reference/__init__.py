@@ -7,6 +7,10 @@ from .fields import FiniteField
 from .polynomials import Polynomial
 from .schemes import BilinearScheme, descend, naive_scheme, strassen_scheme
 from .degenerations import PolynomialDegeneration
+from .tensors import FiniteTensor, matrix_multiplication_tensor
+from .tensor_schemes import TensorScheme
+from .tensor_degenerations import TensorDegeneration
 
 __all__ = ["FiniteField", "Polynomial", "PolynomialDegeneration", "BilinearScheme",
+           "FiniteTensor", "TensorScheme", "TensorDegeneration", "matrix_multiplication_tensor",
            "descend", "naive_scheme", "strassen_scheme"]
