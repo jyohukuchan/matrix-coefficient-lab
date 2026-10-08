@@ -9,6 +9,7 @@ from .tensors import FiniteTensor
 from .tensor_schemes import TensorScheme
 from .tensor_degenerations import TensorDegeneration
 from .sectors import ThreeSectorConstruction
+from .proof_demo import main as proof_demo
 
 
 def main():
@@ -117,6 +118,8 @@ def main():
             raise RuntimeError("Fourier check failed")
         print(f"F_{roots_field.order} Fourier: period {period}, encoded root {root};"
               f" filter selects precisely multiples of {period} (negative exponents included).")
+
+    proof_demo()
 
 
 if __name__ == "__main__":

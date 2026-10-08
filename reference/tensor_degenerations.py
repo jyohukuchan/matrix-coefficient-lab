@@ -121,12 +121,24 @@ class TensorDegeneration:
         evaluate = lambda family: [[p.evaluate(node) for p in row] for row in family]
         return TensorScheme(self.target, evaluate(self.a), evaluate(self.b), evaluate(self.c))
 
-    def recover_scheme(self, nodes=None):
+    def recover_scheme(self, nodes=None, *, degree_bound=None):
+        """Recover with the family bound, or a checked bound on the summed tensor.
+
+        A supplied bound may exploit cancellation between terms. It is checked
+        against every formal tensor polynomial, never merely evaluations.
+        """
         self.require_valid()
         f = self.field
-        nodes = nonzero_nodes(f, self.recovery_node_count) if nodes is None else tuple(nodes)
+        if degree_bound is None:
+            degree_bound = self.degree_bound
+        elif type(degree_bound) is not int or degree_bound < 0:
+            raise ValueError("tensor degree bound must be a nonnegative integer")
+        elif any(p.degree > degree_bound for p in self._tensor_coefficients.values()):
+            raise ValueError("supplied tensor degree bound is below a formal coefficient degree")
+        count = max(0, degree_bound-self.leading)+1
+        nodes = nonzero_nodes(f, count) if nodes is None else tuple(nodes)
         weights = constant_weights(f, nodes)
-        if len(nodes) < self.recovery_node_count:
+        if len(nodes) < count:
             raise ValueError("not enough nodes for the normalized tensor degree bound")
         aa, bb, cc = [], [], []
         for node, weight in zip(nodes, weights):
@@ -154,4 +166,16 @@ class TensorDegeneration:
         result = TensorDegeneration.from_scheme(TensorScheme.from_tensor(FiniteTensor.unit(self.field)))
         for _ in range(exponent):
             result = result.tensor_product(self)
+        return result
+
+    def restrict(self, *maps):
+        """Apply constant local maps to both target and polynomial families."""
+        from .maps import validate_local_maps
+
+        self.require_valid()
+        maps = validate_local_maps(self.field, self.shape, maps)
+        result = TensorDegeneration(self.target.restrict(*maps), self.leading,
+                                    *(tuple(m.apply_polynomials(row) for row in family)
+                                      for m, family in zip(maps, (self.a, self.b, self.c))))
+        result.require_valid()
         return result

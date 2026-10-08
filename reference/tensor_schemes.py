@@ -131,6 +131,41 @@ class TensorScheme:
             result = result.tensor_product(self)
         return result
 
+    def restrict(self, *maps):
+        from .maps import validate_local_maps
+
+        self.require_exact()
+        maps = validate_local_maps(self.field, self.shape, maps)
+        target = self.target.restrict(*maps)
+        result = TensorScheme(target, *(tuple(m.apply(row) for row in family)
+                                       for m, family in zip(maps, (self.a, self.b, self.c))))
+        result.require_exact()
+        return result
+
+    def permute_axes(self, order):
+        self.require_exact()
+        order = tuple(order)
+        target = self.target.permute_axes(order)
+        families = self.a, self.b, self.c
+        return TensorScheme(target, *(families[i] for i in order))
+
+    @classmethod
+    def direct_sum(cls, schemes):
+        schemes = tuple(schemes)
+        if not schemes or any(not isinstance(s, TensorScheme) for s in schemes):
+            raise ValueError("scheme family must be nonempty and contain tensor schemes")
+        for scheme in schemes:
+            scheme.require_exact()
+        target = FiniteTensor.direct_sum(s.target for s in schemes)
+        families = [[], [], []]
+        offsets = [0, 0, 0]
+        for scheme in schemes:
+            for axis, family in enumerate((scheme.a, scheme.b, scheme.c)):
+                families[axis].extend((0,)*offsets[axis]+row+(0,)*(target.shape[axis]-offsets[axis]-scheme.shape[axis])
+                                      for row in family)
+            offsets = [offset+d for offset, d in zip(offsets, scheme.shape)]
+        return cls(target, *families)
+
     def rescale_terms(self, left_scale, right_scale):
         f = self.field
         inverse = f.inv(f.mul(left_scale, right_scale))

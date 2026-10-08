@@ -8,6 +8,7 @@ Python 3.10 or newer is required. Run from the repository root:
 
 ```sh
 python3 -m reference.demo
+python3 -m reference.proof_demo  # just the proof-derived construction pipeline
 python3 -m unittest discover -s reference -t . -v
 ```
 
@@ -25,6 +26,10 @@ python3 -m unittest discover -s reference -t . -v
 | `PolynomialDegeneration.recover_scheme()` | Generate an exact `BilinearScheme` by the normalized nonzero-node recovery identity in [Interpolation.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Polynomial/Interpolation.lean). |
 | `TensorDegeneration` | The same formal certificate and recovery operations for any supplied finite tensor target, via `PolynomialApproximation`. The matrix API delegates certificate/recovery to it. |
 | `ThreeSectorConstruction` | The concrete source `C(a,3*h+a-1)`, interval weights, three ambient branches, and diagonal polynomial restriction from [Sector/Weights.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Sector/Weights.lean) and [Sector/Degeneration.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Sector/Degeneration.lean). |
+| `convolution_scheme()` and `lagrange_basis()` | Evaluation of both input polynomials and full coefficient interpolation from [Convolution/Rank.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Convolution/Rank.lean). |
+| `LinearMap`, `restrict()`, `direct_sum()`, and `permute_axes()` | Independent local substitutions, complete independent blocks, and coordinate relabelings from the finite tensor operations. |
+| `shared_first_tensor()` and `tag_shared_scheme()` | Shared X with matching Y/Z branch labels from [Separation/BranchTagging.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Separation/BranchTagging.lean). |
+| `FiniteSeparation` | The three explicit Fourier maps, integer square weights, formal leading coefficient, and full branch/dot-product direct sum from [Separation/Basic.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Separation/Basic.lean) and [SquareWeights.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/AuxiliarySeparation/Separation/SquareWeights.lean). |
 | `descend()` | The explicit basis/projection formula in [FieldDescent.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/Arithmetic/FieldDescent.lean). |
 
 This correspondence is an implementation guide, not a formal proof that the
@@ -38,6 +43,10 @@ Generic tensor tests cover arbitrary coefficients, non-matrix bilinear maps,
 empty axes, tensor products, projection, and round trips to the matrix API.
 Sector tests check the formal identity on every coordinate, independently
 contract the full local map matrices, and reject missing shifts/reversals.
+Map and separation tests also contract actual source copies, reject hidden
+overlaps, preserve genuine extension coefficients, detect missing Fourier
+normalization and incorrect weights, and exercise adjusted periods in
+characteristics three and five.
 
 ## Coefficients and usage
 
@@ -133,6 +142,69 @@ returns a `TensorScheme`; tensor products and powers preserve explicit targets.
 Arbitrary polynomial coefficient families remain valid inputs. The proof's
 specific three-sector diagonal maps can now generate such families directly,
 as described below; general polynomial local restrictions are still absent.
+
+### General local maps, independent blocks, and shared inputs
+
+`LinearMap(field, input_size, rows)` stores an immutable matrix in
+`[output][input]` order. `identity()` and `selection()` make coordinate maps;
+selection permits repetition and reordering. `second.compose(first)` applies
+first, then second. Maps may have empty input or output axes.
+
+`tensor.restrict(A,B,C)` independently substitutes on the three legs:
+
+```text
+restricted[x,y,z] = sum_{i,j,k} A[x,i] * B[y,j] * C[z,k] * tensor[i,j,k]
+```
+
+`scheme.restrict(A,B,C)` applies the same maps to its exact decomposition and
+checks all resulting coefficients. `degeneration.restrict(A,B,C)` applies
+constant maps to the target and polynomial families, preserving the leading
+order. These are general scalar linear maps; arbitrary polynomial matrices
+are not accepted by `LinearMap`.
+
+`FiniteTensor.direct_sum(tensors)` and `TensorScheme.direct_sum(schemes)`
+concatenate independent blocks on **all three axes** and set cross-block
+coefficients to zero. Blocks may have different shapes. The family must be
+nonempty and use one field representation. `permute_axes(order)` exchanges
+leg roles; coordinate permutations within a leg use `LinearMap.selection()`.
+
+By contrast, `shared_first_tensor(branches)` leaves X unchanged and tags only
+Y and Z. It requires a nonempty family with one common ambient shape.
+`tag_shared_scheme(scheme, branches, y_labels, z_labels)` derives those tags
+by independent maps when both side coordinates determine every supported
+branch's label. It checks each branch before field addition, preventing
+characteristic-two cancellation from hiding invalid overlaps. The scheme must
+target the coefficientwise sum of the branches. For the three-sector
+construction, `side_labels` provides the two label lists and `tag_scheme()`
+inserts them into a supplied exact decomposition of R without increasing its
+term count or duplicating its first input.
+
+### Convolution by evaluation and full interpolation
+
+`convolution_scheme(field,a,b,nodes=None)` now generates the decomposition
+used in `Convolution/Rank.lean`. With n=a+b-1 and distinct nodes v_r,
+
+```text
+A[r,i] = v_r^i
+B[r,j] = v_r^j
+C[r,k] = coefficient k of prod_{s != r} (X-v_s)/(v_r-v_s)
+```
+
+The default uses n canonical field encodings, including zero, and gives n
+terms when both input axes are positive. Empty input axes give zero terms.
+Extra distinct nodes are allowed. `lagrange_basis(field,nodes)` exposes the
+full basis polynomials; the tests reconstruct every monomial of degree below
+the node count as a formal polynomial. Zero is allowed here because there is
+no division by a leading parameter power. Degeneration recovery still requires
+nonzero nodes. Neither operation reduces encoded nodes modulo the characteristic.
+
+Pass this generated source to `ThreeSectorConstruction.generate_degeneration()`
+or `recover_power()` using `source_scheme=...`. For a=2,h=2 over F_8, the source
+C(2,7) has 8 generated terms instead of the coordinate decomposition's 14;
+power-two recovery has 3*8^2=192 terms and descent to F_2 has 3^2*192=1728.
+These are certified decomposition lengths, without a timing or speed claim.
+The source generator needs at least a+b-1 field elements; it does not search
+for an extension if the supplied field is too small.
 
 For generic tensor products, each axis is paired independently: `(i1,i2)` is
 encoded as `i1*dim2+i2`. The zeroth power is the scalar unit of shape `(1,1,1)`.
@@ -294,6 +366,91 @@ family. These finite examples therefore do not establish an asymptotic bound.
 The result computes powers of the retained convolution tensor R; it is not yet
 an extracted 9/4 matrix multiplication scheme.
 
+## Finite Fourier separation and square weights
+
+`FiniteSeparation(branches, period=None, root=None)` implements the finite
+maps from `Separation/Basic.lean`. The branches must share their field and
+ambient shape `(X,Y,Z)`, with M>0 branches. Its source is
+`shared_first_tensor(branches)` of shape `(X,M*Y,M*Z)`. The maps start from
+L complete independent copies of that source. The default period is 5*M,
+or 5*M+1 when the former is zero in the characteristic. A supplied period
+must be at least 5*M, be invertible in the field, and admit the supplied root
+of exact order L. Missing roots raise an error in the supplied field.
+
+Output coordinates are encoded as `(x,g)`, `((h,y),u)`, `((h,z),v)`, with
+the last coordinate varying fastest. The labels g,h,u,v are numbered 1,...,M
+when computing the integer expressions. At copy index r, the three local
+Fourier factors are:
+
+```text
+first:   root^(r*2*g)
+second:  root^(r*(u-h))
+third:   (L in the field)^(-1) * root^(r*(-v-h))
+```
+
+`projection_maps` exposes the full independent matrices. `projection_scheme()`
+forms the actual direct sum of source decompositions, applies those maps,
+and checks its target against the independent phase-zero support formula.
+Only the third map contains the normalization. The bounded integer phase
+`u-v+2*(g-h)` cannot wrap modulo L, so averaging selects exactly phase zero.
+
+The signed weights on the three legs are `g^2`, `h*u-h^2`, and `-h*v`.
+Their sum on Fourier support is `(g-h)^2`, which vanishes exactly when
+g=h and u=v. `weighted_maps(nonzero_node)` exposes the unshifted scalar
+maps, including negative parameter powers, and rejects zero.
+
+For formal polynomial coefficient families, the implementation shifts the
+three weights by `(0,M*(M-1),M^2)`. All local exponents are then nonnegative.
+Writing S for the sum of these shifts, `generate_degeneration()` certifies:
+
+```text
+all coefficients below S vanish
+coefficient S = separationTarget
+summed polynomial degree <= S+(M-1)^2
+```
+
+It also compares every full tensor polynomial to the independently computed
+Fourier average with integer weights. `separationTarget` has matching sector
+labels on all legs and a matching auxiliary pair u=v. `as_direct_sum(scheme)`
+reorders the first axis so this is literally the full direct sum of
+`branch[h] tensor dot_M`, where dot_M has shape `(1,M,M)` and coefficients
+`dot[0,u,v] = 1` exactly when u=v. The source's shared X becomes independent
+branch inputs only through this verified separation construction.
+
+`recover_scheme()` interpolates at `(M-1)^2+1` nonzero nodes. Its bound is on
+the **summed tensor polynomial**, which can be smaller than the sum of local
+family degrees because the Fourier terms cancel. The generic
+`TensorDegeneration.recover_scheme(degree_bound=...)` accepts such a bound only
+after inspecting every formal tensor polynomial; an invalid bound is rejected.
+`recover_power(q)` uses the same parameter in all factors and needs
+`q*(M-1)^2+1` nodes, checking availability before source-copy or power allocation.
+Its supplied term bound is that node count times `(L*r)^q`, with r source terms.
+
+```python
+from reference import FiniteField, ThreeSectorConstruction, convolution_scheme, FiniteSeparation, descend
+
+field = FiniteField(2, (1, 1, 0, 0, 1))  # F_16, fixed for this finite construction
+c = ThreeSectorConstruction(field, 2, 1)
+source = convolution_scheme(field, 2, c.source_width)  # 5 terms
+retained = c.recover_power(1, source_scheme=source)     # 10 terms
+tagged = c.tag_scheme(retained)                       # 10 terms, shape (2,12,15)
+s = FiniteSeparation(c.branches)                      # M=3, L=15
+assert tagged.target == s.source
+exact = s.recover_scheme(source_scheme=tagged)         # 5*15*10 = 750 terms
+direct = s.as_direct_sum(exact)
+assert direct.target == s.direct_sum_target
+assert direct.shape == (6,36,45)
+base = descend(direct)                               # 4^2*750 = 12000 terms
+assert base.verify()
+```
+
+Run `python3 -m reference.proof_demo` for both the 8-term convolution power
+example and this complete finite separation pipeline, including direct
+bilinear evaluation after descent. Full direct sums retain ambient padding;
+there is no support compaction or minimum-rank search. These finite maps do
+not provide the determinant, entropy, or spectral-existence steps that lead
+to the 9/4 matrix multiplication bound.
+
 ## Polynomial degeneration to generated coefficients
 
 `Polynomial(field, coefficients)` stores a formal polynomial with coefficients
@@ -415,11 +572,12 @@ algebra is found automatically. Scalar-operation counts are not instrumented.
   the adjusted period 6 in characteristic 5.
 - Arbitrary finite three-leg targets and their supplied scalar/polynomial
   decompositions are supported. The proof's three-sector diagonal restriction
-  is generated; higher-order tensors and general polynomial local restriction
-  maps are not implemented.
+  is generated; general scalar local restrictions, independent direct sums,
+  leg permutations, and side-label tagging are supported. Higher-order tensors
+  and general polynomial local-map matrices are not implemented.
 - The three-sector finite coefficient construction, powering, interpolation,
-  and fixed-extension descent are connected, but the full
-  auxiliary-separation, determinant/character inequalities, entropy limits,
+  fixed-extension descent, and finite Fourier/square-weight separation are
+  connected. Determinant/character inequalities, entropy limits,
   and spectral existence argument are not translated.
 - Strassen and naive decompositions are input fixtures. Neither is a 9/4
   decomposition extracted from this proof. The example scaling is deliberately
@@ -429,6 +587,7 @@ algebra is found automatically. Scalar-operation counts are not instrumented.
   become large quickly. Use small dimensions and powers.
 
 The three-sector generator supplies proof-derived polynomial families to
-the verified power/recovery/descent pipeline. Further finite constructions and turning the
+the verified power/recovery/descent and finite separation pipelines.
+Further finite constructions and turning the
 current spectral existence proof into a generator for the 9/4 schemes remain
 separate mathematical and implementation tasks.

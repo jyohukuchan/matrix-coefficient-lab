@@ -81,10 +81,15 @@ weights and diagonal maps generate a polynomial degeneration whose full
 coefficient identity and shared input coordinates are checked. The generated
 family is connected to tensor powers, interpolation, and descent: the demo
 recovers its second power over F_4 and descends it to F_2, checking all target
-coefficients and direct bilinear evaluation. From the repository root:
+coefficients and direct bilinear evaluation. Evaluation/interpolation also
+generates the proof's convolution decomposition. General local maps, branch
+tagging, and the finite Fourier/square-weight separation then produce a
+verified full direct sum of branch tensors with dot-product factors. From the
+repository root:
 
 ```sh
 python3 -m reference.demo
+python3 -m reference.proof_demo
 python3 -m unittest discover -s reference -t . -v
 ```
 

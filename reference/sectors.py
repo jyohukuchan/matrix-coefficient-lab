@@ -227,3 +227,18 @@ class ThreeSectorConstruction:
         if len(nodes) < count:
             raise ValueError("not enough nodes for the normalized powered tensor degree bound")
         return degeneration.tensor_power(exponent).recover_scheme(nodes)
+
+    @cached_property
+    def side_labels(self):
+        """Recover zero-based left/middle/right tags from ambient Y and Z."""
+        return (tuple(0 if j < self.h else 1 if j < self.right_start else 2 for j in range(self.shape[1])),
+                tuple(0 if k < self.middle_z_start else 1 if k < self.right_start else 2 for k in range(self.shape[2])))
+
+    def tag_scheme(self, scheme=None):
+        """Insert the two side tags of R, preserving its original first input."""
+        from .tagging import tag_shared_scheme
+
+        self.require_valid()
+        if scheme is None:
+            scheme = TensorScheme.from_tensor(self.retained)
+        return tag_shared_scheme(scheme, self.branches, *self.side_labels)
