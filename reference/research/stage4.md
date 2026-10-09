@@ -6,6 +6,12 @@ audited mathematical restrictions. It completes a reporting checkpoint,
 not the stage's discovery target. No Lean sources were edited or rebuilt;
 the new mathematical arguments and Python checker are not Lean theorems.
 
+This report preserves the initial experiment results. The later
+[variable-auxiliary checkpoint](variable-auxiliary-checkpoint.md) supersedes
+its small-catalyst frontier and the viability of its random `(4,4,5)` candidate.
+The expanded families and new square-to-matrix restrictions are documented
+there; historical row counts below describe their original source versions.
+
 ## The principal finding changes the search priority
 
 The singular `(2,3,3)` star has an actual three-term polynomial degeneration
@@ -67,9 +73,11 @@ The [rank-drop refinement](star-convolution-catalysts.md) adds:
 
 These exclude the complete `(3,4,6)` and truncated `(3,4,5)` convolution
 catalysts, the `(4,4,5)` band pencil `L₄(a,b)+cE₀₀+dE₁₁`, and the tested
-`(3,6,6)` diagonal catalyst. The componentwise shape boundaries still not
-excluded in general are `(3,5,5)`, `(4,4,5)` and `(4,5,4)`; these are not
-witnesses. The whole fixed-star problem remains unresolved.
+`(3,6,6)` diagonal catalyst. These originally left small dimension boundaries
+unresolved. The later [slice-space audit](variable-auxiliaries.md) excludes
+every first-concise star catalyst dimension below six. Its necessary shape
+boundaries are now `(6,6,10)`, `(6,10,6)` and `(6,8,8)`; they are not witnesses.
+The whole fixed-star problem remains unresolved.
 
 `reference.star_catalyst_screen` implements selected exact consequences.
 Its scope fixes the restriction coefficient field. A base-field enumeration
@@ -140,7 +148,9 @@ rank-drop inputs `[4,7,8,12,13]` span all four first coordinates, so its generic
 rank-drop locus cannot lie in one proper linear hyperplane. The single SAT
 run timed out after 120 seconds (133.16 seconds including encoding), with
 865 map bits, 3,978 equations and 186,966 cubic-product occurrences. This
-candidate is unresolved, and passing these tests is not a catalyst certificate.
+candidate is now excluded by the stronger other-flattening bounds in
+[the later audit](variable-auxiliaries.md). Its SAT timeout is a historical
+solver outcome; the mathematical exclusion does not come from that timeout.
 
 [stage4-results.json](stage4-results.json) records finite states, budgets,
 selected coefficient tensors, exact-control attribution and search outcomes.
@@ -175,8 +185,9 @@ search path, but proposed witnesses still need exact coefficient checks.
 Increase and vary connected finite sector/type/determinant constructions and
 their available tensor contexts, allowing the dual to choose auxiliary
 mixtures. Use the exact feasible states to identify missing finite relations
-before increasing SAT budgets. Keep direct decomposition controls and the
-unresolved random catalyst as limited baselines. Continue recording gain,
+before increasing SAT budgets. Keep direct decomposition controls as limited
+baselines and filter the now-excluded random catalyst before new searches.
+Continue recording gain,
 auxiliary decomposition costs and eventual coefficient allocation together.
 Scalable symbolic elimination and Lean formalization of the catalytic and
 obstruction arguments remain separate work; neither supplies the missing

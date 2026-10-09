@@ -16,6 +16,8 @@ from .projective_convolution import projective_convolution_scheme
 from .proof_pipeline import ConstraintInventory, PipelineConfig, generate_proof_inventory
 from .schemes import naive_scheme, strassen_scheme
 from .sectors import ThreeSectorConstruction, convolution_tensor
+from .sector_matrix import (export_matrix_column_sum_order, export_retained_matrix_order,
+                            export_retained_two_copy_matrix_order, export_star_matrix_order)
 from .structured_certificates import GraphResourceLimit
 from .subrank_constraints import (export_projective_convolution_subrank_order,
                                   export_matrix_subrank_order,
@@ -205,6 +207,37 @@ def generate_discovery_inventory(field=FiniteField(11), *, include_known_control
                                                reverse=reverse), 'factor_swap')
                 except StateAssemblyLimit as error:
                     skipped.append({'operation': f'swap-{key}', 'reason': str(error)})
+
+    # Cross the artificial matrix-context boundary with an actual proof
+    # tensor restriction. Merely scaling first flattening ranks to assign
+    # M2 the detector value five cannot satisfy this row.
+    try:
+        add(export_retained_matrix_order(ThreeSectorConstruction(field, 2, 1),
+                                         'retained-square', matrix_key, limits=limits),
+            'sector_matrix')
+    except StateAssemblyLimit as error:
+        skipped.append({'operation': 'sector_matrix', 'reason': str(error)})
+    try:
+        add(export_star_matrix_order(field, 'star-square', matrix_key, limits=limits),
+            'star_matrix')
+    except StateAssemblyLimit as error:
+        skipped.append({'operation': 'star_matrix', 'reason': str(error)})
+    try:
+        add(export_matrix_column_sum_order(field, 2, 2, 2, 'matrix-column', matrix_key,
+                                           limits=limits), 'matrix_columns')
+    except StateAssemblyLimit as error:
+        skipped.append({'operation': 'matrix_columns', 'reason': str(error)})
+    try:
+        retained = ThreeSectorConstruction(field, 2, 1).retained
+        row_export = export_retained_two_copy_matrix_order(ThreeSectorConstruction(field, 2, 1),
+                                                           'sector-retained', matrix_key, limits=limits)
+        add(row_export, 'sector_matrix_rows')
+        names = {key: 'matrix-row-context-'+key for key in dict.fromkeys(
+            row_export.row.positive+row_export.row.negative)}
+        add(lift_witnessed_order(row_export.row, row_export.registry, retained, names, limits=limits),
+            'sector_matrix_row_context')
+    except StateAssemblyLimit as error:
+        skipped.append({'operation': 'sector_matrix_rows', 'reason': str(error)})
 
     # Pin detectors on all initial proof atoms and selected non-matrix tensors.
     tests = tuple(dict.fromkeys(tuple(key for key in book.inventory if not key.startswith(('lift-', 'sum-')) and '@' not in key)

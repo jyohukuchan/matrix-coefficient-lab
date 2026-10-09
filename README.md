@@ -133,6 +133,15 @@ detects missing mixed-branch lower rows in retained sectors and Fourier
 components. Exact finite feasible states still describe only the selected
 constraints; coordinate-search exhaustion does not bound general subrank.
 
+The [variable-auxiliary checkpoint](reference/research/variable-auxiliary-checkpoint.md)
+adds actual restrictions from a retained-sector square and a star square to
+2-by-2 matrix multiplication. The star construction uses signed trace
+corrections valid in every characteristic. These connect previously separate
+power levels; no useful positive-gain certificate has yet been found. New
+independently audited geometric arguments exclude complete convolutions as
+fixed auxiliaries and sharpen the minimum catalyst dimensions for the retained
+and star cases. Those arguments are not Lean-formalized.
+
 ## Reproduction and verification
 
 Install [elan](https://github.com/leanprover/elan), and have Git and Python 3 available. From the repository root, run these commands sequentially:

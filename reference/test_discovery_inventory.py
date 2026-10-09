@@ -144,6 +144,21 @@ class SmallDiscoveryInventoryTests(unittest.TestCase):
         row_index = book.rows.index(lower)
         book.system(2, 5, (row_index,)).require_valid()
 
+    def test_sector_square_crosses_the_matrix_context_boundary(self):
+        index = self.book.families.index('sector_matrix')
+        system = self.book.system(2, 5, (index,))
+        system.require_valid()
+        row = system.constraints[0]
+        self.assertEqual(system.registry[row.positive[0]].shape, (4, 16, 25))
+        self.assertEqual(system.registry[row.negative[0]], matrix_multiplication_tensor(F2, 2, 2, 2))
+        values = tuple(Fraction(1) if key == 'unit' else
+                       Fraction(5) if key == row.negative[0] else
+                       Fraction(4) if key == row.positive[0] else Fraction(0)
+                       for key in system.keys)
+        # This rejects the formerly plausible calibrated-flattening values
+        # on these two atoms; it is not a global catalyst certificate.
+        self.assertFalse(RationalStateCertificate(system, values).verify_inequalities())
+
     def test_row_and_decomposition_caps_return_explicit_incomplete_reports(self):
         capped, skipped = generate_discovery_inventory(F2, contexts=(), budget=DiscoveryBudget(max_rows=1))
         self.assertEqual(len(capped.rows), 1)

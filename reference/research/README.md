@@ -6,6 +6,11 @@ The derivations below have been checked independently by research agents, but
 are **not new Lean theorems**. No decomposition achieving the 9/4 bound has
 been generated, and no speed claim is made.
 
+The current [variable-auxiliary checkpoint](variable-auxiliary-checkpoint.md)
+records stronger candidate filters, verified square-to-matrix coefficient
+maps, and expanded finite state experiments. It supersedes the small-catalyst
+frontier in the earlier [stage 4 report](stage4.md).
+
 ## Concrete extraction target
 
 Fix a represented finite field, initially F_2, and a positive rational slack

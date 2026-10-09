@@ -1,7 +1,8 @@
 """Exact computational consequences of audited singular-star obstructions.
 
 Scope: D + m Unit + M2 tensor S_star <= D + 5 S_star, m>0.
-The mathematical implications are documented in research/star-*.md and have
+The mathematical implications are documented in research/star-*.md and
+research/variable-auxiliaries.md (the stronger three-plane refinement), and have
 not been formalized in Lean. Passing this screen supplies no catalyst maps.
 Finite-point slice ranks are explicitly not generic slice ranks.
 """
@@ -56,18 +57,17 @@ def screen_star_catalyst(tensor, *, supplied_scheme=None, budget=StarScreenBudge
     h, b, c = ranks
     report['flattening_ranks'] = ranks
     reasons = report['reasons']
-    if h < 3:
-        reasons.append('first flattening rank below three')
-    if min(b, c) < 4:
-        reasons.append('other flattening rank below four')
-    if b == c == 4:
-        reasons.append('both other flattening ranks equal four')
-    if h == 3 and min(b, c) < 5:
-        reasons.append('first flattening rank three requires both other ranks at least five')
-    if h == 3 and all(not value or j == k for i, j, k in product(*(range(d) for d in tensor.shape))
-                      for value in (tensor.coefficient(i, j, k),)):
-        reasons.append('first-concise dimension three with diagonal slice support')
-    required_rank = 4+(4+tensor.field.order-1)//tensor.field.order
+    if h < 6:
+        reasons.append('slice-space refinement requires first flattening rank at least six')
+    if min(b, c) < 6:
+        reasons.append('three-plane refinement requires other flattening ranks at least six')
+    if min(b, c) <= 7 and max(b, c) < 10:
+        reasons.append('generic slice rank at most seven requires another flattening rank at least ten')
+    q = tensor.field.order
+    # Count rank-one first-factor forms on the actual coefficient-field
+    # three-plane. This is a tensor-rank bound, never an LP state lower row.
+    required_rank = max(6,
+                        (4*(q*q+q+1)+q*q-1)//(q*q))
     report['required_same_field_tensor_rank'] = required_rank
     if supplied_scheme is not None:
         if not isinstance(supplied_scheme, TensorScheme) or supplied_scheme.target != tensor:
@@ -82,11 +82,10 @@ def screen_star_catalyst(tensor, *, supplied_scheme=None, budget=StarScreenBudge
 
     # Use a basis of the actual slice image, rather than counting nonzero
     # vectors in an input space with a flattening kernel.
-    basis, indices = [], []
-    for index, row in enumerate(rows[0][0]):
+    basis = []
+    for row in rows[0][0]:
         if field_matrix_rank(tensor.field, basis+[row], rows[0][1]) > len(basis):
             basis.append(row)
-            indices.append(index)
     tested, maximum = 0, 0
     histogram = {}
     total = tensor.field.order**h-1
@@ -102,14 +101,6 @@ def screen_star_catalyst(tensor, *, supplied_scheme=None, budget=StarScreenBudge
         tested += 1
         maximum = max(maximum, rank)
         histogram[rank] = histogram.get(rank, 0)+1
-        if h == 3 and rank < 4:
-            original = [0]*tensor.shape[0]
-            for index, value in zip(indices, vector):
-                original[index] = value
-            report['counterexample_input'] = tuple(original)
-            reasons.append('first-concise dimension three has a nonzero slice below rank four')
-            report['status'] = 'excluded'
-            break
     report['base_field_slices'] = {'checked': tested, 'total_nonzero': total,
                                   'complete': tested == total, 'histogram': histogram,
                                   'maximum_observed': maximum, 'generic_rank': 'not_computed'}
