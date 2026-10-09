@@ -528,17 +528,19 @@
   "useful_d2_k5_witness_found": false,
   "near_nine_quarters_matrix_scheme_found": false,
   "verification": {
-    "reference_tests": 405,
-    "full_suite_seconds": 353.641,
+    "reference_tests": 412,
+    "full_suite_seconds": 351.962,
     "protected_specifications": "eleven files and frozen Challenge match exact baseline",
     "lean_sources_changed": false,
     "lean_build_performed": false,
     "latest_focused_screen_tests": 19,
     "latest_focused_screen_seconds": 40.21,
     "prior_complete_suite": {
-      "reference_tests": 401,
-      "full_suite_seconds": 330.562
-    }
+      "reference_tests": 405,
+      "full_suite_seconds": 353.641
+    },
+    "latest_star_focused_tests": 13,
+    "latest_star_focused_seconds": 1.875
   },
   "historical_final_families": [
     {
@@ -811,6 +813,33 @@
         4
       ],
       "existence_witness_discovery_resolved": false
+    },
+    "fixed_star": {
+      "catalysts": "every finite tensor D",
+      "fields": "every field",
+      "gains": "every positive m",
+      "proof": "star-koszul-catalysts.md",
+      "certificate": "../star_koszul.json",
+      "target_shape": [
+        9,
+        13,
+        13
+      ],
+      "koszul_degree": 4,
+      "matrix_shape": [
+        1638,
+        1638
+      ],
+      "matrix_nonzeros": 2310,
+      "components": 550,
+      "max_component_dimension": 12,
+      "unimodular_operations": 1244,
+      "integral_matrix_rank_lower": 1054,
+      "rank_one_factor": 70,
+      "target_border_rank_lower": 16,
+      "source_terms_per_five_copies": 15,
+      "formalization_status": "Independently replayed integer certificate and audited rational-function proof; not Lean",
+      "certificate_sha256": "08b208f626563362ff42e113e744277d83ee690dc741fbaaffc0f7049e8212f3"
     }
   }
 }

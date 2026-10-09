@@ -89,8 +89,8 @@ rank values or a character of the full tensor semiring.
 Both latest files passed fresh standalone replay, with all 574 and 756 ordinary
 or detector rows checked. [The compact result record](variable-auxiliary-results.json)
 contains saved artifact hashes and budgets; it does not replace the literal
-coefficient certificates. The complete reference suite passed 405 tests in 353.641 seconds;
-focused controls and the preceding 401-test run are also recorded there.
+coefficient certificates. The complete reference suite passed 412 tests in 351.962 seconds;
+focused controls and the preceding 405-test run are also recorded there.
 The eleven protected files and frozen Challenge model still match the exact
 specification baseline. Portable F4 integration tests reject weakened states,
 check actual product-coordinate swaps, and verify repeated passes add no rows.
@@ -147,7 +147,8 @@ alone therefore does not make a prescribed convolution viable.
 For the retained `R(2,1)` auxiliary, necessary catalyst flattening boundaries
 are `(5,8,16)`, `(5,14,10)`, or `(5,12,12)` in the stated leg order. For the
 fixed star they are `(6,6,10)`, `(6,10,6)`, or `(6,8,8)`. These are necessary
-shape inequalities, not witnesses. Further rank-drop component conditions
+shape inequalities, not witnesses. The star conditions are now superseded
+by the universal integer certificate below. Further rank-drop component conditions
 exclude some tensors having those dimensions. The former random `(4,4,5)`
 star catalyst, smaller band tensors, and the proposed outer-product plus
 dot-tail retained catalyst are now excluded mathematically.
@@ -196,6 +197,22 @@ The earlier gauged C3/F2 search timed out after 913.358 seconds, with
 seconds when its all-field obstruction was audited. Neither returned maps
 or UNSAT. Independent coefficient automorphism controls remain saved.
 
+The fixed (2,3,3) star is now excluded for every finite D and every field.
+[The new proof](star-koszul-catalysts.md) uses its verified three-term formal
+family and the full nine-dimensional first leg of Unit + M2 tensor Star.
+The exterior-degree-four matrix is 1638 by 1638 with only 2310 nonzero
+entries. Its 550 disjoint support components, each at most 12 by 12,
+have integer unit minors totaling rank 1054. A rank-one tensor contributes
+at most 70, while the supplied source contributes 15 per repetition.
+Thus 1054n <= 70(C_D+15n) would force 4n <= 70C_D for every n.
+The compact certificate and [`star_koszul.py`](../star_koszul.py) replay all
+1244 integer elementary operations using the standard library. This is an
+all-field integer proof, rather than an inference from a binary rank sample.
+The default [`star_catalyst_screen.py`](../star_catalyst_screen.py) now uses
+that certificate; its earlier finite geometry diagnostics remain separately
+available as screen_star_catalyst_geometry. Slice enumeration caps do not
+limit the independent integer certificate, whose own caps remain explicit.
+
 The mixed-dot tensor itself has border rank exactly six in every field.
 [Its adjugate proof](mixed-dot-border-rank.md) has a single obstruction
 coefficient minus one; [`mixed_dot_border.py`](../mixed_dot_border.py)
@@ -242,7 +259,24 @@ separately and may extend beyond a search window.
 
 The next useful discovery target is an actual restriction connecting the
 surviving proof tensors and matrix contexts that eliminates the remaining
-finite states, together with a verified negative-unit dual. More scalar
-lower rows or unsupported multiplicativity equations do not supply that
-witness. The unrestricted existence theorem still guarantees some finite
-auxiliary, without guaranteeing any of these prescribed small candidates.
+finite states, together with a verified negative-unit dual. The simple shared,
+separate-dot and fixed-star auxiliaries above are now excluded for all finite
+catalysts, so increasing only their catalyst sizes is not a discovery route.
+Their tensor powers are distinct candidates: exclusion of S does not permit
+tensor cancellation and therefore does not automatically exclude S^e.
+The separate-dot square is a concrete next control, with three length-four
+matrix-dot blocks and six outer-product blocks; its existing 15-unit and M2
+maps can seed an expanded family. The present proof does not guarantee a
+witness for that prescribed square. Its normalized-state proof ranges over
+all detector tensors and uses invariance under all multiplication translates.
+The star square is another concrete surviving control: shape (4,9,9),
+exact border rank nine (the supplied nine-term formal family and a rank-nine
+flattening), and target Unit + M2 tensor Star^2 of shape (17,37,37).
+Its character upper bound nine means a gain-one certificate would imply
+log2(44/9), which is weaker than 9/4; the earlier accidental stronger-bound
+calibration does not apply to this square. This makes it a reasonable test,
+without guaranteeing maps. Proof-derived retained mixtures remain another
+discovery route. More scalar
+lower rows or unsupported multiplicativity equations do not supply a witness.
+The unrestricted existence theorem still guarantees some finite auxiliary,
+without guaranteeing any prescribed small candidate or its powers.

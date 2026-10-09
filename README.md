@@ -148,8 +148,9 @@ further ordinary matrix restrictions. Independently audited integral Koszul
 and commutator arguments exclude the shared-dot family for every finite
 catalyst and every field. Replicated rectangular rank and substitution also
 exclude three separate oriented dots for every finite catalyst; the literal
-length-two auxiliary has border rank exactly six. These improve the search
-frontier without supplying a useful 9/4 coefficient generator.
+length-two auxiliary has border rank exactly six. A separate compact integer
+certificate also excludes the fixed star for every finite catalyst. These
+improve the search frontier without supplying a useful 9/4 coefficient generator.
 
 ## Reproduction and verification
 

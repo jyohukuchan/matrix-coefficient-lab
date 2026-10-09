@@ -18,7 +18,9 @@ and independently checked rational-function arguments. The
 oriented dots for every finite catalyst, superseding the earlier
 [mixed-orientation audit](mixed-dot-catalysts.md). A [node-free coefficient extractor](../coefficient_extraction.py)
 handles supplied finite polynomial families even when interpolation nodes
-are unavailable. The missing useful family or catalytic maps remain open.
+are unavailable. The [star integer certificate](star-koszul-catalysts.md)
+also excludes the fixed star for every finite catalyst. The missing useful
+family or catalytic maps remain open.
 
 ## Concrete extraction target
 

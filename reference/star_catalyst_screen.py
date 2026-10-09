@@ -4,7 +4,8 @@ Scope: D + m Unit + M2 tensor S_star <= D + 5 S_star, m>0.
 The mathematical implications are documented in research/star-*.md and
 research/variable-auxiliaries.md (the stronger three-plane refinement), and have
 not been formalized in Lean. Passing this screen supplies no catalyst maps.
-Finite-point slice ranks are explicitly not generic slice ranks.
+Finite-point slice ranks are explicitly not generic slice ranks. The separate
+universal screen uses the integral certificate in research/star-koszul-catalysts.md.
 """
 
 from dataclasses import dataclass
@@ -39,7 +40,8 @@ def _flatten_rows(tensor, axis):
     return tuple(rows), tensor.shape[others[0]]*tensor.shape[others[1]]
 
 
-def screen_star_catalyst(tensor, *, supplied_scheme=None, budget=StarScreenBudget()):
+def screen_star_catalyst_geometry(tensor, *, supplied_scheme=None, budget=StarScreenBudget()):
+    """Earlier necessary geometry controls, retained independently for diagnostics."""
     if not isinstance(tensor, FiniteTensor) or not isinstance(budget, StarScreenBudget):
         raise ValueError('supply an exact finite tensor and screen budget')
     report = {'status': 'not_excluded', 'reasons': [],
@@ -107,4 +109,58 @@ def screen_star_catalyst(tensor, *, supplied_scheme=None, budget=StarScreenBudge
     if tested == total and maximum < 4:
         reasons.append('no base-field slice has the necessary matrix rank four')
         report['status'] = 'excluded'
+    return report
+
+
+def screen_star_catalyst(tensor, *, supplied_scheme=None, budget=StarScreenBudget(),
+                        m=1, koszul_limits=None):
+    """All-field analytic exclusion for every finite catalyst of the literal star.
+
+    Integer components and the complete source polynomial are replayed. The
+    unbounded rational-function iteration is a mathematical proof, not a
+    finite-field enumeration or a new Lean theorem.
+    """
+    from .star_degeneration import star_polynomial_degeneration
+    from .star_koszul import StarKoszulLimit, StarKoszulLimits, verify_star_integer_components
+    if not isinstance(tensor, FiniteTensor) or not isinstance(budget, StarScreenBudget):
+        raise ValueError('supply an exact finite tensor and screen budget')
+    if type(m) is not int or m < 1:
+        raise ValueError('gain must be a positive integer')
+    limits = StarKoszulLimits() if koszul_limits is None else koszul_limits
+    if not isinstance(limits, StarKoszulLimits):
+        raise ValueError('supply explicit star Koszul limits')
+    report = {'status': 'not_excluded', 'reasons': [], 'gain': m,
+        'scope': 'fixed literal S_star,d=2,k=5,positive gain; every finite catalyst and every field',
+        'field': {'p': tensor.field.p, 'modulus': tensor.field.modulus},
+        'verification': 'integral certificate and analytic iteration in research/star-koszul-catalysts.md; not Lean',
+        'finite_sampling_proves_all_fields': False}
+    if prod(tensor.shape) > budget.max_tensor_entries or sum(tensor.shape) > budget.max_tensor_entries:
+        report.update(status='resource_cap', reasons=['input tensor exceeds screen budget'])
+        return report
+    if supplied_scheme is not None:
+        if not isinstance(supplied_scheme, TensorScheme) or supplied_scheme.target != tensor:
+            raise ValueError('supplied rank upper certificate must have this exact target')
+        supplied_scheme.require_exact()
+        report['supplied_upper_terms'] = supplied_scheme.terms
+    try:
+        control = verify_star_integer_components(limits=limits)
+    except StarKoszulLimit as error:
+        report.update(status='resource_cap', reasons=[str(error)])
+        return report
+    polynomial = star_polynomial_degeneration(tensor.field)
+    polynomial.require_valid()
+    upper = sum(value != 0 for value in tensor.coefficients)
+    gap = control.rank_lower-15*control.rank_one_factor
+    copies = control.rank_one_factor*upper//gap+1
+    report.update(status='excluded', arbitrary_finite_catalyst=True,
+        reasons=['integral Koszul components and rational-function iteration exclude every finite catalyst'],
+        coefficient_controls={'formal_source_terms': polynomial.terms,
+            'formal_leading_degree': polynomial.leading,
+            'integral_matrix_rank_lower': control.rank_lower,
+            'rank_one_factor': control.rank_one_factor,
+            'target_border_rank_lower': control.border_rank_lower},
+        iteration={'catalyst_coordinate_rank_upper': upper, 'contradicting_repetitions': copies,
+            'target_matrix_rank_lower': control.rank_lower*copies,
+            'source_matrix_rank_upper': control.rank_one_factor*(upper+15*copies),
+            'materialized': False})
     return report

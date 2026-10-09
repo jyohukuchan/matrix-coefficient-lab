@@ -32,7 +32,9 @@ initially survived these necessary bounds. The later
 [replicated rank audit](mixed-dot-rank-catalysts.md) excludes it for every
 finite catalyst, including unequal positive dot lengths. The intermediate
 slice-space results below retain their narrower scope. The retained and
-star families are not catalyst witnesses.
+star families are not catalyst witnesses. The subsequent
+[integer Koszul proof](star-koszul-catalysts.md) also excludes the fixed star
+for every finite catalyst.
 
 ## What the existing existence argument actually supplies
 

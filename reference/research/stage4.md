@@ -9,6 +9,8 @@ the new mathematical arguments and Python checker are not Lean theorems.
 This report preserves the initial experiment results. The later
 [variable-auxiliary checkpoint](variable-auxiliary-checkpoint.md) supersedes
 its small-catalyst frontier and the viability of its random `(4,4,5)` candidate.
+The later [integer Koszul proof](star-koszul-catalysts.md) excludes the fixed
+star for every finite catalyst; its unresolved status below is historical.
 The expanded families and new square-to-matrix restrictions are documented
 there; historical row counts below describe their original source versions.
 
