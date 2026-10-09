@@ -275,8 +275,18 @@ flattening), and target Unit + M2 tensor Star^2 of shape (17,37,37).
 Its character upper bound nine means a gain-one certificate would imply
 log2(44/9), which is weaker than 9/4; the earlier accidental stronger-bound
 calibration does not apply to this square. This makes it a reasonable test,
-without guaranteeing maps. Proof-derived retained mixtures remain another
-discovery route. More scalar
+without guaranteeing maps. For its gain-one target, the four separate Y/Z
+block sizes after multiplication by M2 are (4,16), (16,4), (8,8), (8,8).
+An exterior-degree-p flattening after a first-leg projection to dimension a
+has rank at most the sum of min(y*binomial(a,p), z*binomial(a,p+1))
+over those blocks, plus binomial(a-1,p) for the gain unit. Relative to the
+rank-one factor binomial(a-1,p), this bound never exceeds 45 for a<=12.
+Thus more random projections at those sizes cannot exclude this gain-one
+candidate by that method. The first central profile not ruled out is a=13,
+p=6: rank must exceed 41580, against the upper control 42108. The matrix
+would have 63492 rows and columns; sparse or block methods are needed before
+attempting it. This is a method frontier, not a positive rank prediction.
+Proof-derived retained mixtures remain another discovery route. More scalar
 lower rows or unsupported multiplicativity equations do not supply a witness.
 The unrestricted existence theorem still guarantees some finite auxiliary,
 without guaranteeing any prescribed small candidate or its powers.
