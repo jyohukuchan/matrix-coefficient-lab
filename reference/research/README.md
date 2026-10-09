@@ -11,6 +11,15 @@ records stronger candidate filters, verified square-to-matrix coefficient
 maps, and expanded finite state experiments. It supersedes the small-catalyst
 frontier in the earlier [stage 4 report](stage4.md).
 
+The [shared-dot audit](shared-dot-catalysts.md) now excludes the whole Cq
+family as positive-gain auxiliaries, using replayable integer certificates
+and independently checked rational-function arguments. The
+[replicated rank audit](mixed-dot-rank-catalysts.md) also excludes separate
+oriented dots for every finite catalyst, superseding the earlier
+[mixed-orientation audit](mixed-dot-catalysts.md). A [node-free coefficient extractor](../coefficient_extraction.py)
+handles supplied finite polynomial families even when interpolation nodes
+are unavailable. The missing useful family or catalytic maps remain open.
+
 ## Concrete extraction target
 
 Fix a represented finite field, initially F_2, and a positive rational slack

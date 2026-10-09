@@ -444,6 +444,177 @@ def cross_level(source_path, destination):
     print(json.dumps({key: report[key] for key in ('status', 'atoms', 'rows', 'total_seconds')}), flush=True)
 
 
+def mixed_dots(source_path, destination, wall_seconds=1000, include_shared=False):
+    """Connect the mixed-dot auxiliary by actual ordinary coefficient maps.
+
+    This pass deliberately does not turn the analytic catalyst exclusions
+    into state rows. Its selected context lifts retain the usual operational
+    cap; the square's larger M2 context is explicitly skipped if it exceeds it.
+    """
+    from reference.mixed_dot_orders import (export_mixed_dot_matrix_order,
+        export_mixed_dot_square_subrank_order, export_mixed_dot_star_sum_order,
+        export_mixed_dot_subrank_order, export_mixed_dot_two_copy_matrix_order)
+
+    start = monotonic()
+    data = json.loads(source_path.read_text())
+    original = replay(data)
+    field = FiniteField(data['field']['p'], tuple(data['field']['modulus']))
+    experiment = Experiment(field, start+wall_seconds, max_rows=1000, max_atoms=400,
+                            strong=True)
+    experiment.max_upper_terms = 64
+    book = experiment.book
+    for key, entry in data['inventory'].items():
+        book.register(key, FiniteTensor(field, tuple(entry['shape']), tuple(entry['coefficients'])))
+    for entry in data['rows']:
+        row = WitnessedOrder(tuple(entry['positive']), tuple(entry['negative']),
+            tuple(LinearMap(field, mapping['input_size'], tuple(tuple(row) for row in mapping['rows']))
+                  for mapping in entry['maps']), entry['label']) if 'maps' in entry else DetectorConstraint(entry['test'], entry['product'])
+        book.rows.append(row)
+        book.families.append(entry['family'])
+        book.witness_nodes.append(None)
+
+    def add(exported, family):
+        names = {key: book._canonical.get(tensor, key) for key, tensor in exported.inventory}
+        row = WitnessedOrder(tuple(names[key] for key in exported.row.positive),
+            tuple(names[key] for key in exported.row.negative), exported.row.maps,
+            exported.row.label)
+        if row in book.rows:
+            return row
+        return experiment.attempt(exported.row.label, lambda: exported, family)
+
+    lower = export_mixed_dot_subrank_order(field, 'mixed-three-dots', limits=LIMITS)
+    branches = export_mixed_dot_star_sum_order(field, 'mixed-three-dots',
+        'mixed-dot-star', 'mixed-dot-first', limits=LIMITS)
+    exports = (
+        (lower, 'mixed_dot_subrank'),
+        (branches, 'mixed_dot_star_sum'),
+        (export_mixed_dot_matrix_order(field, 'mixed-three-dots-square', 'M2', limits=LIMITS),
+         'mixed_dot_matrix'),
+        (export_mixed_dot_square_subrank_order(field, 'mixed-three-dots-square', limits=LIMITS),
+         'mixed_dot_square_15_subrank'),
+        (export_mixed_dot_two_copy_matrix_order(field, 'mixed-three-dots', 'M2', limits=LIMITS),
+         'mixed_dot_matrix_rows'),
+    )
+    shared_seeds, supplied_schemes = (), {}
+    if include_shared:
+        from reference.shared_dot_orders import (export_shared_dot_quotient_order,
+            export_shared_dot_subrank_order, shared_dot_scheme)
+        from reference.shared_dot_matrix import (export_shared_dot_matrix_order,
+            export_shared_dot_star_order, export_shared_dot_two_copy_matrix_order)
+        quotient = export_shared_dot_quotient_order(field, 3, 'mixed-length-3', 'shared-dot-3', limits=LIMITS)
+        square = export_shared_dot_matrix_order(field, 3, 'shared-dot-3-square', 'M2', limits=LIMITS)
+        exports += (
+            (quotient, 'shared_dot_quotient'),
+            (export_shared_dot_subrank_order(field, 3, 'shared-dot-3', limits=LIMITS), 'shared_dot_subrank'),
+            (export_shared_dot_star_order(field, 3, 'shared-dot-3', 'mixed-dot-star', limits=LIMITS), 'shared_dot_star'),
+            (square, 'shared_dot_square_matrix'),
+            (export_shared_dot_two_copy_matrix_order(field, 3, 'shared-dot-3', 'M2', limits=LIMITS), 'shared_dot_matrix_rows'),
+        )
+        shared = quotient.registry['shared-dot-3']
+        shared_seeds = (quotient.registry['mixed-length-3'], shared, square.registry['shared-dot-3-square'])
+        shared_scheme = shared_dot_scheme(field, 3)
+        supplied_schemes[shared] = shared_scheme
+        supplied_schemes[shared.tensor_power(2)] = shared_scheme.tensor_power(2)
+    for exported, family in exports:
+        if add(exported, family) is None:
+            raise StateAssemblyLimit('mixed-dot seed window or inventory cap reached')
+    S = lower.registry['mixed-three-dots']
+    star, dot = branches.registry['mixed-dot-star'], branches.registry['mixed-dot-first']
+    seeds = (S, star, dot, S.tensor_power(2))+shared_seeds
+    keys = tuple(book._canonical[tensor] for tensor in seeds)
+    for tensor, key, selectors in ((star, keys[1], ((0, 1), (1, 0), (0, 2))),
+                                   (dot, keys[2], ((0,), (0,), (0,)))):
+        add(export_selected_subrank_order(tensor, selectors, key, limits=LIMITS),
+            'mixed_dot_branch_subrank')
+    matrix = matrix_multiplication_tensor(field, 2, 2, 2)
+    matrix_key = book._canonical[matrix]
+    if include_shared:
+        supplied_schemes[matrix.tensor_product(shared)] = TensorScheme.from_tensor(matrix).tensor_product(shared_scheme)
+    for key in keys:
+        if monotonic() >= experiment.deadline:
+            experiment.skipped.append(dict(operation='mixed-detector-'+key, reason='total wall cap reached'))
+            break
+        if any(isinstance(row, DetectorConstraint) and row.test == key for row in book.rows):
+            continue
+        shape = tuple(4*n for n in book.inventory[key].shape)
+        if prod(shape) > experiment.max_context_entries:
+            experiment.skipped.append(dict(operation='mixed-detector-'+key,
+                reason='context operational coefficient cap reached', entries=prod(shape)))
+            continue
+        book.add_detector(key, 2)
+        experiment.accepted.append(dict(operation='mixed-detector-'+key, family='detector',
+            row=len(book.rows)-1, parameters=dict(test=key, product=book.rows[-1].product)))
+    for exported, family in exports:
+        source_shape = tuple(4*sum(exported.registry[key].shape[axis]
+            for key in exported.row.positive) for axis in range(3))
+        target_shape = tuple(4*sum(exported.registry[key].shape[axis]
+            for key in exported.row.negative) for axis in range(3))
+        if max(prod(source_shape), prod(target_shape)) > experiment.max_context_entries:
+            experiment.skipped.append(dict(operation='mixed-context-'+exported.row.label,
+                reason='context operational coefficient cap reached',
+                source_entries=prod(source_shape), target_entries=prod(target_shape)))
+            continue
+        names = {key: 'mixed-M2-context-'+key for key in exported.registry}
+        lifted = lift_witnessed_order(exported.row, exported.registry, matrix, names, limits=LIMITS)
+        add(lifted, 'context:M2:'+family)
+    product_keys = tuple(row.product for row in book.rows if isinstance(row, DetectorConstraint)
+                         and row.test in keys)
+    # Context lifting uses S tensor M2; detectors use M2 tensor S. The two
+    # literal coordinate orders require checked swaps before their rows can
+    # constrain the same state values.
+    detector_tests = {row.test for row in book.rows if isinstance(row, DetectorConstraint)}
+    for tensor, key in zip(seeds, keys):
+        if key not in detector_tests:
+            continue
+        for reverse in (False, True):
+            add(commute_product_export(key, tensor, matrix_key, matrix, reverse=reverse),
+                'factor_swap:mixed_dots')
+    for key in tuple(dict.fromkeys(keys+product_keys)):
+        tensor = book.inventory[key]
+        scheme = supplied_schemes.get(tensor)
+        terms = scheme.terms if scheme is not None else sum(any(tensor.coefficients[i:i+tensor.shape[2]])
+                    for i in range(0, len(tensor.coefficients), tensor.shape[2]))
+        if terms > experiment.max_upper_terms or terms**3 > LIMITS.max_tensor_entries:
+            experiment.skipped.append(dict(operation='mixed-upper-'+key,
+                reason='rank-upper dense/term cap', terms=terms))
+            continue
+        if scheme is None:
+            scheme = TensorScheme.from_tensor(tensor)
+        add(WitnessedOrderExport(rank_upper_constraint('unit', key, scheme),
+            (('unit', book.inventory['unit']), (key, tensor))), 'mixed_dot_rank_upper')
+    solve_start = monotonic()
+    result = solve_finite_states(book.system(2, 5), timeout_seconds=10, limits=LIMITS)
+    solve_seconds = monotonic()-solve_start
+    final = literal_export(book, result)
+    replay_start = monotonic()
+    checked = replay(final)
+    replay_seconds = monotonic()-replay_start
+    destination.mkdir(parents=True, exist_ok=True)
+    (destination/'finite-replay.json').write_text(json.dumps(final)+'\n')
+    (destination/'diagnostics.json').write_text(json.dumps(diagnostics(final), indent=2)+'\n')
+    report = dict(status=result.status, reason=result.reason, field=data['field'],
+        original=original, atoms=len(book.inventory), rows=len(book.rows), replay=checked,
+        accepted=experiment.accepted, skipped=experiment.skipped,
+        family_counts=dict(Counter(book.families)), limits=asdict(LIMITS), native_LP_seconds=10,
+        upper_terms_cap=experiment.max_upper_terms,
+        context_operational_entries_cap=experiment.max_context_entries,
+        construction_window_seconds=wall_seconds,
+        proposal_and_exact_verification_seconds=solve_seconds, replay_seconds=replay_seconds,
+        total_seconds=monotonic()-start, supplied_rank_seven_matrix_row=False,
+        shared_dot_connections=include_shared,
+        interpretation='Actual ordinary mixed-dot maps and selected M2 contexts only. Analytic catalyst screens are separate; finite feasibility does not exclude arbitrary catalysts.')
+    if result.state is not None:
+        report['exact_state'] = {key: str(value) for key, value in result.state.assignment.items()}
+        report['mixed_dot_values'] = {key: str(result.state.assignment[key])
+            for key in tuple(dict.fromkeys(keys+product_keys+(matrix_key,)))}
+    if result.dual is not None:
+        report['gain'] = result.dual.m
+        report['used_rows'] = [dict(index=i, family=book.families[i], weight=weight)
+            for i, weight in enumerate(result.dual.weights) if weight]
+    (destination/'report.json').write_text(json.dumps(report, indent=2)+'\n')
+    print(json.dumps({key: report[key] for key in ('status', 'atoms', 'rows', 'total_seconds')}), flush=True)
+
+
 def adaptive_cut(source_path, destination, max_rounds=6, wall_seconds=600,
                  fill_existing_detectors=False):
     """Cut exact states with checked coordinate restrictions, then seek a dual."""
@@ -973,13 +1144,21 @@ if __name__ == '__main__':
         help='Adaptively add actual coordinate subrank rows that violate the saved exact state')
     modes.add_argument('--cross-level', type=Path,
         help='Add actual sector-square/rectangle-column matrix rows and the M2 detector to a saved literal system')
+    modes.add_argument('--mixed-dots', type=Path,
+        help='Connect actual mixed-dot subrank, star, square and M2 rows to a saved literal system')
+    parser.add_argument('--shared-dot-connections', action='store_true',
+        help='With --mixed-dots, also connect C3 quotient, exact rank upper schemes and matrix maps')
     parser.add_argument('--cut-rounds', type=int, default=6)
     parser.add_argument('--fill-existing-detectors', action='store_true',
         help='Before cutting, add missing M2 detectors whose exact reverse product is already registered')
     args = parser.parse_args()
     if args.wall_seconds <= 0 or args.cut_rounds < 0:
         parser.error('--wall-seconds must be positive and --cut-rounds nonnegative')
-    if args.cross_level:
+    if args.shared_dot_connections and not args.mixed_dots:
+        parser.error('--shared-dot-connections requires --mixed-dots')
+    if args.mixed_dots:
+        mixed_dots(args.mixed_dots, args.output, args.wall_seconds, args.shared_dot_connections)
+    elif args.cross_level:
         cross_level(args.cross_level, args.output)
     elif args.cut:
         adaptive_cut(args.cut, args.output, args.cut_rounds, args.wall_seconds,

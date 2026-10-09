@@ -142,6 +142,15 @@ independently audited geometric arguments exclude complete convolutions as
 fixed auxiliaries and sharpen the minimum catalyst dimensions for the retained
 and star cases. Those arguments are not Lean-formalized.
 
+The latest checkpoint also adds node-free extraction of a supplied polynomial
+tensor family's leading coefficients, shared-dot exact decompositions, and
+further ordinary matrix restrictions. Independently audited integral Koszul
+and commutator arguments exclude the shared-dot family for every finite
+catalyst and every field. Replicated rectangular rank and substitution also
+exclude three separate oriented dots for every finite catalyst; the literal
+length-two auxiliary has border rank exactly six. These improve the search
+frontier without supplying a useful 9/4 coefficient generator.
+
 ## Reproduction and verification
 
 Install [elan](https://github.com/leanprover/elan), and have Git and Python 3 available. From the repository root, run these commands sequentially:

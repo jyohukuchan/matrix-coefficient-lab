@@ -676,6 +676,27 @@ Further finite constructions and turning the
 current spectral existence proof into a generator for the 9/4 schemes remain
 separate mathematical and implementation tasks.
 
+For a supplied formal family, leading coefficients can also be collected
+directly without interpolation or a field extension:
+
+```python
+from reference.coefficient_extraction import extract_leading_coefficient
+from reference.fields import FiniteField
+from reference.shared_dot_orders import shared_dot_degeneration
+
+family = shared_dot_degeneration(FiniteField(2), 3).tensor_power(2)
+scheme = extract_leading_coefficient(family)
+scheme.require_exact()  # all 16³ target coefficients; 135 raw terms over F2
+```
+
+The function verifies all formal coefficients below the leading degree,
+counts actual degree supports before allocating output, and enforces caps.
+It needs an already supplied polynomial decomposition. The
+[latest research checkpoint](research/variable-auxiliary-checkpoint.md)
+records new matrix maps and candidate obstructions, including integral
+certificates replayable without search dependencies. No useful d=2,k=5
+positive-gain witness or new low-exponent matrix scheme has been found.
+
 The [stage 4 discovery report](research/stage4.md) adds optional exact-rational
 LP proposals and seeded decomposition experiments, with replayable witnesses
 and explicit construction/search caps. SciPy/NumPy and Z3 are optional search

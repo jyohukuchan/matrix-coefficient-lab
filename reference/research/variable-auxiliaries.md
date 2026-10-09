@@ -28,7 +28,11 @@ and other flattening ranks at least six. Earlier first-dimension-three/four
 refinements remain in the proof record but are superseded by these general
 exclusions. A
 mixture of three length-two dot tensors in all three singleton-leg orientations
-also survives these necessary bounds. Neither is a catalyst witness.
+initially survived these necessary bounds. The later
+[replicated rank audit](mixed-dot-rank-catalysts.md) excludes it for every
+finite catalyst, including unequal positive dot lengths. The intermediate
+slice-space results below retain their narrower scope. The retained and
+star families are not catalyst witnesses.
 
 ## What the existing existence argument actually supplies
 
@@ -1175,6 +1179,933 @@ and cannot be the projection exception for a two-row pair map. This
 applies to either fixed auxiliary. No SAT run is needed to establish these
 exclusions; passing dimension and finite-point rank-drop-span checks alone
 would miss them.
+
+## Three oriented dot tensors: exclusions for three small catalysts
+
+Let `S` be the direct sum of one length-two dot tensor in each singleton-leg
+orientation. Its concise shape is `(5,5,5)` and its supplied exact
+decomposition has six terms. Although the previous common-output
+convolution argument does not
+apply, the following new slice-space argument excludes
+
+```
+D ⊕ Unit ⊕ (M₂⊗S) ≤ D ⊕ 5S
+```
+
+for **each of `D=0`, `D=Unit`, and `D=M₂`, over every field**. This also
+excludes any positive gain for these same catalysts, since projecting a
+larger gain to one unit preserves the other target blocks. It does not
+exclude an arbitrary larger catalyst.
+
+Work over the algebraic closure of the coefficient field. An exact tensor
+restriction remains exact there. Label the singleton-first block of `S`
+by its scalar first input `s`, and label its other first inputs by two
+vectors `u,v∈K²`. Its slice rank is
+
+```
+2·1_(s≠0) + 1_(u≠0) + 1_(v≠0).
+```
+
+Consequently each of the five source copies has slice rank at most four.
+Let `s₁,…,s₅` denote its five scalar coordinates, pulled back as linear
+forms on the target first space through the putative first map. Setting
+two of these forms to zero reduces the source rank upper bound by four;
+setting all five to zero bounds the source contribution of `5S` by ten.
+These statements use distinct source block occurrences even if some of
+the pulled-back forms happen to coincide.
+
+The core first space of `M₂⊗S` has three disjoint parts: a `2×2` matrix
+`A`, a `4×2` matrix `B`, and a `2×4` matrix `C`. Its slice rank is
+
+```
+4 rank(A) + 2 rank(B) + 2 rank(C).
+```
+
+For example, the first core block is `M(2,2,4)`; the other two are
+`M(4,2,2)` and `M(2,4,2)`. Their generic slice ranks are eight, four, and
+four. There is also the target gain form `g`. In the three cases the
+target first dimension, generic target slice rank, and source rank after
+killing two scalar forms are
+
+| `D` | Target first dimension | Generic target slice rank | Source upper bound on a pair kernel |
+| --- | --- | --- | --- |
+| `0` | 21 | 17 | 16 |
+| `Unit` | 22 | 18 | 17 |
+| `M₂` | 25 | 21 | 20 |
+
+For `D=M₂`, write its independent first matrix as `E`; its slice rank is
+`2 rank(E)`. For `D=Unit`, write its scalar form as `d`.
+
+Each pair kernel `Jᵢⱼ=ker(sᵢ,sⱼ)` therefore lies in the target's generic
+rank-drop cone. A linear space over an infinite field is irreducible, so
+it lies in one of that cone's finitely many components. Those components
+are `g=0`, also `d=0` for a unit catalyst, also `rank(E)≤1` for a matrix
+catalyst, and the three core matrix rank-drop components.
+
+The maximal dimension of a linear subspace in the rank-one cone of a
+`2×2` matrix space is two; for a `4×2` or `2×4` matrix space it is four.
+This follows from the common-image or common-row classification used
+above. A pair kernel has dimension at least 19, 20, or 23 in the three
+cases. The `B` and `C` bad components have maximal linear dimensions only
+17, 18, or 21, so neither can contain a pair kernel. If `Jᵢⱼ` lies in an
+`A` or `E` rank-one component, equality of dimensions forces its two
+normal forms to be independent, pure forms in that matrix block. Their
+normal two-plane is itself a rank-one matrix space: the annihilator of
+a maximal common-row or common-image two-plane in a `2×2` matrix space
+has the other common factor. If it lies in a scalar component, the
+corresponding scalar form belongs to `span(sᵢ,sⱼ)`.
+
+Here is the resulting bound on the whole span of the five forms. Let
+`Y` be the pure scalar row space: `span(g)` for `D=0` or `M₂`, and
+`span(g,d)` for `D=Unit`. If the images of the `sᵢ` modulo `Y` span at
+most one dimension, their full span has dimension at most `dim(Y)+1`.
+Otherwise choose two forms with independent quotient images. Their pair
+cannot contain a scalar normal, so both belong to the same pure matrix
+block. Any further form with nonzero quotient image is independent of
+at least one of this pair, forcing it into that same block. Their matrix
+span has dimension at most two: every independent pair spans a rank-one
+space, so the determinant quadratic vanishes on the whole span, including
+in characteristic two. The remaining forms lie in `Y`. Thus
+
+```
+dim span(s₁,…,s₅) ≤ 3   for D=0 or M₂,
+dim span(s₁,…,s₅) ≤ 4   for D=Unit.
+```
+
+For `D=Unit`, attaining four forces the span to be the direct sum of a
+pure `A` rank-one normal two-plane and all of `span(g,d)`.
+
+To finish, set `J=ker(s₁,…,s₅)`. The following elementary dimensions
+bound linear spaces of uniformly low target slice rank:
+
+| `D` | Source rank upper bound on `J` | Maximum dimension of a target linear space with this rank bound |
+| --- | --- | --- |
+| `0` | 10 | 17 |
+| `Unit` | 11 | 18 |
+| `M₂` | 14 | 21 |
+
+For completeness, let `a,b,c∈{0,1,2}` be the generic ranks of the three
+matrix projections of such a space. Their dimension bounds are
+`f(a)+t(b)+t(c)`, where `f=(0,2,4)` and `t=(0,4,8)`; its generic core
+slice rank is `4a+2b+2c`. Add zero or one for each scalar projection;
+for the matrix catalyst add `f(e)` to dimension and `2e` to rank.
+The dimension of the space is at most the sum of its projection
+dimensions. Enumerating these three-valued ranks proves the displayed
+maxima. Each maximum requires `a=0`, `b=c=2`, and all remaining target
+blocks unrestricted.
+
+For `D=0`, the scalar-span bound gives `dim J≥18`, contradicting the
+maximum 17. For `D=M₂`, it gives `dim J≥22`, contradicting the maximum
+21. For `D=Unit`, a scalar span of dimension at most three gives
+`dim J≥19`, contradicting the maximum 18. The only remaining possibility
+is a four-dimensional scalar span. Then
+
+```
+J = (an A rank-one two-plane) ⊕ (the whole B space) ⊕ (the whole C space),
+```
+
+with `g=d=0`. This space has generic target slice rank `4+4+4=12`,
+contradicting the source upper bound eleven. This completes all three
+exclusions without a tensor-rank additivity theorem or a SAT result.
+
+An independent finite enumeration checked the last dimension maximization;
+its unique maximizing rank profiles are `(a,b,c)=(0,2,2)` with unrestricted
+scalar or catalyst blocks. The proof uses algebraic-closure linear spaces,
+not finite-point rank sampling. Larger `D` remains unknown from this
+argument; the surviving three-orientation auxiliary is still a search
+candidate, with these three catalyst choices removed.
+
+## Every diagonal catalyst is excluded for the mixed-dot auxiliary
+
+The small-catalyst argument strengthens to **`D=n Unit` for every finite
+`n≥0`, over every field**. The proof below concerns actual restrictions
+and slice ranks; it does not assert an optimal tensor-rank value over a
+finite field. It also excludes any positive gain by projection to one
+gain unit.
+
+Work over the algebraic closure as before. The target first space has
+dimension `n+21`; its independent scalar-coordinate forms are the `n`
+target diagonal forms and the gain form. Denote their full row space by
+`Y`, of dimension `n+1`. The remaining first coordinates are the core
+matrices `A,B,C` from the preceding argument. Let `c₁,…,c₅` be the five
+source singleton-first scalar forms, pulled back to this target space.
+The generic target slice rank is `n+17`. On each pair kernel the source
+slice rank is at most `n+16`. The same dimension argument as above forces
+each pair normal span to contain a target scalar-coordinate form or to
+be a pure `A` rank-one normal two-plane. In particular, the larger scalar
+row space does not permit an arbitrary scalar combination as the first
+alternative: it must contain an individual coordinate form.
+
+Let `J=ker(c₁,…,c₅)`. All five source singleton-first inputs vanish on
+`J`, so every source slice there has rank at most `n+10`.
+
+First suppose the images of the `cᵢ` modulo `Y` span at most one
+dimension. The projection of `J` to each core matrix block then has
+codimension at most one: its annihilator is the intersection of the
+source normal span with that block's pure row space, which has dimension
+at most one. The projected matrix spaces therefore attain ranks two,
+two, and two, so the generic core slice rank on `J` is sixteen. At most
+five independent target scalar-coordinate forms vanish identically on
+`J`, since its normal span has dimension at most five. Hence generic
+target slice rank is at least `16+n+1−5=n+12`, a contradiction.
+
+Otherwise choose two forms with independent images modulo `Y`. They
+are pure `A` forms spanning a rank-one normal two-plane. Every other
+form with nonzero quotient image is likewise pure `A`, by pairing with
+one of these two. All such forms span at most two dimensions. Every
+remaining form lies in `Y`; pairing it with a pure `A` form forces it to
+be a multiple of one individual target scalar coordinate. A zero form
+cannot meet either pair alternative. Let `r` be the number of distinct
+scalar coordinates among these remaining forms. There are at most
+three remaining forms, so `r≤3`. Their common kernel is
+
+```
+J = (an A rank-one two-plane) ⊕ K⁸_B ⊕ K⁸_C ⊕ K^(n+1−r),
+```
+
+with generic target slice rank `12+n+1−r=n+13−r`. The source upper bound
+`n+10` forces `r=3`. Thus `n≥2`, the five source forms are independent,
+and the only possible equality case has
+
+```
+J = (an A rank-one two-plane) ⊕ K⁸_B ⊕ K⁸_C ⊕ K^(n−2),
+generic target slice rank on J = n+10.
+```
+
+It remains to use the source diagonal forms. Let `t₁,…,tₙ` be their
+pullbacks restricted to `J`. None can vanish identically there: losing
+one source diagonal block would bound every source slice on `J` by
+`n+9`, below its generic target rank. For each nonzero `tⱼ`, the
+hyperplane `ker(tⱼ)` must lie in the target rank-drop cone on `J`, since
+source rank on it is at most `n+9`.
+
+The only linear hyperplanes contained in that cone are the `n−2`
+remaining target scalar-coordinate hyperplanes. Indeed, the core `A`
+two-plane has constant rank one away from zero, so its rank-drop locus
+has codimension two in `J`. The `B` and `C` rank-drop cones have maximal
+linear subspaces of codimension four in `J`. None can contain a
+hyperplane. Irreducibility of a linear hyperplane then forces
+`ker(tⱼ)` to equal one of the remaining scalar-coordinate hyperplanes.
+
+Moreover, two distinct source forms cannot choose the same hyperplane.
+On that hyperplane at least two source diagonal blocks vanish, giving
+source rank at most `n+8`. Exactly one independent target scalar block
+is lost there, so the generic target rank is `n+9`, again a contradiction.
+Thus the `n` source forms would require `n` distinct target hyperplanes,
+while only `n−2` remain. This proves the exclusion for all `n`; the
+first case and the impossibility of `r=3` cover the smaller `n` as well.
+
+The root derivation and a separate proof-family audit were independently
+checked here. The argument uses direct-sum block counts as integers and
+formal coefficient restrictions, so it remains valid in characteristic
+two. The earlier `D=0` and `D=Unit` exclusions are now special cases;
+the `D=M₂` argument remains a separate result.
+
+## A broader mixed-dot filter from the catalyst rank-drop cone
+
+Keep the three-orientation dot auxiliary of the preceding section. Let
+`D` be first-concise with first dimension `h` and generic first-slice rank
+`ρ`, both computed over the algebraic closure. Define
+
+```
+Δ_D = {x : rank(D_x)<ρ}.
+```
+
+If every linear subspace contained in `Δ_D` has dimension at most `h−3`,
+then **no positive-gain catalyst with this `D` exists**. Equivalently, a
+potential catalyst must have a linear rank-drop slice subspace of
+codimension one or two. This necessary subspace is asserted over the
+algebraic closure; it need not have a basis over the original coefficient
+field. Padding away nonconcise first coordinates does not evade the
+condition: the tensor and its concise version restrict to each other,
+and the putative certificate can be composed with these maps.
+
+Here is an independent audit of the general proof. As above, pull back the
+five singleton-first scalar forms `sᵢ` to the target first space, whose
+dimension is `h+21` and whose generic slice rank is `ρ+17`. On every pair
+kernel `ker(sᵢ,sⱼ)`, source rank is at most `ρ+16`, so this kernel lies in
+the union of the five generic rank-drop sets: `Δ_D`, gain zero, or one of
+the three core matrix rank-drop sets. The kernel has dimension at least
+`h+19`. Its projection to the `D` first space has dimension at least
+`h−2`, so it cannot lie in `Δ_D`. The `B` and `C` bad sets have maximal
+linear dimensions `h+17`, so they cannot contain the kernel either.
+
+Thus each pair's normal span contains the gain form `g` or is an
+independent pure `A` rank-one normal two-plane. Let `Y=span(g)`.
+If the images of the five forms modulo `Y` span at least two dimensions,
+the same pair argument as above forces all their nonzero quotient forms
+to be pure `A` forms, spanning at most two dimensions. The remaining
+forms are multiples of `g`. Their common kernel therefore retains the
+whole `D`, `B`, and `C` first spaces and at least two `A` dimensions.
+It has generic target slice rank at least `ρ+4+4+4=ρ+12`.
+
+If their quotient images span at most one dimension, their total span has
+dimension at most two. Their common kernel then has codimension at most
+two. Its `D` projection has dimension at least `h−2`, and hence attains
+generic slice rank `ρ` by hypothesis. Its `A` projection has dimension
+at least two, so it attains rank at least one. Its `B` and `C` projections
+each have dimension at least six, exceeding the maximal dimension four
+of their rank-one linear spaces; each therefore attains rank two.
+These rank conditions hold simultaneously on a nonempty open subset of
+the common kernel, giving generic target slice rank at least `ρ+12`
+again. In either case all five source scalar forms vanish there, so
+source rank is at most `ρ+10`, a contradiction.
+
+This proof uses exact slice-rank inequalities and linear spaces over an
+infinite field, with no tensor-rank additivity or finite-point inference.
+It extends to every original field by scalar extension. It also applies
+with any chosen catalyst leg first: the mixed-dot auxiliary is invariant
+up to coordinate changes under leg permutations, as is `M₂`.
+
+Some concrete applications need only the elementary form of the filter.
+If `D` has constant positive slice rank on every nonzero first input and
+`h≥3`, its rank-drop cone is just zero, and it is excluded. This includes
+an outer-product tensor with at least three first coordinates. For
+`D=C(a,b)`, multiplication by any nonzero first-input polynomial is
+injective on the second-input polynomial space, so its slice rank is
+always `b`. Thus any complete convolution catalyst with `a≥3`, or with
+`b≥3` after exchanging the two input legs, is excluded for this mixed-dot
+auxiliary.
+
+Matrix-multiplication catalysts have a further application invoking a
+standard bounded-rank matrix-space theorem. For `D=M(a,b,c)`, a first
+slice is `c` copies of an `a×b` matrix, so `Δ_D` is the rank-at-most
+`min(a,b)−1` matrix cone. Over an infinite field, Flanders' theorem bounds
+the dimension of a linear subspace of this cone by
+
+```
+max(a,b)·(min(a,b)−1) = ab−max(a,b).
+```
+
+The reference is H. Flanders, “On spaces of linear transformations with
+bounded rank,” *Journal of the London Mathematical Society* 37 (1962),
+10–16, [doi:10.1112/jlms/s1-37.1.10](https://doi.org/10.1112/jlms/s1-37.1.10).
+The algebraic closure satisfies the theorem's field-size requirement.
+Consequently the filter excludes this catalyst whenever `max(a,b)≥3`.
+Applying it on another leg excludes every `M(a,b,c)` with any parameter
+at least three. This application invokes the cited theorem; the filter
+itself does not require it. In the special case `M(3,2,2)`, the relevant
+rank-one `3×2` spaces have dimension at most three by the elementary
+common-row or common-image classification, so this example needs no
+general bounded-rank theorem.
+
+## The mixed-dot exclusions extend to every length `t≥2`
+
+Let `S_t` be the direct sum of a length-`t` dot tensor in each of the three
+singleton-leg orientations. It has shape `(1+2t)³` and a supplied exact
+`3t`-term coordinate decomposition. The previous three kinds of exclusion
+extend to **every `t≥2`, over every field**:
+
+- Every finite diagonal catalyst `D=n Unit` is excluded.
+- The catalyst `D=M₂` is excluded.
+- Any first-concise `D` whose generic slice-rank-drop cone contains no
+  linear subspace of codimension at most two is excluded.
+
+The last condition may be checked on any leg, using the same leg symmetry
+as above. These results concern actual restrictions with any positive
+gain; projection reduces that gain to one unit. They do not assert
+existence for the catalyst families remaining after these filters.
+
+Here is the complete parameter audit. A source `S_t` slice has rank
+
+```
+t·1_(s≠0) + 1_(u≠0) + 1_(v≠0),
+```
+
+where `u,v∈K^t`. If `D` has generic slice rank `ρ`, the source slice
+upper bound after killing two singleton-first scalar forms is
+`ρ+3t+10`; after killing all five it is `ρ+10`. The three core first
+matrix spaces have shapes `2×2`, `(2t)×2`, and `2×(2t)`, dimensions
+`4,4t,4t`, and slice contribution
+
+```
+2t rank(A) + 2 rank(B) + 2 rank(C).
+```
+
+This follows directly from the matrix-column spectators in the product
+with `M₂`. The target generic slice rank, including one gain unit, is
+`ρ+4t+9`. It exceeds the pair-kernel source upper bound by `t−1`, which
+is positive for the stated range. The target first dimension is
+`h+8t+5`. A pair kernel has codimension at most two. A rank-one linear
+subspace of either rectangular core matrix space has dimension at most
+`2t`, so every linear subspace in its rank-drop cone has codimension at
+least `2t≥4`.
+Thus those two bad components cannot contain a pair kernel. The `A`
+rank-drop component still forces a pure rank-one normal two-plane.
+
+For the general catalyst rank-drop hypothesis, the proof above is
+unchanged up to its final rank count. The pair kernels cannot project
+into `Δ_D`, since their `D` projections have codimension at most two.
+If the scalar forms modulo the gain form span at least two dimensions,
+their common kernel retains full `D,B,C` and at least two `A` dimensions.
+Its generic target rank is at least `ρ+2t+8`. Otherwise their common
+kernel has codimension at most two; its `D` projection attains rank
+`ρ`, its `A` projection attains rank at least one, and its `B,C`
+projections have dimension at least `4t−2>2t`, hence rank two.
+The same lower bound follows. Since `ρ+2t+8>ρ+10` for `t≥2`, both cases
+contradict the source upper bound.
+
+For `D=n Unit`, if the five scalar forms modulo the target scalar row
+space span at most one dimension, every core projection has codimension
+at most one and attains its full generic rank. At most five target scalar
+coordinates vanish identically on the common kernel. Hence its generic
+target slice rank is at least
+
+```
+4t+8+n+1−5 = n+4t+4 > n+10.
+```
+
+In the other case the five forms are pure `A` forms spanning a rank-one
+normal two-plane, together with at most three pure target scalar-coordinate
+forms. If these eliminate `r≤3` distinct scalar axes, the common kernel
+has generic target slice rank
+
+```
+2t+8+n+1−r = n+2t+9−r.
+```
+
+The source upper bound `n+10` would require `r≥2t−1`. This is impossible
+for `t≥3`. For `t=2` it forces exactly the equality case `r=3`, excluded
+by the preceding `n` source hyperplanes versus `n−2` target hyperplanes
+argument. Thus no diagonal catalyst survives at any stated length.
+
+For `D=M₂`, retain its independent first matrix `E`, with source and
+target slice contribution `2 rank(E)≤4`. The pair-kernel alternatives
+are gain zero or pure rank-one normal two-planes in `A` or `E`.
+If the five scalar forms modulo the gain form span at least two
+dimensions, their nonzero quotient forms all lie in just one of these
+matrix blocks, spanning at most two dimensions. The common kernel
+therefore has generic target slice rank at least `2t+12` if that block
+is `A`, and at least `4t+10` if it is `E`.
+
+Otherwise the common kernel has codimension at most two. Its `A,E`
+projections each have dimension at least two and attain rank at least
+one; its `B,C` projections attain rank two. The two former projections
+cannot both be rank-one matrix spaces: that would require at least two
+pure `A` normals and two independent pure `E` normals, contradicting
+codimension at most two. At least one therefore attains rank two.
+The generic target rank is again at least
+`min(2t+12,4t+10)=2t+12`. Every case exceeds the source common-kernel
+upper bound `4+10=14` for `t≥2`.
+
+All simultaneous generic-rank statements use intersections of nonempty
+open subsets of a linear space over the algebraic closure. The rank sums
+are ordinary matrix slice ranks in disjoint blocks, not an additivity
+assumption for tensor rank. The coefficient identities and block counts
+therefore give all-field exclusions, including characteristic two.
+
+## Exact single-copy subrank of the mixed-dot family
+
+For every `t≥1`, the ordinary single-copy subrank is **`Q(S_t)=3` over
+every field**. This is a single-copy statement, with no asymptotic-subrank
+claim.
+
+Order the three direct-sum blocks by singleton first, second, and third
+leg, using the original dot support `(0,j,j)`, `0≤j<t`, in each permuted
+block. Zero-based coordinate selectors for three independent units are
+
+```
+first:  (0,1,t+1),
+second: (0,t,t+1),
+third:  (0,t,2t).
+```
+
+They select exactly one supported triple in each block, and every mixed
+selected triple has coefficient zero. Thus the selected tensor is the
+three-unit diagonal tensor over the integers. For `t=2`, the portable
+[`export_mixed_dot_subrank_order`](../mixed_dot_orders.py) exports these
+actual maps, with controls in
+[`test_mixed_dot_orders.py`](../test_mixed_dot_orders.py).
+
+For the upper bound, suppose four independent units restrict from `S_t`,
+and extend the maps to the algebraic closure. Pull back the source
+singleton-first scalar form to the four-dimensional target diagonal
+first space. Its kernel has dimension at least three. On this kernel
+the source singleton-first dot block disappears, while each other block
+has slice rank at most one. Hence every target diagonal slice on this
+kernel has rank at most two. The rank-at-most-two cone of a four-entry
+diagonal matrix is the finite union of its coordinate two-planes.
+An irreducible linear space of dimension at least three cannot be
+contained in that union, a contradiction. A restriction to more than
+four units would project to four, so the upper bound follows.
+
+Independent temporary controls checked the displayed lower restriction
+for `t=1,2,3` over `F₂,F₃,F₄,F₅`, twelve cases in total. The integer
+coefficient identity and linear-space proof establish the all-field
+statement. The lower maps supply the legitimate ordinary state row
+`3≤f(S_t)` for normalized additive monotone states. The subrank upper
+bound is not a state upper row and does not imply `f(S_t)≤3`.
+
+## Two same-orientation dot-two catalysts are excluded
+
+This is a stepping stone to the
+[all-finite-copy theorem](#every-finite-same-orientation-dot-catalyst-is-excluded)
+below, which supersedes this two-copy screen.
+
+For `S=S_2`, the catalyst consisting of **two copies of a singleton-first
+length-two dot tensor** is impossible over every field. Its shape is
+`(2,4,4)` and its source slice rank is at most four. By leg permutation,
+the result also holds for two dots both having the singleton second leg,
+or both having the singleton third leg. This proof does not cover a
+mixture of different dot orientations.
+
+Write its two independent target first scalars as `d₁,d₂`, whose slice
+contributions are two each, and retain the gain scalar `g` of weight one.
+As before, any pair of the five source scalar normal forms contains one
+of these individual scalar-coordinate forms or spans a pure `A` rank-one
+normal two-plane. If their images modulo `span(d₁,d₂,g)` span at most
+one dimension, their common kernel attains the full generic core rank
+sixteen. This exceeds the source bound `4+10=14` there.
+
+Otherwise the nonzero quotient forms span a pure `A` rank-one normal
+two-plane; every other form is a pure scalar-coordinate form. Let `r≤3`
+be the number of distinct eliminated target scalar axes. The surviving
+core has generic rank twelve. For `r≤1`, surviving scalar weight is at
+least three, giving target rank at least fifteen, again above fourteen.
+
+If `r=2`, exactly one target scalar axis remains. The common kernel has
+generic target rank fourteen if that axis is a dot scalar, and thirteen
+if it is the gain. Let `t₁,t₂` be the two source catalyst scalar forms
+restricted to this kernel. Neither can vanish identically, since that
+would give source rank at most twelve throughout. Killing either reduces
+source rank by two, to at most twelve. Its hyperplane must therefore lie
+in the target rank-drop cone, and the only available linear hyperplane
+is the one remaining scalar-coordinate hyperplane. The core `A` drop
+has codimension two and every linear subspace in a `B,C` bad cone has
+codimension at least four. Thus both `t₁,t₂` have that same kernel. Killing both
+gives source rank at most ten while the target core still has generic
+rank twelve, a contradiction.
+
+It remains to exclude `r=3`, when all target scalar axes vanish and the
+common kernel is exactly the whole `B,C` first spaces plus an `A`
+rank-one two-plane. Here ordinary tensor flattening concision supplies
+the missing obstruction. On the source, all five singleton-first dot
+blocks disappear. Each remaining copy is the direct sum of a shape
+`(2,1,2)` outer-product block and a shape `(2,2,1)` dot block, whose
+second and third concise dimensions are three each. Adding the two
+source catalyst dots gives the other-leg upper bounds
+
+```
+5·(3,3) + (4,4) = (19,19).
+```
+
+For the target `A` block, a rank-one plane is equivalent to one of the
+following actual coordinate restrictions of `M(2,2,4)`:
+
+```
+A=[[x,0],[y,0]]:  A-first selectors (0,2), other flattenings (4,8),
+A=[[x,y],[0,0]]:  A-first selectors (0,1), other flattenings (8,4).
+```
+
+In the first case the four second-input coordinates in the first matrix
+row produce eight independent output coordinates `(xw,yw)`. In the
+second case all eight second-input coordinates are used but only four
+output coordinates remain. Common-row or common-image coordinate
+changes preserve these concision values for every rank-one two-plane.
+The full `B` and `C` core blocks have other flattenings `(4,8)` and
+`(8,4)`, respectively. Because all three blocks have disjoint coordinates
+on each leg, their actual flattening ranks add to
+
+```
+(16,20) or (20,16).
+```
+
+One target flattening is therefore twenty, while the corresponding
+source flattening is at most nineteen. Flattening ranks cannot increase
+under the remaining restriction maps, so the last case is impossible.
+These are matrix flattening ranks, without a tensor-rank additivity
+assumption. Eight independent temporary controls checked the two `A`
+coordinate concision calculations over `F₂,F₃,F₄,F₅`; the coordinate
+span calculation proves the field-independent values.
+
+## A second-leg exclusion for one larger-dot-catalyst boundary
+
+The [all-finite-copy theorem](#every-finite-same-orientation-dot-catalyst-is-excluded)
+below now subsumes this boundary calculation.
+
+For the mixed-dot auxiliary `S_2`, consider `D=n DotX₂`, the direct sum
+of `n` singleton-first length-two dots. The argument here excludes one
+specific boundary case for every `n≥3`; it does **not** establish an
+all-`n` exclusion for this whole catalyst family.
+
+Suppose the five source singleton-first scalar normal forms span a pure
+`A` rank-one normal two-plane together with three distinct target `D`
+scalar-coordinate axes, while leaving the gain scalar uneliminated.
+This is the `r=3` case in which all three eliminated scalar axes belong
+to `D`. On their common first kernel the target is the direct sum of
+the three core blocks, with `A` restricted to a rank-one two-plane, one
+gain unit, and `n−3` remaining singleton-first dots. The source first
+restriction removes all five singleton-first auxiliary blocks. The
+remaining source is a restriction of
+
+```
+n DotX₂ ⊕ 5(DotY₂ ⊕ DotZ₂).
+```
+
+Analyze slices on the second leg of this new restriction. The source
+second-slice rank is at most `n+15`: each source catalyst dot contributes
+at most one, while each auxiliary copy contributes two from its
+singleton-second block and one from its singleton-third block. Pull
+back the five source singleton-second scalar forms as `α₁,…,α₅` on the
+target second space. Killing any two gives source rank at most `n+11`;
+killing all five gives at most `n+5`.
+
+The target second-slice contributions of the core blocks are as follows:
+
+| Block | Generic second-slice rank | Minimum codimension of a linear rank-drop subspace |
+| --- | --- | --- |
+| `A` common-row plane | 2 | 4: a four-vector must vanish |
+| `A` common-image plane | 2 | 4: a `2×4` matrix drops to rank one |
+| `M(4,2,2)` block | 8 | 2: a `2×2` matrix drops to rank one |
+| `M(2,4,2)` block | 4 | 4: a `4×2` matrix drops to rank one |
+
+In the second table column for `M(4,2,2)`, the slice rank is four times
+the rank of its second matrix. For `M(2,4,2)` it is twice that rank.
+Each remaining target dot has generic second-slice rank one and drops
+only when its second two-vector vanishes. Including the gain, the
+generic target second-slice rank is therefore
+
+```
+2+8+4+1+(n−3) = n+12.
+```
+
+The pair kernels of the `αᵢ` have codimension at most two and must lie
+in this generic rank-drop cone, because source rank there is at most
+`n+11`. The `A` and `M(2,4,2)` bad components cannot contain such a
+linear space. Irreducibility leaves only three pair-normal alternatives:
+the span contains the gain form; it is a pure rank-one normal two-plane
+in the `M(4,2,2)` second matrix; or it is the whole pure two-coordinate
+normal plane of one remaining dot's second vector.
+
+If the five `αᵢ` modulo the gain form span at least two dimensions,
+choose a pair with independent quotient images. All further nonzero
+quotient forms must belong to the same pure block as this pair; forms
+with zero quotient image are multiples of the gain. In the matrix case
+their span is a rank-one normal two-plane; in the dot case it is that
+dot's full two-coordinate plane. Killing all five leaves generic target
+second-slice rank at least
+
+```
+2+4+4+(n−3) = n+7        in the matrix case,
+2+8+4+(n−4) = n+10       in the remaining-dot case.
+```
+
+Both exceed the source bound `n+5`. The remaining-dot case is possible
+only when there is at least one remaining dot.
+
+Otherwise their quotient span has dimension at most one, so the common
+second kernel has codimension at most two. The `A` block still attains
+second-slice rank two: its common-row four-vector projection cannot
+vanish, and its common-image matrix projection has dimension at least
+six, greater than the maximum four of a rank-one `2×4` matrix space.
+The `M(4,2,2)` second projection has dimension at least two, so it
+attains rank at least one and contributes at least four. The
+`M(2,4,2)` second projection has dimension at least six and contributes
+four. At most one remaining dot's second vector can vanish identically,
+because each needs two independent pure normals and the whole kernel
+has codimension at most two. The generic target rank is consequently
+at least `2+4+4+(n−4)=n+6`, again above `n+5`.
+
+This exhausts the second-leg possibilities and excludes the stated
+first-kernel boundary. Both orientations of the `A` rank-one plane are
+covered explicitly. The proof extends to every coefficient field via
+its algebraic closure. The first-leg case in which the five scalar
+forms have quotient span at most one remains outside this argument;
+no conclusion for all finite `n DotX₂` is made here.
+
+## The three same-orientation dot-two catalyst is also excluded
+
+The [all-finite-copy theorem](#every-finite-same-orientation-dot-catalyst-is-excluded)
+below now supersedes this three-copy screen.
+
+For `S=S_2`, the previous partial arguments and one final flattening
+step prove that **`D=3 DotX₂` is impossible over every field**. Here
+`D` is exactly three copies of the singleton-first length-two dot, with
+concise shape `(3,6,6)` and generic first-slice rank six. Its source and
+target shapes before restricting the first space are `(28,31,31)` and
+`(24,27,27)`, respectively. Leg symmetry gives the same exclusion for
+three dots all singleton on the second leg or all singleton on the
+third leg. This result does not assert an exclusion for arbitrary
+larger numbers of dots or for mixtures of their orientations.
+
+Let the three target catalyst scalars be `d₁,d₂,d₃`, each of slice weight
+two, and let the gain form `g` have weight one. Put
+`Y=span(d₁,d₂,d₃,g)`. The five pulled-back source scalar forms are
+`c₁,…,c₅`. Killing any pair gives source first-slice rank at most
+`6+16=22`, below the generic target rank `6+17=23`. The pair-normal
+alternatives are therefore the familiar individual target scalar axis
+or pure `A` rank-one normal two-plane. Their common kernel `J` has
+source slice-rank upper bound `6+10=16`.
+
+First consider the case where the `cᵢ` modulo `Y` span at least two
+dimensions. Their matrix forms span a pure `A` rank-one normal
+two-plane; their remaining forms eliminate `r≤3` individual scalar
+axes. The restricted target core has generic rank twelve.
+
+- If `r≤1`, its surviving scalar weight is at least five, giving target
+  rank at least seventeen, above sixteen.
+- If `r=2` and two catalyst axes disappear, the gain and one catalyst
+  axis remain, giving generic target rank fifteen. If instead one
+  catalyst axis and the gain disappear, two catalyst axes remain,
+  giving generic rank sixteen. In either situation all three source
+  catalyst forms restricted to `J` are nonzero. Killing any one loses
+  two source rank units, so its hyperplane must be a remaining target
+  scalar-coordinate hyperplane; the core bad sets cannot contain a
+  hyperplane. Two source forms choosing the same axis would lose four
+  source rank units but at most two target rank units, a contradiction.
+  Three source forms would therefore need three distinct axes, while
+  only two remain.
+- If `r=3` and the gain disappears, exactly two catalyst axes also
+  disappear. The remaining catalyst dot adds `(2,2)` to the restricted
+  core other-leg flattenings `(16,20)` or `(20,16)`. Thus a target
+  flattening is twenty-two, whereas the source after all five `cᵢ`
+  vanish has other flattenings at most `5·3+3·2=21`.
+- If `r=3` and the gain remains, all three catalyst axes disappear.
+  This is exactly the preceding second-leg exclusion, with `n=3`.
+
+It remains to analyze quotient span zero or one. Every core projection
+of `J` has codimension at most one and retains its full generic slice
+rank, so generic core rank on `J` is sixteen. Since source rank there
+is at most sixteen, every target catalyst and gain scalar must vanish
+identically on `J`. Hence the five-form normal span `W` contains all
+four dimensions of `Y`. There are two possibilities:
+
+```
+W=Y,                 J=the whole 20-dimensional core first space;
+W=Y⊕span(λ),         J=ker(λ) in that core, dimension 19,
+```
+
+where in the second line `λ` is a nonzero pure core form. Let `t` be
+any of the three source catalyst scalar forms restricted to `J`. It is
+nonzero: otherwise source rank is at most fourteen throughout `J`,
+contradicting its generic target rank sixteen. On `H=ker(t)` the source
+rank is at most fourteen, so `H` lies in the core generic rank-drop cone.
+The `B,C` bad cones have maximal linear dimension sixteen in the full
+twenty-dimensional core first space, and the `A` bad cone has maximal
+linear dimension eighteen.
+
+If `W=Y`, then `dim H=19`, so irreducibility and those dimension bounds
+give an immediate contradiction. In the other case `dim H=18`. It
+must lie in the `A` bad cone, and equality of dimensions forces
+
+```
+H = (an A rank-one two-plane) ⊕ K⁸_B ⊕ K⁸_C.
+```
+
+In particular, `λ` and the new hyperplane normal are pure `A` forms
+spanning a rank-one normal two-plane; the possible triangular-matrix
+normal form is justified by this argument, rather than assumed.
+
+The target on `H` has other flattenings `(16,20)` or `(20,16)`, by the
+actual coordinate concision calculation above. The source has all five
+auxiliary singleton-first blocks zero and at least one of its three
+catalyst dot blocks zero. Its corresponding other flattenings are at
+most
+
+```
+5·(3,3) + 2·(2,2) = (19,19).
+```
+
+A flattening twenty cannot restrict from a flattening of rank at most
+nineteen. This excludes the last possibility and proves the full
+three-copy result. The source block counts, first-slice inequalities,
+and normal-form concision values are all coefficient constructions over
+the algebraic closure, so the proof applies to every original field and
+every positive gain, after projection to one gain unit.
+
+## Every finite same-orientation dot catalyst is excluded
+
+For the mixed-dot auxiliary `S=S_2`, **no finite catalyst `D=n DotX₂`
+exists, for any `n≥0`, over any field**. Here `DotX₂` is the length-two
+dot tensor with its first leg singleton, so `D` has concise shape
+`(n,2n,2n)` and generic first-slice rank `2n`. Leg symmetry gives the
+same theorem for any finite number of dots all singleton on the second
+leg or all singleton on the third leg. Different orientations mixed
+inside `D` are outside this theorem. Any positive gain projects to one
+gain unit. This is independently audited slice-space mathematics over
+the algebraic closure, with no Lean formalization claimed.
+
+The earlier two-copy, three-copy, and second-leg boundary arguments are
+retained above as stepping stones. The following branch analysis closes
+the entire finite family. The zero-copy case is already excluded by the
+small-catalyst theorem, so assume `n≥1` below.
+
+Use the previous core matrices `A,B,C`, with generic slice rank sixteen.
+The target first dimension is `n+21`; the source first dimension is
+`n+25`. Its target scalar row space `Y` has `n` independent catalyst
+coordinate forms of slice weight two and one gain form of weight one.
+Let `c₁,…,c₅` be the pulled-back scalar forms of the five source
+singleton-first auxiliary blocks, and set
+
+```
+W=span(c₁,…,c₅),       J=ker(W).
+```
+
+Source rank on `J` is at most `2n+10`. Killing any pair of the `cᵢ`
+gives source rank at most `2n+16`, below the generic target rank
+`2n+17`. Thus every pair normal span contains an individual target
+scalar-coordinate form or is a pure `A` rank-one normal two-plane.
+The `B,C` bad components have linear codimension at least four and
+cannot contain a pair kernel.
+
+If the images of the `cᵢ` modulo `Y` span at least two dimensions,
+the same pair argument forces all nonzero quotient forms into one pure
+`A` rank-one normal two-plane. Forms with zero quotient image are pure
+individual scalar-coordinate forms. Let `r_D` count distinct eliminated
+catalyst axes and `r_g∈{0,1}` record whether the gain disappears. Then
+`r_D+r_g≤3`, and the restricted target core has generic rank twelve.
+The complete possibilities are:
+
+| Eliminated axes | Generic target rank or decisive bound | Exclusion |
+| --- | --- | --- |
+| At most one | At least `2n+11` | Source upper bound is `2n+10` |
+| Two catalyst axes | `2n+9` | Source catalyst forms cannot fit the remaining `n−1` scalar hyperplanes |
+| One catalyst axis and gain | `2n+10` | Source catalyst forms cannot fit the remaining `n−1` scalar hyperplanes |
+| Two catalyst axes and gain | A target flattening is `2n+16` | Source other flattenings are at most `2n+15` |
+| Three catalyst axes, gain retained | Second-leg recursion | The preceding boundary proof applies |
+
+For clarity, in either two-axis case every source catalyst scalar form
+is nonzero on `J`. Killing it reduces source rank by two and forces its
+hyperplane into the generic target rank-drop cone. The restricted `A`
+plane drops only at zero, a codimension-two locus, and `B,C` bad linear
+spaces have codimension at least four. Hence it must be a remaining
+target scalar-coordinate hyperplane. Two source forms cannot select the
+same axis: source would lose four rank units, while target loses at
+most two and its initial source surplus is at most one. The `n` source
+forms would need `n` distinct axes, but only `n−1` remain. The other
+rows are exactly the concision and second-leg proofs already given.
+
+It remains to handle quotient span zero or one. The core projection of
+`J` has codimension at most one and retains generic core rank sixteen.
+Define `p` as the number of **actual target catalyst coordinate forms**
+vanishing identically on `J`, and `q∈{0,1}` according to whether the
+gain vanishes identically. These count individual axes, not dimensions
+of a possibly noncoordinate scalar normal space. Its generic target
+rank is therefore
+
+```
+G = 16+2(n−p)+1−q = 2n+17−2p−q.
+```
+
+Since source rank is at most `2n+10`, one needs `2p+q≥7`.
+If the quotient span is one, `dim(W∩Y)≤4`; if it is zero,
+`dim W≤5`. This gives only the following branches:
+
+| Quotient dimension | `(p,q)` | Generic target rank `G` | Source surplus `2n+10−G` |
+| --- | --- | --- | --- |
+| One | `(3,1)` | `2n+10` | 0 |
+| One | `(4,0)` | `2n+9` | 1 |
+| Zero | `(3,1)` | `2n+10` | 0 |
+| Zero | `(4,0)` | `2n+9` | 1 |
+| Zero | `(4,1)` | `2n+8` | 2 |
+| Zero | `(5,0)` | `2n+7` | 3 |
+
+Let `t₁,…,tₙ` be the source catalyst scalar forms restricted to `J`.
+Whenever they all vanish, the whole source has slice rank at most ten.
+
+First take quotient dimension zero and source surplus zero or one.
+Then `J` is the direct product of the **whole core** with a scalar
+subspace `L`. This `L` may contain an additional noncoordinate relation;
+different surviving scalar-coordinate restrictions may even be
+proportional. Each `tⱼ` is nonzero on `J`, since losing two source rank
+units would put source rank below `G` throughout `J`. Its hyperplane
+must lie in the target rank-drop cone. The full core `A` bad set has
+linear codimension at least two and `B,C` have at least four, so none
+can contain a hyperplane in this product. Thus `tⱼ` is a pure scalar
+form on `L`, proportional to a surviving coordinate restriction.
+Killing all the `tⱼ` retains the whole core, of generic rank sixteen,
+while source rank is at most ten. No independence or distinctness of
+the surviving scalar axes is used.
+
+Next take quotient dimension zero and source surplus two or three.
+Killing any two source catalyst forms reduces source rank to at most
+`2n+6`, below `G`. A pair kernel must therefore lie in the target
+rank-drop cone. The pair normals contain a nonzero actual scalar
+coordinate restriction or span a pure `A` rank-one normal two-plane;
+the `B,C` components again cannot contain a codimension-two linear
+space. Work modulo the **full scalar row space `L*`**, allowing all
+relations among the coordinate restrictions. If the `tⱼ` images modulo
+that space span at most one dimension, their common kernel retains a
+core projection of codimension at most one and generic rank sixteen.
+Otherwise a pair with independent quotient images forces all nonzero
+quotient forms into the same pure `A` rank-one normal two-plane; the
+remaining forms are pure scalar. Their common kernel retains at least
+two `A` dimensions and the whole `B,C` spaces, giving core rank at
+least twelve. Both bounds exceed the source rank ten after all source
+catalyst forms vanish.
+
+Finally take quotient dimension one. There are exactly four eliminated
+coordinate axes, and their span is precisely `W∩Y`. After removing
+them, the ambient first space `U` is the direct product of the core
+and all surviving scalar coordinates. Its remaining normal is of the
+form
+
+```
+w=λ(core)+y(scalars),       λ≠0,       J=ker(w) inside U.
+```
+
+**Counting alone does not force `y=0`.** The fifth normal may mix core
+and surviving scalar coordinates. Nevertheless, the surviving scalar
+coordinate restrictions on `J` are independent, because any relation
+among them would enlarge `W∩Y` beyond the four eliminated axes.
+
+For either surplus zero or one, every `tⱼ` is nonzero: an identically
+zero form would lose two source rank units against a surplus smaller
+than two. Its hyperplane lies in a generic rank-drop component. A scalar component
+gives a pure scalar-coordinate restriction. If an `A` component
+contains it, equality of maximal linear dimensions forces that
+hyperplane to be the product of an `A` rank-one two-plane with the
+whole `B,C` spaces and **all** surviving scalar coordinates. Its
+annihilator in `U` is consequently pure `A`. In particular, this
+alternative forces `y=0` and `λ` to be a rank-one pure `A` normal.
+The `B,C` alternatives are too small.
+
+In branch `(p,q)=(3,1)`, an `A`-type hyperplane has a target other-leg
+flattening
+
+```
+20+2(n−3)=2n+14,
+```
+
+whereas the source after killing its source catalyst form has other
+flattenings at most `15+2(n−1)=2n+13`. Thus all `tⱼ` must be scalar
+types. Killing all retains at least `ker(λ)` in the core, which has
+codimension one and generic core rank sixteen. Source rank is ten,
+giving a contradiction even when the fifth normal was mixed.
+
+In branch `(p,q)=(4,0)`, scalar-type source forms cannot repeat the
+same surviving axis: two copies would lose four source rank units
+against at most two target rank units, with initial surplus only one.
+There are `n−4` surviving catalyst axes and the gain, so at most `n−3`
+source forms are scalar types. At least three must therefore be
+`A` types. Their existence forces the remaining normal pure `A` and
+rank one, as just proved. By coordinate changes the core `A`
+hyperplane is the upper-triangular three-space
+
+```
+A=[[a,b],[0,d]],       det(A)=ad.
+```
+
+Its only linear rank-drop hyperplanes are `a=0` and `d=0`. Thus the
+three source `A`-type forms span at most two pure `A` normal directions.
+Killing any three of them loses six source rank units, giving source
+rank at most `2n+4`. It leaves a nonzero `A` direction, the whole
+`B,C` spaces, and all surviving scalar coordinates. Its generic
+target rank is at least
+
+```
+4+4+4+2(n−4)+1 = 2n+5,
+```
+
+a final contradiction.
+
+This completes every branch. The scalar-coupling distinction is essential:
+quotient-zero branches retain a full core and permit arbitrary scalar
+relations, while quotient-one branches permit a mixed fifth normal
+until an `A`-type maximal linear space forces that normal pure `A`.
+The proof uses algebraic-closure linear spaces, formal restrictions, and
+ordinary matrix slice or flattening ranks. It gives no assertion about
+an optimal finite-field tensor-rank decomposition.
 
 ## A concrete constructive relation: `M₂≤R(2,1)²`
 
