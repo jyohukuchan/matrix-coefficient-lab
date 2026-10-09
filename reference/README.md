@@ -12,6 +12,8 @@ python3 -m reference.proof_demo  # just the proof-derived construction pipeline
 python3 -m reference.extraction_demo  # branch extraction to a small matrix scheme
 python3 -m reference.catalyst_demo  # actual maps from a supplied catalyst
 python3 -m reference.witnessed_demo  # finite dual -> catalyst -> matrix coefficients
+python3 -m reference.proof_pipeline  # generated proof rows, exact search, attribution
+python3 -m reference.structured_demo  # checked large tensor power, without expansion
 python3 -m unittest discover -s reference -t . -v
 ```
 
@@ -44,6 +46,9 @@ python3 -m unittest discover -s reference -t . -v
 | `build_geometric_catalyst()` | Convert a supplied exact M_(d^b) scheme with r<k^b into a D=0 certificate over the same field, using a specified direct sum of matrix powers. It does not discover the required input scheme. |
 | `projective_convolution_scheme()` | Finite-node interpolation plus a leading-coefficient/infinity term, verified as an exact convolution scheme. |
 | `descend()` | The explicit basis/projection formula in [FieldDescent.lean](../lean/OAI/LinearAlgebra/MatrixMultiplication/Arithmetic/FieldDescent.lean). |
+| `forecast_candidate()` and `forecast_verified_inputs()` | Integer cost/size forecasts for capped catalytic blocks, one final descent, and dense expansion budgets. Numerical forecasts construct no output decomposition. |
+| `CertificateGraph` | Checked tensor/scheme leaves and finite restriction seeds, typed construction DAGs, individual coefficient queries, bounded expansion, serialization/replay and exact support counts where available. |
+| `reference.proof_pipeline` | Automatic sector/type/Fourier/determinant row generation, canonical tensor registry, exact dual/catalyst compilation and family-removal analysis with a separately identified known-rank control. |
 
 This correspondence is an implementation guide, not a formal proof that the
 Python code refines the Lean definitions. Tests independently check tensor
@@ -670,3 +675,32 @@ the verified power/recovery/descent and finite separation pipelines.
 Further finite constructions and turning the
 current spectral existence proof into a generator for the 9/4 schemes remain
 separate mathematical and implementation tasks.
+
+For a supplied formal family, leading coefficients can also be collected
+directly without interpolation or a field extension:
+
+```python
+from reference.coefficient_extraction import extract_leading_coefficient
+from reference.fields import FiniteField
+from reference.shared_dot_orders import shared_dot_degeneration
+
+family = shared_dot_degeneration(FiniteField(2), 3).tensor_power(2)
+scheme = extract_leading_coefficient(family)
+scheme.require_exact()  # all 16³ target coefficients; 135 raw terms over F2
+```
+
+The function verifies all formal coefficients below the leading degree,
+counts actual degree supports before allocating output, and enforces caps.
+It needs an already supplied polynomial decomposition. The
+[latest research checkpoint](research/variable-auxiliary-checkpoint.md)
+records new matrix maps and candidate obstructions, including integral
+certificates replayable without search dependencies. No useful d=2,k=5
+positive-gain witness or new low-exponent matrix scheme has been found.
+
+The [stage 4 discovery report](research/stage4.md) adds optional exact-rational
+LP proposals and seeded decomposition experiments, with replayable witnesses
+and explicit construction/search caps. SciPy/NumPy and Z3 are optional search
+dependencies; the ordinary package and star polynomial controls remain standard
+library code. A fixed star catalyst would prove a stronger bound than 9/4,
+so discovery prioritizes varying proof-derived auxiliaries. No useful d=2,k=5
+certificate has been found, and these new obstructions are not Lean-formalized.

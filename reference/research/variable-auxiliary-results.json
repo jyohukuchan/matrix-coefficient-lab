@@ -1,0 +1,845 @@
+{
+  "format": "variable-auxiliary-observation-summary-v1",
+  "date": "2026-10-09",
+  "scope": "Observation metadata only. Exact feasible states concern the selected finite rows. Hashes identify external literal artifacts; no full certificate or general nonexistence result is encoded here.",
+  "final_families": [
+    {
+      "field_order": 4,
+      "field": {
+        "p": 2,
+        "modulus": [
+          1,
+          1,
+          1
+        ]
+      },
+      "atoms": 132,
+      "rows": 574,
+      "status": "finite_feasible",
+      "replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 132,
+        "rows": 574
+      },
+      "standalone_replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 132,
+        "rows": 574
+      },
+      "artifact_sha256": "8d2f3e8dbe2c3e3fcf24ff20397b9a6af7497837ff2ab8ad36182ee1fe57e946",
+      "limits": {
+        "max_blocks": 4096,
+        "max_tensor_entries": 2000000,
+        "max_map_entries": 1000000,
+        "max_constraint_entries": 1000000
+      },
+      "native_LP_seconds": 10,
+      "observed_final_pass_seconds": 213.8587953869992,
+      "cross_level_values": {
+        "source": "sector-2-1-e2-retained",
+        "target": "M2",
+        "source_value": "25/4",
+        "target_value": "5",
+        "pair_source": "sector-pair-power",
+        "pair_source_value": "5",
+        "word_source": "sector-pair-words",
+        "word_source_value": "5/2",
+        "matrix_product": "M2-context-31-M2",
+        "matrix_product_value": "25"
+      },
+      "mixed_dot_values": {
+        "mixed-three-dots": "3",
+        "mixed-dot-star": "2",
+        "mixed-dot-first": "1",
+        "mixed-three-dots-square": "15",
+        "mixed-length-3": "3",
+        "shared-dot-3": "3",
+        "shared-dot-3-square": "49",
+        "M2*mixed-three-dots": "48",
+        "M2*mixed-dot-star": "10",
+        "M2*mixed-dot-first": "5",
+        "M2*mixed-length-3": "15",
+        "M2*shared-dot-3": "15",
+        "M2": "5"
+      },
+      "supplied_rank_seven_matrix_row": false,
+      "shared_dot_connections": true
+    },
+    {
+      "field_order": 11,
+      "field": {
+        "p": 11,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "atoms": 174,
+      "rows": 756,
+      "status": "finite_feasible",
+      "replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 174,
+        "rows": 756
+      },
+      "standalone_replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 174,
+        "rows": 756
+      },
+      "artifact_sha256": "d2893ff32da5e69cd4bf8346fb248d244e4b9189fd7b113ce290359acb484f0a",
+      "limits": {
+        "max_blocks": 4096,
+        "max_tensor_entries": 2000000,
+        "max_map_entries": 1000000,
+        "max_constraint_entries": 1000000
+      },
+      "native_LP_seconds": 10,
+      "observed_final_pass_seconds": 215.86394613500124,
+      "cross_level_values": {
+        "source": "sector-2-1-e2-retained",
+        "target": "M2",
+        "source_value": "25/4",
+        "target_value": "5",
+        "pair_source": "sector-pair-power",
+        "pair_source_value": "5",
+        "word_source": "sector-pair-words",
+        "word_source_value": "5/2",
+        "matrix_product": "M2-context-46-M2",
+        "matrix_product_value": "25"
+      },
+      "mixed_dot_values": {
+        "mixed-three-dots": "3",
+        "mixed-dot-star": "2",
+        "mixed-dot-first": "1",
+        "mixed-three-dots-square": "15",
+        "mixed-length-3": "3",
+        "shared-dot-3": "3",
+        "shared-dot-3-square": "49",
+        "M2*mixed-three-dots": "48",
+        "M2*mixed-dot-star": "10",
+        "M2*mixed-dot-first": "5",
+        "M2*mixed-length-3": "15",
+        "M2*shared-dot-3": "15",
+        "M2": "5"
+      },
+      "supplied_rank_seven_matrix_row": false,
+      "shared_dot_connections": true
+    }
+  ],
+  "selected_direct_searches": [
+    {
+      "case": "mixed-dots-zero",
+      "status": "resource_cap",
+      "reason": "solver incomplete: max. memory exceeded",
+      "elapsed_seconds": 20.029188363999765,
+      "native_timeout_seconds": 120.0,
+      "memory_mb": 512,
+      "product_cap": 1000000,
+      "boolean_product_cap": 1000000,
+      "map_bit_cap": 4096,
+      "cubic_products": 277830,
+      "source_shape": [
+        25,
+        25,
+        25
+      ],
+      "target_shape": [
+        21,
+        21,
+        21
+      ],
+      "field_order": 2
+    },
+    {
+      "case": "mixed-dots-zero",
+      "status": "resource_cap",
+      "reason": "solver incomplete: timeout",
+      "elapsed_seconds": 140.0137632449996,
+      "native_timeout_seconds": 120.0,
+      "memory_mb": 2048,
+      "product_cap": 1000000,
+      "boolean_product_cap": 1000000,
+      "map_bit_cap": 4096,
+      "cubic_products": 277830,
+      "source_shape": [
+        25,
+        25,
+        25
+      ],
+      "target_shape": [
+        21,
+        21,
+        21
+      ],
+      "field_order": 2
+    },
+    {
+      "case": "mixed-dots-zero",
+      "status": "resource_cap",
+      "reason": "solver incomplete: timeout",
+      "elapsed_seconds": 317.9592084169999,
+      "native_timeout_seconds": 300.0,
+      "memory_mb": 2048,
+      "product_cap": 1000000,
+      "boolean_product_cap": 1000000,
+      "map_bit_cap": 4096,
+      "cubic_products": 277830,
+      "source_shape": [
+        25,
+        25,
+        25
+      ],
+      "target_shape": [
+        21,
+        21,
+        21
+      ],
+      "field_order": 2
+    },
+    {
+      "status": "found",
+      "reason": "actual SAT restriction independently verified; third leg re-solved",
+      "seconds": 0.2035249739997198,
+      "source_shape": [
+        4,
+        9,
+        9
+      ],
+      "target_shape": [
+        4,
+        4,
+        4
+      ],
+      "case": "star-square-matrix",
+      "field_order": 2
+    },
+    {
+      "status": "exhausted",
+      "reason": "full coefficient restriction encoding UNSAT for these exact tensors",
+      "seconds": 1.1693867739995767,
+      "source_shape": [
+        4,
+        6,
+        6
+      ],
+      "case": "two-stars-matrix",
+      "field_order": 2
+    },
+    {
+      "field": 2,
+      "status": "exhausted",
+      "reason": "full coefficient restriction encoding UNSAT for these exact tensors",
+      "seconds": 0.8818817139999737,
+      "case": "LM-ML-core-to-3-unit",
+      "field_order": 2
+    },
+    {
+      "field": 4,
+      "status": "resource_cap",
+      "reason": "solver incomplete: timeout",
+      "seconds": 30.115163530000245,
+      "case": "LM-ML-core-to-3-unit",
+      "field_order": 4
+    },
+    {
+      "case": "mixed-dots-matrix",
+      "status": "terminated_by_math_screen",
+      "reason": "The independently audited slice-space argument excludes this fixed D=M2 candidate over every field. Root intentionally terminated SAT with SIGTERM; no native UNSAT result was obtained.",
+      "field": {
+        "p": 2,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "elapsed_seconds": 581.0,
+      "elapsed_seconds_kind": "Approximate process wall time from ps at termination, including startup/encoding; solver-only runtime unavailable.",
+      "native_timeout_seconds": 900,
+      "memory_mb": 2048,
+      "product_cap": 1000000,
+      "boolean_product_cap": 1000000,
+      "map_bit_cap": 4096,
+      "cubic_products": 593750,
+      "source_shape": [
+        29,
+        29,
+        29
+      ],
+      "target_shape": [
+        25,
+        25,
+        25
+      ],
+      "solver_unsat_claim": false,
+      "artifact_sha256": "80a5cfbfb6f4fc9b9ef7904520475ceed91fae8860d0e696dff08d9a537d37b9"
+    },
+    {
+      "case": "mixed-dots-unit",
+      "status": "terminated_by_math_screen",
+      "reason": "Coordinator independent analytic audit excludes this fixed mixed-three-dot auxiliary with D=Unit. Native SAT was intentionally terminated; no solver UNSAT result was obtained.",
+      "field": {
+        "p": 2,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "elapsed_seconds": 447.1199999999999,
+      "elapsed_seconds_kind": "Process wall time at termination, including startup and coefficient encoding; solver-only runtime not separately available.",
+      "native_timeout_seconds": 600,
+      "memory_mb": 2048,
+      "product_cap": 1000000,
+      "boolean_product_cap": 1000000,
+      "map_bit_cap": 4096,
+      "cubic_products": 330088,
+      "source_shape": [
+        26,
+        26,
+        26
+      ],
+      "target_shape": [
+        22,
+        22,
+        22
+      ],
+      "solver_unsat_claim": false,
+      "artifact_sha256": "dccff3afb9e6865c600310f8044f079bb41df89ec625dc67ba576adb52efda09"
+    },
+    {
+      "status": "not_run_analytic_exclusion",
+      "reason": "Coordinator paused SAT before solver launch after a new analytic exclusion. Only exact coefficient preflight and commutator controls ran.",
+      "field": {
+        "p": 2,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "elapsed_seconds": 0.10395307699945988,
+      "cubic_products": 488750,
+      "source_shape": [
+        27,
+        29,
+        29
+      ],
+      "target_shape": [
+        23,
+        25,
+        25
+      ],
+      "found_maps": false,
+      "incomplete": true,
+      "solver_started": false,
+      "case": "mixed-dots-two-dot-catalyst",
+      "solver_unsat_claim": false,
+      "budgets": {
+        "timeout_ms": 600000,
+        "max_memory_mb": 2048,
+        "max_products": 1000000,
+        "max_boolean_products": 1000000,
+        "max_map_bits": 4096,
+        "identical_blocks": null
+      },
+      "artifact_sha256": "0b3e588dfabfa2c684d5feb888e824a3f735030398946af9d689df8804ffdb37"
+    },
+    {
+      "status": "terminated_by_math_screen",
+      "reason": "Coordinator requested termination after an independently audited analytic exclusion of this exact D=3DotX2 candidate; no SAT outcome obtained.",
+      "field": {
+        "p": 2,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "elapsed_seconds": 760.398001,
+      "cubic_products": 629856,
+      "source_shape": [
+        28,
+        31,
+        31
+      ],
+      "target_shape": [
+        24,
+        27,
+        27
+      ],
+      "found_maps": false,
+      "incomplete": true,
+      "solver_started": true,
+      "case": "mixed-dots-three-dot-catalyst",
+      "solver_unsat_claim": false,
+      "budgets": {
+        "timeout_ms": 900000,
+        "max_memory_mb": 2048,
+        "max_products": 1000000,
+        "max_boolean_products": 1000000,
+        "max_map_bits": 4096,
+        "identical_blocks": null
+      },
+      "artifact_sha256": "058e9477891a661d9e45e993f1f7cf992dacaf89db6ed688128a8725485acc5d"
+    },
+    {
+      "case": "shared-CW3-zero",
+      "status": "resource_cap",
+      "reason": "solver incomplete: timeout",
+      "field": {
+        "p": 2,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "elapsed_seconds": 317.6642662360009,
+      "native_timeout_seconds": 300,
+      "memory_mb": 1024,
+      "product_cap": 1000000,
+      "boolean_product_cap": 1000000,
+      "map_bit_cap": 4096,
+      "cubic_products": 221085,
+      "source_shape": [
+        20,
+        20,
+        20
+      ],
+      "target_shape": [
+        17,
+        17,
+        17
+      ],
+      "solver_unsat_claim": false,
+      "artifact_sha256": "3e49e2eeac15a880409de59b96a0c598f0fe3576b261eaf856eb11df0962d6b3"
+    },
+    {
+      "case": "shared-CW3-zero-gauge",
+      "status": "resource_cap",
+      "reason": "solver incomplete: timeout",
+      "field": {
+        "p": 2,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "elapsed_seconds": 913.3578695220003,
+      "native_timeout_seconds": 900,
+      "memory_mb": 2048,
+      "product_cap": 1000000,
+      "boolean_product_cap": 1000000,
+      "map_bit_cap": 4096,
+      "cubic_products": 221085,
+      "source_shape": [
+        20,
+        20,
+        20
+      ],
+      "target_shape": [
+        17,
+        17,
+        17
+      ],
+      "solver_unsat_claim": false,
+      "artifact_sha256": "7adc13a2e94d0eb2f312f80f1aaf90d914b7ce19a5dc032e607be5064ff0dcde"
+    },
+    {
+      "status": "resource_cap",
+      "reason": "solver incomplete: max. memory exceeded",
+      "field": {
+        "p": 2,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "elapsed_seconds": 50.298065046001284,
+      "cubic_products": 555660,
+      "source_shape": [
+        25,
+        25,
+        25
+      ],
+      "target_shape": [
+        21,
+        21,
+        21
+      ],
+      "found_maps": false,
+      "incomplete": true,
+      "solver_started": true,
+      "case": "shared-CW4-zero",
+      "solver_unsat_claim": false,
+      "budgets": {
+        "timeout_ms": 900000,
+        "max_memory_mb": 2048,
+        "max_products": 1000000,
+        "max_boolean_products": 1000000,
+        "max_map_bits": 4096,
+        "identical_blocks": 5
+      },
+      "artifact_sha256": "2d44e46e115cda8b803e0a81cf699ad7ab6ba40d1f97122f64ef965a842c9ee4"
+    },
+    {
+      "status": "terminated_by_math_screen",
+      "reason": "Root and an independent mathematical audit confirmed the all-characteristic necessary condition q+m<=4 for the shared CWq auxiliary and any finite D. This CW4,m1 candidate violates it. Native SAT was terminated without an outcome.",
+      "field": {
+        "p": 2,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "elapsed_seconds": 765.380463,
+      "cubic_products": 555660,
+      "source_shape": [
+        25,
+        25,
+        25
+      ],
+      "target_shape": [
+        21,
+        21,
+        21
+      ],
+      "found_maps": false,
+      "incomplete": true,
+      "solver_started": true,
+      "case": "shared-CW4-zero-gauge",
+      "solver_unsat_claim": false,
+      "budgets": {
+        "timeout_ms": 900000,
+        "max_memory_mb": 4096,
+        "max_products": 1000000,
+        "max_boolean_products": 1000000,
+        "max_map_bits": 4096,
+        "identical_blocks": 5
+      },
+      "artifact_sha256": "6f7b6edba3d02ee8f877c32f4d599c4c6151acc023d250a067f3520a0d025395"
+    }
+  ],
+  "useful_d2_k5_witness_found": false,
+  "near_nine_quarters_matrix_scheme_found": false,
+  "verification": {
+    "reference_tests": 412,
+    "full_suite_seconds": 351.962,
+    "protected_specifications": "eleven files and frozen Challenge match exact baseline",
+    "lean_sources_changed": false,
+    "lean_build_performed": false,
+    "latest_focused_screen_tests": 19,
+    "latest_focused_screen_seconds": 40.21,
+    "prior_complete_suite": {
+      "reference_tests": 405,
+      "full_suite_seconds": 353.641
+    },
+    "latest_star_focused_tests": 13,
+    "latest_star_focused_seconds": 1.875
+  },
+  "historical_final_families": [
+    {
+      "field_order": 4,
+      "field": {
+        "p": 2,
+        "modulus": [
+          1,
+          1,
+          1
+        ]
+      },
+      "atoms": 115,
+      "rows": 529,
+      "status": "finite_feasible",
+      "replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 115,
+        "rows": 529
+      },
+      "standalone_replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 115,
+        "rows": 529
+      },
+      "artifact_sha256": "db83b2ac6485059f5975217c47d22f5ba8343d045d9e5f024be3d61299e1f636",
+      "limits": {
+        "max_blocks": 4096,
+        "max_tensor_entries": 2000000,
+        "max_map_entries": 1000000,
+        "max_constraint_entries": 1000000
+      },
+      "native_LP_seconds": 10,
+      "observed_final_pass_seconds": 186.51295884200044,
+      "cross_level_values": {
+        "source": "sector-2-1-e2-retained",
+        "target": "M2",
+        "source_value": "25/4",
+        "target_value": "5",
+        "pair_source": "sector-pair-power",
+        "pair_source_value": "5",
+        "word_source": "sector-pair-words",
+        "word_source_value": "5/2",
+        "matrix_product": "M2-context-31-M2",
+        "matrix_product_value": "25"
+      }
+    },
+    {
+      "field_order": 11,
+      "field": {
+        "p": 11,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "atoms": 157,
+      "rows": 711,
+      "status": "finite_feasible",
+      "replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 157,
+        "rows": 711
+      },
+      "standalone_replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 157,
+        "rows": 711
+      },
+      "artifact_sha256": "2206c1251d32ad93ebd71840b3bf30f02f1335e1f8da73a1403ad798187b4ce2",
+      "limits": {
+        "max_blocks": 4096,
+        "max_tensor_entries": 2000000,
+        "max_map_entries": 1000000,
+        "max_constraint_entries": 1000000
+      },
+      "native_LP_seconds": 10,
+      "observed_final_pass_seconds": 194.08615783599998,
+      "cross_level_values": {
+        "source": "sector-2-1-e2-retained",
+        "target": "M2",
+        "source_value": "25/4",
+        "target_value": "5",
+        "pair_source": "sector-pair-power",
+        "pair_source_value": "5",
+        "word_source": "sector-pair-words",
+        "word_source_value": "5/2",
+        "matrix_product": "M2-context-46-M2",
+        "matrix_product_value": "25"
+      }
+    }
+  ],
+  "mixed_connected_families": [
+    {
+      "field_order": 4,
+      "field": {
+        "p": 2,
+        "modulus": [
+          1,
+          1,
+          1
+        ]
+      },
+      "atoms": 125,
+      "rows": 555,
+      "status": "finite_feasible",
+      "replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 125,
+        "rows": 555
+      },
+      "standalone_replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 125,
+        "rows": 555
+      },
+      "artifact_sha256": "9697828187f0a4926a22fefda5177ed8eeff520617d784a7af91721f2085446f",
+      "limits": {
+        "max_blocks": 4096,
+        "max_tensor_entries": 2000000,
+        "max_map_entries": 1000000,
+        "max_constraint_entries": 1000000
+      },
+      "native_LP_seconds": 10,
+      "observed_final_pass_seconds": 195.33962073800103,
+      "cross_level_values": {
+        "source": "sector-2-1-e2-retained",
+        "target": "M2",
+        "source_value": "25/4",
+        "target_value": "5",
+        "pair_source": "sector-pair-power",
+        "pair_source_value": "5",
+        "word_source": "sector-pair-words",
+        "word_source_value": "5/2",
+        "matrix_product": "M2-context-31-M2",
+        "matrix_product_value": "25"
+      },
+      "mixed_dot_values": {
+        "mixed-three-dots": "3",
+        "mixed-dot-star": "2",
+        "mixed-dot-first": "1",
+        "mixed-three-dots-square": "15",
+        "M2*mixed-three-dots": "15",
+        "M2*mixed-dot-star": "10",
+        "M2*mixed-dot-first": "5",
+        "M2": "5"
+      },
+      "supplied_rank_seven_matrix_row": false,
+      "shared_dot_connections": false
+    },
+    {
+      "field_order": 11,
+      "field": {
+        "p": 11,
+        "modulus": [
+          0,
+          1
+        ]
+      },
+      "atoms": 167,
+      "rows": 737,
+      "status": "finite_feasible",
+      "replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 167,
+        "rows": 737
+      },
+      "standalone_replay": {
+        "checked": [
+          "finite_feasible"
+        ],
+        "atoms": 167,
+        "rows": 737
+      },
+      "artifact_sha256": "091f7117b559078a7838b7b9d269ed9b2485b97377ce74d5224ae0ae0fffc981",
+      "limits": {
+        "max_blocks": 4096,
+        "max_tensor_entries": 2000000,
+        "max_map_entries": 1000000,
+        "max_constraint_entries": 1000000
+      },
+      "native_LP_seconds": 10,
+      "observed_final_pass_seconds": 194.4540711720001,
+      "cross_level_values": {
+        "source": "sector-2-1-e2-retained",
+        "target": "M2",
+        "source_value": "25/4",
+        "target_value": "5",
+        "pair_source": "sector-pair-power",
+        "pair_source_value": "5",
+        "word_source": "sector-pair-words",
+        "word_source_value": "5/2",
+        "matrix_product": "M2-context-46-M2",
+        "matrix_product_value": "25"
+      },
+      "mixed_dot_values": {
+        "mixed-three-dots": "3",
+        "mixed-dot-star": "2",
+        "mixed-dot-first": "1",
+        "mixed-three-dots-square": "15",
+        "M2*mixed-three-dots": "15",
+        "M2*mixed-dot-star": "10",
+        "M2*mixed-dot-first": "5",
+        "M2": "5"
+      },
+      "supplied_rank_seven_matrix_row": false,
+      "shared_dot_connections": false
+    }
+  ],
+  "analytic_screen_summaries": {
+    "formalization_status": "Independently audited mathematical notes and finite coefficient controls; not new Lean theorems.",
+    "shared_dot_all_q": {
+      "lengths": "every integer q>=1",
+      "catalysts": "every finite D",
+      "fields": "every field",
+      "gains": "every positive m",
+      "proof": "shared-dot-catalysts.md",
+      "q2_certificate": "../shared_dot_two_koszul.json",
+      "q2_minor_size": 124,
+      "q2_unimodular_operations": 903,
+      "q3_certificate": "../shared_dot_three_koszul.json",
+      "q3_minor_size": 153,
+      "q3_minor_determinant": 1,
+      "rank_one_koszul_factor": 6
+    },
+    "mixed_dot_border": {
+      "rank": 6,
+      "border_rank": 6,
+      "fields": "every field",
+      "proof": "mixed-dot-border-rank.md",
+      "unit_obstruction_coefficient": -1
+    },
+    "mixed_dot_catalysts": {
+      "auxiliary": "separate dots in all three singleton orientations, arbitrary positive lengths",
+      "catalysts": "every finite tensor D",
+      "proofs": [
+        "variable-auxiliaries.md",
+        "mixed-dot-catalysts.md",
+        "mixed-dot-rank-catalysts.md"
+      ],
+      "arbitrary_finite_catalyst_decided": true,
+      "replicated_core_rank_lower_per_copy_S2": 30,
+      "source_rank_upper_per_copy_S2": 30,
+      "proof": "mixed-dot-rank-catalysts.md",
+      "executable_recognition_scope": "literal S2 auxiliary; arbitrary finite D"
+    },
+    "node_free_extraction": {
+      "input_required": "supplied finite formal polynomial decomposition",
+      "node_evaluations": 0,
+      "implicit_field_extension": false,
+      "C3_raw_terms": 9,
+      "C3_square_raw_terms": 135,
+      "verified_fields": [
+        2,
+        3,
+        4
+      ],
+      "existence_witness_discovery_resolved": false
+    },
+    "fixed_star": {
+      "catalysts": "every finite tensor D",
+      "fields": "every field",
+      "gains": "every positive m",
+      "proof": "star-koszul-catalysts.md",
+      "certificate": "../star_koszul.json",
+      "target_shape": [
+        9,
+        13,
+        13
+      ],
+      "koszul_degree": 4,
+      "matrix_shape": [
+        1638,
+        1638
+      ],
+      "matrix_nonzeros": 2310,
+      "components": 550,
+      "max_component_dimension": 12,
+      "unimodular_operations": 1244,
+      "integral_matrix_rank_lower": 1054,
+      "rank_one_factor": 70,
+      "target_border_rank_lower": 16,
+      "source_terms_per_five_copies": 15,
+      "formalization_status": "Independently replayed integer certificate and audited rational-function proof; not Lean",
+      "certificate_sha256": "08b208f626563362ff42e113e744277d83ee690dc741fbaaffc0f7049e8212f3"
+    }
+  }
+}

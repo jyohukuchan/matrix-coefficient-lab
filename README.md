@@ -93,6 +93,8 @@ python3 -m reference.proof_demo
 python3 -m reference.extraction_demo
 python3 -m reference.catalyst_demo
 python3 -m reference.witnessed_demo
+python3 -m reference.proof_pipeline
+python3 -m reference.structured_demo
 python3 -m unittest discover -s reference -t . -v
 ```
 
@@ -107,6 +109,48 @@ explicit catalytic restriction. The prototype verifies supplied catalyst
 maps, assembles witnessed finite duals, and compiles powered restrictions into
 exact coefficients. It has not found a useful 9/4 catalyst. Branch extraction is connected to a
 small exact eight-term 2-by-2 matrix scheme.
+
+The [revised stages 1–3 checkpoint](reference/research/stages-1-3.md) adds
+integer allocation forecasts, checked construction DAGs with coefficient
+queries, and automatic finite proof-row integration with attribution analysis.
+Its known-rank controls reconstruct seven- and 49-term schemes; the selected
+proof-derived rows have not produced a useful d=2,k=5 certificate. Small witness
+seeds are checked densely, and the full giant catalytic compilation is not yet
+symbolic.
+
+The [stage 4 discovery checkpoint](reference/research/stage4.md) adds connected
+finite LP families, exact rational feasible-state certificates, budgeted direct
+search and new independently audited catalyst obstructions. A fixed singular
+star witness would imply an exponent about 2.222, stronger than the original
+9/4 guarantee, so discovery now prioritizes varying the auxiliary. No useful
+d=2,k=5 witness has been found; these new arguments are not Lean-formalized.
+
+The lower-map refinement adds checked convolution subrank restrictions using
+finite evaluation points and infinity, matrix diagonal selectors, and bounded
+coordinate searches. These return actual coefficient maps. For example,
+`C(3,3)` over F₂ now yields three independent units, and the coordinate search
+detects missing mixed-branch lower rows in retained sectors and Fourier
+components. Exact finite feasible states still describe only the selected
+constraints; coordinate-search exhaustion does not bound general subrank.
+
+The [variable-auxiliary checkpoint](reference/research/variable-auxiliary-checkpoint.md)
+adds actual restrictions from a retained-sector square and a star square to
+2-by-2 matrix multiplication. The star construction uses signed trace
+corrections valid in every characteristic. These connect previously separate
+power levels; no useful positive-gain certificate has yet been found. New
+independently audited geometric arguments exclude complete convolutions as
+fixed auxiliaries and sharpen the minimum catalyst dimensions for the retained
+and star cases. Those arguments are not Lean-formalized.
+
+The latest checkpoint also adds node-free extraction of a supplied polynomial
+tensor family's leading coefficients, shared-dot exact decompositions, and
+further ordinary matrix restrictions. Independently audited integral Koszul
+and commutator arguments exclude the shared-dot family for every finite
+catalyst and every field. Replicated rectangular rank and substitution also
+exclude three separate oriented dots for every finite catalyst; the literal
+length-two auxiliary has border rank exactly six. A separate compact integer
+certificate also excludes the fixed star for every finite catalyst. These
+improve the search frontier without supplying a useful 9/4 coefficient generator.
 
 ## Reproduction and verification
 
