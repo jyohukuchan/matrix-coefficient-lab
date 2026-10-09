@@ -17,6 +17,9 @@ from .proof_pipeline import ConstraintInventory, PipelineConfig, generate_proof_
 from .schemes import naive_scheme, strassen_scheme
 from .sectors import ThreeSectorConstruction, convolution_tensor
 from .structured_certificates import GraphResourceLimit
+from .subrank_constraints import (export_projective_convolution_subrank_order,
+                                  export_matrix_subrank_order,
+                                  export_subrank_product_order)
 from .tensor_schemes import TensorScheme
 from .tensors import FiniteTensor, matrix_multiplication_tensor
 from .witnessed_constraints import (DEFAULT_LIMITS, StateAssemblyLimit,
@@ -133,6 +136,8 @@ def generate_discovery_inventory(field=FiniteField(11), *, include_known_control
     if include_known_control:
         add(WitnessedOrderExport(rank_upper_constraint('unit', matrix_key, matrix),
                                  (('unit', book.inventory['unit']), (matrix_key, matrix.target))), 'known_control')
+    lowers = {matrix_key: export_matrix_subrank_order(field, 2, matrix_key,
+                                                     limits=limits)}
     for a, b in ((2, 2), (2, 3), (3, 3)):
         target = convolution_tensor(field, a, b)
         try:
@@ -143,9 +148,16 @@ def generate_discovery_inventory(field=FiniteField(11), *, include_known_control
             scheme = TensorScheme.from_tensor(target)
         key = register(f'C{a}{b}', target)
         schemes[key] = scheme
+        lowers[key] = export_projective_convolution_subrank_order(
+            field, a, b, min(a, b, field.order+1), key, limits=limits)
     star = star_tensor(field)
     star_key = register('star', star)
     schemes[star_key] = TensorScheme.from_tensor(star)
+    # These rows are actual diagonal restrictions, not rank lower bounds or
+    # multiplication of additive-state values. Include them before context
+    # lifting, so n*M2 <= M2 tensor C(a,b) also has checked maps.
+    for lower in lowers.values():
+        add(lower, 'subrank_lower')
     seed_rows = tuple(zip(book.rows, book.families))
     context_tensors = {'M2': matrix.target, 'C22': convolution_tensor(field, 2, 2), 'star': star}
     for index, (row, family) in enumerate(seed_rows):
@@ -212,11 +224,15 @@ def generate_discovery_inventory(field=FiniteField(11), *, include_known_control
         product_key = book._canonical[matrix.target.tensor_product(book.inventory[key])]
         if key in schemes:
             schemes[product_key] = matrix.tensor_product(schemes[key])
+        if key in lowers:
+            add(export_subrank_product_order(lowers[matrix_key], lowers[key],
+                                            product_key, limits=limits),
+                'subrank_product')
 
     for key, tensor in tuple(book.inventory.items()):
         if key == 'unit':
             continue
-        if any(tensor.coefficients):
+        if key not in lowers and any(tensor.coefficients):
             add(scalar_lower_export(key, tensor), 'scalar_lower')
         scheme = schemes.get(key) or TensorScheme.from_tensor(tensor)
         if scheme.terms > budget.max_upper_terms:

@@ -2,12 +2,14 @@
 
 from collections import Counter
 from dataclasses import replace
+from fractions import Fraction
 import unittest
 
 from .discovery_inventory import (DiscoveryBudget, commute_product_export,
                                   generate_discovery_inventory, scalar_lower_export,
                                   star_tensor)
 from .fields import FiniteField
+from .finite_state_solver import RationalStateCertificate
 from .maps import LinearMap
 from .tensors import FiniteTensor, matrix_multiplication_tensor
 from .witnessed_constraints import (DetectorConstraint, StateAssemblyLimit,
@@ -118,6 +120,29 @@ class SmallDiscoveryInventoryTests(unittest.TestCase):
         unit_detector = next(row for row in self.book.rows
                              if isinstance(row, DetectorConstraint) and row.test == "unit")
         self.assertEqual(unit_detector.product, upper.negative[0])
+
+    def test_diagonal_lowers_reject_the_previous_unit_valued_convolution_state(self):
+        indices = tuple(i for i, family in enumerate(self.book.families)
+                        if family in ('subrank_lower', 'subrank_product'))
+        system = self.book.system(2, 5, indices)
+        system.require_valid()
+        old_weak_values = RationalStateCertificate(
+            system, (Fraction(1),)*len(system.keys))
+        self.assertFalse(old_weak_values.verify_inequalities())
+        lower = next(row for row, family in zip(self.book.rows, self.book.families)
+                     if family == 'subrank_lower' and row.positive == ('C33',))
+        self.assertEqual(lower.negative, ('unit',)*3)
+        # Projective infinity supplies the third unit over the two-element field.
+        self.assertEqual(len(lower.negative), F2.order+1)
+
+    def test_extension_nodes_strengthen_the_c33_diagonal_lower(self):
+        book, _ = generate_discovery_inventory(
+            F4, contexts=(), budget=DiscoveryBudget(max_upper_terms=1))
+        lower = next(row for row, family in zip(book.rows, book.families)
+                     if family == 'subrank_lower' and row.positive == ('C33',))
+        self.assertEqual(lower.negative, ('unit',)*3)
+        row_index = book.rows.index(lower)
+        book.system(2, 5, (row_index,)).require_valid()
 
     def test_row_and_decomposition_caps_return_explicit_incomplete_reports(self):
         capped, skipped = generate_discovery_inventory(F2, contexts=(), budget=DiscoveryBudget(max_rows=1))

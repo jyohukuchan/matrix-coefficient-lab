@@ -125,6 +125,14 @@ star witness would imply an exponent about 2.222, stronger than the original
 9/4 guarantee, so discovery now prioritizes varying the auxiliary. No useful
 d=2,k=5 witness has been found; these new arguments are not Lean-formalized.
 
+The lower-map refinement adds checked convolution subrank restrictions using
+finite evaluation points and infinity, matrix diagonal selectors, and bounded
+coordinate searches. These return actual coefficient maps. For example,
+`C(3,3)` over F₂ now yields three independent units, and the coordinate search
+detects missing mixed-branch lower rows in retained sectors and Fourier
+components. Exact finite feasible states still describe only the selected
+constraints; coordinate-search exhaustion does not bound general subrank.
+
 ## Reproduction and verification
 
 Install [elan](https://github.com/leanprover/elan), and have Git and Python 3 available. From the repository root, run these commands sequentially:
